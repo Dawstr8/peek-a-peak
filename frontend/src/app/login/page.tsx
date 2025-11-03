@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   const handleLoginSuccess = () => {
     toast.success("Logged in successfully!");
-    router.push("/");
+    router.push("/dashboard");
   };
 
   return (
