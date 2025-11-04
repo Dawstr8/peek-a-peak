@@ -8,14 +8,13 @@ import type { PhotoMetadata } from "@/lib/metadata/types";
 import type { Peak } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
-import { SelectStep } from "@/app/upload/components/SelectStep";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useStepper } from "@/hooks/use-stepper";
 
 import { MetadataStep } from "./components/MetadataStep";
 import { PeakStep } from "./components/PeakStep";
+import { SelectStep } from "./components/SelectStep";
 import { UploadStep } from "./components/UploadStep";
 
 export default function UploadPage() {
