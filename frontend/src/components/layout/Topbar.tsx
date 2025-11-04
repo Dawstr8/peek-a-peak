@@ -2,11 +2,11 @@
 
 import { useAuth } from "@/components/auth/AuthContext";
 
-import CallToAction from "./CallToAction";
-import HamburgerMenu from "./HamburgerMenu";
-import Logo from "./Logo";
-import Navigation from "./Navigation";
-import Profile from "./Profile";
+import CallToAction from "./topbar/CallToAction";
+import HamburgerMenu from "./topbar/HamburgerMenu";
+import Logo from "./topbar/Logo";
+import Navigation from "./topbar/Navigation";
+import Profile from "./topbar/Profile";
 
 export default function Topbar() {
   const { user } = useAuth();

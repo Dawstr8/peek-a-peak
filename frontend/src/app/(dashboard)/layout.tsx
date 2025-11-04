@@ -4,7 +4,12 @@ import { redirect } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthContext";
 import Footer from "@/components/layout/Footer";
-import Topbar from "@/components/layout/Topbar";
+import { Sidebar } from "@/components/layout/Sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
   children,
@@ -18,10 +23,17 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Topbar />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
+    <SidebarProvider>
+      <Sidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="px-4">
+            <SidebarTrigger />
+          </div>
+        </header>
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
