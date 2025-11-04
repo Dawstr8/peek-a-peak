@@ -11,6 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Camera, MapPin, Cloud, Calendar, Mountain } from "lucide-react";
 import peaksData from "@/data/sample-summit-photos.json";
+import { checkIfAuthenticated } from "@/lib/auth/utils";
+import { redirect } from "next/navigation";
 
 const peaks = peaksData;
 
@@ -38,7 +40,10 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const isAuthenticated = await checkIfAuthenticated();
+  if (isAuthenticated) redirect("/dashboard");
+
   return (
     <>
       {/* Hero Section */}
