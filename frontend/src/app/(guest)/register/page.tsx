@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-import { RegisterForm } from "@/app/register/components/RegisterForm";
-
 import {
   Card,
   CardContent,
@@ -14,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+import { RegisterForm } from "./components/RegisterForm";
 
 export default function RegisterPage() {
   const router = useRouter();

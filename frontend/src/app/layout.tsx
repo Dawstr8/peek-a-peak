@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth/AuthContext";
-import Footer from "@/components/layout/Footer";
-import Topbar from "@/components/layout/Topbar";
 import { Toaster } from "@/components/ui/sonner";
 
 import "../styles/globals.css";
@@ -36,14 +34,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <div className="flex min-h-screen flex-col">
-            <Topbar />
-            <QueryProvider>
-              <main className="flex-1">{children}</main>
-            </QueryProvider>
-            <Footer />
+          <QueryProvider>
+            {children}
             <Toaster position="top-center" />
-          </div>
+          </QueryProvider>
         </AuthProvider>
       </body>
     </html>
