@@ -6,6 +6,7 @@ import { ChevronDown, LogIn, User as UserIcon } from "lucide-react";
 
 import type { User } from "@/lib/users/types";
 
+import LogoutButton from "@/components/layout/LogoutButton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,8 +14,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import LogoutButton from "./LogoutButton";
 
 interface ProfileProps {
   user: User | null;

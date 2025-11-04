@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 import { navigation } from "@/config/navigation";
 
-import Logo from "./Logo";
+import Logo from "./topbar/Logo";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
