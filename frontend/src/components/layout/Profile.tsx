@@ -1,8 +1,11 @@
 "use client";
 
-import LogoutButton from "./LogoutButton";
-import { User } from "@/lib/users/types";
 import Link from "next/link";
+
+import { ChevronDown, LogIn, User as UserIcon } from "lucide-react";
+
+import type { User } from "@/lib/users/types";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,7 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, LogIn, User as UserIcon } from "lucide-react";
+
+import LogoutButton from "./LogoutButton";
 
 interface ProfileProps {
   user: User | null;

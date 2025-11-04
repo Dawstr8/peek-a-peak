@@ -1,4 +1,4 @@
-import { PhotoMetadataFormatter } from "./types";
+import type { PhotoMetadataFormatter } from "./types";
 
 const NOT_AVAILABLE = "N/A";
 

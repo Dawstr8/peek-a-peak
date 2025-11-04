@@ -1,9 +1,11 @@
 /**
  * API client for interacting with the photo endpoints
  */
-import { API_ENDPOINTS } from "@/config/api";
 import { ApiClient } from "@/lib/common/api-client";
-import { PeakWithDistance } from "./types";
+
+import { API_ENDPOINTS } from "@/config/api";
+
+import type { PeakWithDistance } from "./types";
 
 /**
  * PeakClient class for handling peak-related API requests

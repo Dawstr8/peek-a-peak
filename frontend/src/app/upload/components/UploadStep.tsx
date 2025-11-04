@@ -1,15 +1,18 @@
 "use client";
 
-import { PhotoClient } from "@/lib/photos/client";
-import { useMutation } from "@tanstack/react-query";
-import { Spinner } from "@/components/ui/spinner";
-import { Button } from "@/components/ui/button";
-import { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
-import { SummitPhotoCard } from "@/components/photos/SummitPhotoCard";
-import { photoMetadataService } from "@/lib/metadata/service";
-import { Peak } from "@/lib/peaks/types";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+import { photoMetadataService } from "@/lib/metadata/service";
+import type { Peak } from "@/lib/peaks/types";
+import { PhotoClient } from "@/lib/photos/client";
+import type { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
+
+import { SummitPhotoCard } from "@/components/photos/SummitPhotoCard";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 interface UploadStepProps {
   file: File;

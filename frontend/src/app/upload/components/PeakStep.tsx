@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
+
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+
 import { PeakClient } from "@/lib/peaks/client";
-import { Peak, PeakWithDistance } from "@/lib/peaks/types";
-import { SummitPhotoCreate } from "@/lib/photos/types";
+import type { Peak, PeakWithDistance } from "@/lib/peaks/types";
+import type { SummitPhotoCreate } from "@/lib/photos/types";
+
+import { Button } from "@/components/ui/button";
+
 import { PeakSelect } from "./PeaksSelect";
 
 const MAX_DISTANCE = 10000; // 10 km

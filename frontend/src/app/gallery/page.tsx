@@ -1,11 +1,13 @@
 "use client";
 
-import { SummitPhotoCard } from "@/components/photos/SummitPhotoCard";
-import { photoMetadataService } from "@/lib/metadata/service";
-import { PhotoClient } from "@/lib/photos/client";
-import { SummitPhoto } from "@/lib/photos/types";
 import { useQuery } from "@tanstack/react-query";
 import { Masonry } from "masonic";
+
+import { photoMetadataService } from "@/lib/metadata/service";
+import { PhotoClient } from "@/lib/photos/client";
+import type { SummitPhoto } from "@/lib/photos/types";
+
+import { SummitPhotoCard } from "@/components/photos/SummitPhotoCard";
 
 export default function Gallery() {
   const { data: summitPhotos } = useQuery({

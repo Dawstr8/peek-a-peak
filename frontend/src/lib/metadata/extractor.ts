@@ -1,5 +1,6 @@
 import * as exifr from "exifr";
-import { PhotoMetadata, PhotoMetadataExtractor } from "./types";
+
+import type { PhotoMetadata, PhotoMetadataExtractor } from "./types";
 
 export class ExifMetadataExtractor implements PhotoMetadataExtractor {
   async extract(file: File): Promise<PhotoMetadata> {

@@ -1,6 +1,7 @@
-import { API_ENDPOINTS } from "@/config/api";
 import { ApiClient } from "@/lib/common/api-client";
-import { User, UserCreate } from "@/lib/users/types";
+import type { User, UserCreate } from "@/lib/users/types";
+
+import { API_ENDPOINTS } from "@/config/api";
 
 /**
  * AuthClient class for handling user-related API requests

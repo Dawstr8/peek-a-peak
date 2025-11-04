@@ -1,5 +1,4 @@
 /** Utility functions for authentication */
-
 import { cookies } from "next/headers";
 
 export async function checkIfAuthenticated(): Promise<boolean> {

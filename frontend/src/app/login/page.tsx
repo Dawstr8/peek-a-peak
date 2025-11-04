@@ -1,7 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { toast } from "sonner";
+
+import { LoginForm } from "@/app/login/components/LoginForm";
+
 import {
   Card,
   CardContent,
@@ -9,8 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LoginForm } from "@/app/login/components/LoginForm";
-import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();

@@ -1,16 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Upload } from "lucide-react";
+
+import type { PhotoMetadata } from "@/lib/metadata/types";
+import type { Peak } from "@/lib/peaks/types";
+import type { SummitPhotoCreate } from "@/lib/photos/types";
+
 import { SelectStep } from "@/app/upload/components/SelectStep";
-import { UploadStep } from "./components/UploadStep";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { useStepper } from "@/hooks/use-stepper";
+
 import { MetadataStep } from "./components/MetadataStep";
-import { PhotoMetadata } from "@/lib/metadata/types";
-import { SummitPhotoCreate } from "@/lib/photos/types";
 import { PeakStep } from "./components/PeakStep";
-import { Peak } from "@/lib/peaks/types";
+import { UploadStep } from "./components/UploadStep";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);

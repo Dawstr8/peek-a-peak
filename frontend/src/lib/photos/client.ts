@@ -1,10 +1,10 @@
 /**
  * API client for interacting with the photo endpoints
  */
-
-import { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
-import { API_ENDPOINTS } from "@/config/api";
 import { ApiClient } from "@/lib/common/api-client";
+import type { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
+
+import { API_ENDPOINTS } from "@/config/api";
 
 /**
  * PhotoClient class for handling photo-related API requests

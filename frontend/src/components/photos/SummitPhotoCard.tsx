@@ -1,14 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { UPLOADS_BASE_URL } from "@/config/api";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
+
+import { formatDistance } from "date-fns";
+import { ArrowUp, MapPin, Mountain } from "lucide-react";
+
+import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
+import type { SummitPhoto } from "@/lib/photos/types";
+
 import {
   Card,
   CardContent,
@@ -16,10 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SummitPhoto } from "@/lib/photos/types";
-import { ArrowUp, MapPin, Mountain } from "lucide-react";
-import { PhotoMetadataFormatter } from "@/lib/metadata/types";
-import { formatDistance } from "date-fns";
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+
+import { UPLOADS_BASE_URL } from "@/config/api";
 
 interface SummitPhotoCardProps {
   summitPhoto: SummitPhoto;
