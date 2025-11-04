@@ -1,12 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { MetadataDisplay } from "@/components/metadata/MetadataDisplay";
-import { PhotoMetadata } from "@/lib/metadata/types";
-import { photoMetadataService } from "@/lib/metadata/service";
-import { SummitPhotoCreate } from "@/lib/photos/types";
-import { mapPhotoMetadataToSummitPhotoCreate } from "@/lib/photos/mappers";
 import dynamic from "next/dynamic";
+
+import { photoMetadataService } from "@/lib/metadata/service";
+import type { PhotoMetadata } from "@/lib/metadata/types";
+import { mapPhotoMetadataToSummitPhotoCreate } from "@/lib/photos/mappers";
+import type { SummitPhotoCreate } from "@/lib/photos/types";
+
+import { MetadataDisplay } from "@/components/metadata/MetadataDisplay";
+import { Button } from "@/components/ui/button";
 
 const LocationMap = dynamic(
   () => import("./LocationMap").then((mod) => mod.LocationMap),

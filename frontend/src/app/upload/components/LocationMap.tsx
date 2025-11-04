@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, ReactNode } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { ReactNode, useEffect } from "react";
+
 import { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { initializeLeafletIcons, MAP_CONFIG } from "@/lib/leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+
+import { MAP_CONFIG, initializeLeafletIcons } from "@/lib/leaflet";
 import { cn } from "@/lib/utils";
 
 interface LocationData {

@@ -1,5 +1,5 @@
-import { PhotoMetadata } from "../metadata/types";
-import { SummitPhotoCreate } from "./types";
+import type { PhotoMetadata } from "../metadata/types";
+import type { SummitPhotoCreate } from "./types";
 
 /**
  * Converts PhotoMetadata to SummitPhotoCreate

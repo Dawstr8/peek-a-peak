@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navigation } from "@/config/navigation";
+
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -10,6 +10,8 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+
+import { navigation } from "@/config/navigation";
 
 export interface NavigationProps {
   className?: string;

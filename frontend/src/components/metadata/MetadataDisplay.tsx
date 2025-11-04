@@ -1,5 +1,10 @@
-import { PhotoMetadata, PhotoMetadataFormatter } from "@/lib/metadata/types";
-import { MapPin, Mountain, Clock, Camera } from "lucide-react";
+import { Camera, Clock, MapPin, Mountain } from "lucide-react";
+
+import type {
+  PhotoMetadata,
+  PhotoMetadataFormatter,
+} from "@/lib/metadata/types";
+
 import { MetadataItem } from "@/components/metadata/MetadataItem";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

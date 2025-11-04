@@ -1,10 +1,12 @@
 import { AlertCircleIcon, Ruler, SearchX } from "lucide-react";
-import { PeakWithDistance } from "@/lib/peaks/types";
-import { Spinner } from "@/components/ui/spinner";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PeakCard } from "@/components/peaks/PeakCard";
+
+import type { PeakWithDistance } from "@/lib/peaks/types";
 import { cn } from "@/lib/utils";
+
+import { PeakCard } from "@/components/peaks/PeakCard";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
 
 interface PeakSelectProps {
   peaksWithDistance: PeakWithDistance[];

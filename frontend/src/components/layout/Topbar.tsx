@@ -1,11 +1,12 @@
 "use client";
 
 import { useAuth } from "@/components/auth/AuthContext";
-import Logo from "./Logo";
+
+import CallToAction from "./CallToAction";
 import HamburgerMenu from "./HamburgerMenu";
+import Logo from "./Logo";
 import Navigation from "./Navigation";
 import Profile from "./Profile";
-import CallToAction from "./CallToAction";
 
 export default function Topbar() {
   const { user } = useAuth();

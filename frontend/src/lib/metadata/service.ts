@@ -1,10 +1,10 @@
-import {
+import { createMetadataExtractor } from "./extractor";
+import { createMetadataFormatter } from "./formatter";
+import type {
   PhotoMetadata,
   PhotoMetadataExtractor,
   PhotoMetadataFormatter,
 } from "./types";
-import { createMetadataExtractor } from "./extractor";
-import { createMetadataFormatter } from "./formatter";
 
 export class PhotoMetadataService {
   constructor(

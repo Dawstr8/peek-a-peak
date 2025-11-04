@@ -1,14 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
 import { useDropzone } from "react-dropzone";
+
 import { photoMetadataService } from "@/lib/metadata/service";
-import { PhotoMetadata } from "@/lib/metadata/types";
-import { useMutation } from "@tanstack/react-query";
-import { Spinner } from "@/components/ui/spinner";
+import type { PhotoMetadata } from "@/lib/metadata/types";
+import { cn } from "@/lib/utils";
+
 import { MessageBlock } from "@/components/common/MessageBlock";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 interface SelectStepProps {
   setFile: (file: File) => void;

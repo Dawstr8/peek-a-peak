@@ -1,5 +1,14 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { AuthClient } from "@/lib/auth/client";
+
+import { useAuth } from "@/components/auth/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,14 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AuthClient } from "@/lib/auth/client";
-import { useAuth } from "@/components/auth/AuthContext";
 
 const loginSchema = z.object({
   email: z.email("Invalid email address"),

@@ -1,4 +1,4 @@
-import { Peak } from "@/lib/peaks/types";
+import type { Peak } from "@/lib/peaks/types";
 
 export interface SummitPhoto {
   id?: number;

@@ -1,8 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Peak } from "@/lib/peaks/types";
 import { MapPin, Mountain } from "lucide-react";
+
+import type { Peak } from "@/lib/peaks/types";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PeakCardProps {
   peak: Peak;

@@ -1,5 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { Calendar, Camera, Cloud, MapPin, Mountain } from "lucide-react";
+
+import { checkIfAuthenticated } from "@/lib/auth/utils";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,11 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Camera, MapPin, Cloud, Calendar, Mountain } from "lucide-react";
+
 import peaksData from "@/data/sample-summit-photos.json";
-import { checkIfAuthenticated } from "@/lib/auth/utils";
-import { redirect } from "next/navigation";
 
 const peaks = peaksData;
 
