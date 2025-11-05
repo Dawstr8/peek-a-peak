@@ -99,7 +99,7 @@ export function RegisterForm({ handleRegisterSuccess }: RegisterFormProps) {
         />
 
         {isError && (
-          <div className="text-sm text-destructive text-center">
+          <div className="text-destructive text-center text-sm">
             {error.message}
           </div>
         )}

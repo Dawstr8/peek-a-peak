@@ -28,7 +28,7 @@ export function PeakCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <MapPin className="h-3 w-3" />
           <span>{peak.elevation}m elevation</span>
         </div>

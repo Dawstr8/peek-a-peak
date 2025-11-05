@@ -25,7 +25,7 @@ export function PeakSelect({
 }: PeakSelectProps) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8 gap-2">
+      <div className="flex items-center justify-center gap-2 py-8">
         <Spinner className="size-8" />
         <span className="text-muted-foreground">Finding nearby peaks...</span>
       </div>
@@ -66,19 +66,19 @@ export function PeakSelect({
             key={peak.id}
             peak={peak}
             className={cn(
-              "cursor-pointer transition-all hover:bg-accent/5",
+              "hover:bg-accent/5 cursor-pointer transition-all",
               isHighlighted &&
-                "ring-2 ring-primary border-primary bg-accent/10",
+                "ring-primary border-primary bg-accent/10 ring-2",
             )}
             onClick={() => onSelect({ peak, distance })}
           >
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <Ruler className="h-3 w-3" />
               <span>{distance.toFixed(1)}m away</span>
             </div>
             <Badge
               variant={isHighlighted ? "default" : "secondary"}
-              className="w-full justify-center mt-2"
+              className="mt-2 w-full justify-center"
             >
               {isHighlighted ? "Selected" : "Select"}
             </Badge>

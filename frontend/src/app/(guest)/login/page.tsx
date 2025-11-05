@@ -24,10 +24,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-center text-2xl font-bold">
             Sign In
           </CardTitle>
           <CardDescription className="text-center">
@@ -36,7 +36,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-1">
           <LoginForm handleLoginSuccess={handleLoginSuccess} />
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link href="/register" className="underline">
               Sign up

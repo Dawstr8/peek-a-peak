@@ -69,12 +69,12 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="container py-10 mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-center text-primary">
+    <div className="container mx-auto py-10">
+      <h1 className="text-primary mb-8 text-center text-3xl font-bold">
         Upload Summit Photo
       </h1>
 
-      <Card className="max-w-3xl mx-auto shadow-md border-border">
+      <Card className="border-border mx-auto max-w-3xl shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-6 w-6" />

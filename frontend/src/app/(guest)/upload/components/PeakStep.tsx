@@ -57,7 +57,7 @@ export function PeakStep({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Select a Peak</h3>
+        <h3 className="mb-2 text-lg font-semibold">Select a Peak</h3>
         <p className="text-muted-foreground">
           Choose the peak this photo was taken near. This helps organize your
           mountain adventures.

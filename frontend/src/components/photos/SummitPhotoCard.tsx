@@ -65,7 +65,7 @@ export function SummitPhotoCard({
               <ArrowUp />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle className="text-base font-mono">
+              <ItemTitle className="font-mono text-base">
                 {formatter.formatAltitude(summitPhoto.altitude)}
               </ItemTitle>
             </ItemContent>
@@ -77,7 +77,7 @@ export function SummitPhotoCard({
               <MapPin />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle className="text-base font-mono">
+              <ItemTitle className="font-mono text-base">
                 {formatter.formatLatitude(summitPhoto.latitude)},{" "}
                 {formatter.formatLongitude(summitPhoto.longitude)}
               </ItemTitle>
@@ -90,10 +90,10 @@ export function SummitPhotoCard({
               <Mountain />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle className="text-base font-mono">
+              <ItemTitle className="font-mono text-base">
                 {summitPhoto.peak.name}
               </ItemTitle>
-              <ItemDescription className="flex justify-between w-full">
+              <ItemDescription className="flex w-full justify-between">
                 <span>{summitPhoto.peak.range}</span>
                 <span>
                   {formatter.formatAltitude(summitPhoto.peak.elevation)}
