@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
 
+from src.auth.dependencies import current_user_dep
 from src.photos.dependencies import photos_service_dep
 from src.photos.models import SummitPhotoCreate, SummitPhotoRead
 
@@ -35,6 +36,7 @@ async def get_all_photos(
 @router.post("/", response_model=SummitPhotoRead, tags=["photos"])
 async def upload_photo(
     photos_service: photos_service_dep,
+    current_user: current_user_dep,
     file: UploadFile = File(...),
     summit_photo_create: str = Form(...),
 ):
@@ -51,7 +53,9 @@ async def upload_photo(
     summit_photo_create = SummitPhotoCreate.model_validate_json(summit_photo_create)
 
     try:
-        return await photos_service.upload_photo(file, summit_photo_create)
+        return await photos_service.upload_photo(
+            file, summit_photo_create, current_user
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

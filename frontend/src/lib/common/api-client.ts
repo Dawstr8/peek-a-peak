@@ -56,6 +56,7 @@ export class ApiClient {
   ): Promise<T> {
     const response = await fetch(url, {
       method: "GET",
+      credentials: "include",
       headers: {
         Accept: "application/json",
         ...options?.headers,
@@ -86,6 +87,7 @@ export class ApiClient {
 
     const response = await fetch(url, {
       method: "POST",
+      credentials: "include",
       headers: {
         ...(!isFormData ? { "Content-Type": "application/json" } : {}),
         Accept: "application/json",
@@ -118,6 +120,7 @@ export class ApiClient {
 
     const response = await fetch(url, {
       method: "PUT",
+      credentials: "include",
       headers: {
         ...(!isFormData ? { "Content-Type": "application/json" } : {}),
         Accept: "application/json",
@@ -146,6 +149,7 @@ export class ApiClient {
   ): Promise<T> {
     const response = await fetch(url, {
       method: "DELETE",
+      credentials: "include",
       headers: {
         Accept: "application/json",
         ...options?.headers,

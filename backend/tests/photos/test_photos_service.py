@@ -12,6 +12,7 @@ from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
 from src.photos.service import PhotosService
 from src.uploads.service import UploadsService
+from src.users.models import User
 
 
 @pytest.fixture
@@ -59,6 +60,12 @@ def mock_file():
     return file
 
 
+@pytest.fixture
+def mock_user():
+    """Create a mock user"""
+    return User(id=1, email="test@example.com", hashed_password="hashed")
+
+
 @pytest.mark.asyncio
 async def test_upload_photo_with_metadata(
     photos_service,
@@ -66,6 +73,7 @@ async def test_upload_photo_with_metadata(
     mock_uploads_service,
     mock_photos_repository,
     peak_coords,
+    mock_user,
 ):
     """Test uploading a photo with provided metadata"""
     summit_photo_create = SummitPhotoCreate(
@@ -76,9 +84,12 @@ async def test_upload_photo_with_metadata(
         peak_id=1,
     )
 
-    result = await photos_service.upload_photo(mock_file, summit_photo_create)
+    result = await photos_service.upload_photo(
+        mock_file, summit_photo_create, mock_user
+    )
 
     assert result.id == 1
+    assert result.owner_id == mock_user.id
     assert result.file_name == "test-photo.jpg"
     assert result.peak_id == 1
     assert result.distance_to_peak is None
@@ -99,13 +110,17 @@ async def test_upload_photo_without_metadata(
     mock_file,
     mock_uploads_service,
     mock_photos_repository,
+    mock_user,
 ):
     """Test uploading a photo without any metadata"""
     summit_photo_create = SummitPhotoCreate()
 
-    result = await photos_service.upload_photo(mock_file, summit_photo_create)
+    result = await photos_service.upload_photo(
+        mock_file, summit_photo_create, mock_user
+    )
 
     assert result.id == 1
+    assert result.owner_id == mock_user.id
     assert result.file_name == "test-photo.jpg"
     assert result.peak_id is None
     assert result.distance_to_peak is None
@@ -126,6 +141,7 @@ async def test_upload_photo_with_partial_metadata(
     mock_file,
     mock_uploads_service,
     mock_photos_repository,
+    mock_user,
 ):
     """Test uploading a photo with only some metadata fields"""
     summit_photo_create = SummitPhotoCreate(
@@ -133,9 +149,12 @@ async def test_upload_photo_with_partial_metadata(
         altitude=1500.0,
     )
 
-    result = await photos_service.upload_photo(mock_file, summit_photo_create)
+    result = await photos_service.upload_photo(
+        mock_file, summit_photo_create, mock_user
+    )
 
     assert result.id == 1
+    assert result.owner_id == mock_user.id
     assert result.file_name == "test-photo.jpg"
     assert result.peak_id is None
     assert result.distance_to_peak is None

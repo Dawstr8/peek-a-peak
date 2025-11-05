@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.peaks.models import Peak
+from src.users.models import User
 
 
 class SummitPhoto(SQLModel, table=True):
@@ -17,8 +18,10 @@ class SummitPhoto(SQLModel, table=True):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
-    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
     distance_to_peak: Optional[float] = None
+
+    owner_id: int = Field(foreign_key="user.id")
+    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
 
     peak: Optional[Peak] = Relationship()
 
