@@ -8,23 +8,6 @@ import pytest
 
 from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
-from src.users.models import User
-from src.users.repository import UsersRepository
-
-
-@pytest.fixture()
-def test_users_repository(test_db):
-    """Create a UsersRepository instance for testing"""
-    return UsersRepository(test_db)
-
-
-@pytest.fixture()
-def mock_user(test_users_repository):
-    """Create a mock user for testing"""
-    user = User(email="test@example.com", hashed_password="hashed")
-    saved_user = test_users_repository.save(user)
-
-    return saved_user
 
 
 @pytest.fixture()
@@ -34,12 +17,12 @@ def test_photos_repository(test_db):
 
 
 @pytest.fixture()
-def test_photos(test_db, test_peaks, peak_coords, mock_user):
+def test_photos(test_db, test_peaks, peak_coords, db_user):
     """Create test summit photos and save to database"""
 
     photos = [
         SummitPhoto(
-            owner_id=mock_user.id,
+            owner_id=db_user.id,
             file_name="test1.jpg",
             uploaded_at=datetime(2025, 10, 1, 12, 0),
             captured_at=datetime(2025, 9, 30, 10, 0),
@@ -50,7 +33,7 @@ def test_photos(test_db, test_peaks, peak_coords, mock_user):
             distance_to_peak=10.5,
         ),
         SummitPhoto(
-            owner_id=mock_user.id,
+            owner_id=db_user.id,
             file_name="test2.jpg",
             uploaded_at=datetime(2025, 10, 2, 14, 0),
             captured_at=datetime(2025, 10, 1, 11, 0),
@@ -73,10 +56,10 @@ def test_photos(test_db, test_peaks, peak_coords, mock_user):
     return photos
 
 
-def test_save(test_photos_repository, test_peaks, mock_user):
+def test_save(test_photos_repository, test_peaks, db_user):
     """Test saving a new summit photo"""
     new_photo = SummitPhoto(
-        owner_id=mock_user.id,
+        owner_id=db_user.id,
         file_name="new_photo.jpg",
         captured_at=datetime(2025, 10, 5, 9, 0),
         latitude=49.5730,

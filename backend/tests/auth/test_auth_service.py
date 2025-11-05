@@ -6,21 +6,8 @@ import pytest
 from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
 from src.sessions.repository import SessionsRepository
-from src.users.models import User, UserCreate
+from src.users.models import UserCreate
 from src.users.repository import UsersRepository
-
-
-@pytest.fixture
-def mock_users_repository():
-    """Create a mock UsersRepository"""
-    repo = MagicMock(spec=UsersRepository)
-
-    def save_user(user):
-        user.id = 1
-        return user
-
-    repo.save.side_effect = save_user
-    return repo
 
 
 @pytest.fixture
@@ -54,36 +41,22 @@ def service(
     )
 
 
-def test_authenticate_user_success(
-    service, mock_password_service, mock_users_repository
-):
+def test_authenticate_user_success(service, mock_user):
     """Test successful user authentication."""
-    hashed_password = mock_password_service.get_hash("correct_password")
-    user = User(id=1, email="test@example.com", hashed_password=hashed_password)
-    mock_users_repository.get_by_email.return_value = user
+    result = service.authenticate_user(mock_user.email, "correct_password")
 
-    result = service.authenticate_user("test@example.com", "correct_password")
-
-    assert result == user
+    assert result == mock_user
 
 
-def test_authenticate_user_wrong_password(
-    service, mock_password_service, mock_users_repository
-):
+def test_authenticate_user_wrong_password(service, mock_user):
     """Test authentication with wrong password."""
-    hashed_password = mock_password_service.get_hash("correct_password")
-    user = User(id=1, email="test@example.com", hashed_password=hashed_password)
-    mock_users_repository.get_by_email.return_value = user
-
-    result = service.authenticate_user("test@example.com", "wrong_password")
+    result = service.authenticate_user(mock_user.email, "wrong_password")
 
     assert result is None
 
 
-def test_authenticate_user_not_found(service, mock_users_repository):
+def test_authenticate_user_not_found(service):
     """Test authentication when user is not found."""
-    mock_users_repository.get_by_email.return_value = None
-
     result = service.authenticate_user("nonexistent@example.com", "password")
 
     assert result is None
@@ -102,14 +75,8 @@ async def test_register_user(service):
     assert user.hashed_password != "password123"
 
 
-def test_login_user_success(
-    service, mock_users_repository, mock_sessions_repository, mock_password_service
-):
+def test_login_user_success(service, mock_sessions_repository, mock_user):
     """Test successful login and session creation."""
-    hashed_password = mock_password_service.get_hash("correct_password")
-    user = User(id=1, email="test@example.com", hashed_password=hashed_password)
-    mock_users_repository.get_by_email.return_value = user
-
     session_id = UUID("12345678-1234-5678-1234-567812345678")
     session = MagicMock()
     session.id = session_id
@@ -118,12 +85,13 @@ def test_login_user_success(
     result = service.login_user("test@example.com", "correct_password")
 
     assert result == session_id
-    mock_sessions_repository.create.assert_called_once_with(user.id, expires_in_days=30)
+    mock_sessions_repository.create.assert_called_once_with(
+        mock_user.id, expires_in_days=30
+    )
 
 
-def test_login_user_invalid_credentials(service, mock_users_repository):
+def test_login_user_invalid_credentials(service):
     """Test login with invalid credentials raises ValueError."""
-    mock_users_repository.get_by_email.return_value = None
 
     with pytest.raises(ValueError) as exc:
         service.login_user("nonexistent@example.com", "password")
@@ -141,22 +109,19 @@ def test_logout_user(service, mock_sessions_repository):
 
 
 def test_get_current_user_valid_session(
-    service, mock_users_repository, mock_sessions_repository
+    service, mock_users_repository, mock_sessions_repository, mock_user
 ):
     """Test getting current user from valid session."""
     session_id = UUID("12345678-1234-5678-1234-567812345678")
-    user_id = 1
+    user_id = mock_user.id
 
     session = MagicMock()
     session.user_id = user_id
     mock_sessions_repository.get_active_by_id.return_value = session
 
-    user = User(id=user_id, email="test@example.com", hashed_password="hashed_pass")
-    mock_users_repository.get_by_id.return_value = user
-
     result = service.get_current_user(session_id)
 
-    assert result == user
+    assert result == mock_user
     mock_sessions_repository.get_active_by_id.assert_called_once_with(session_id)
     mock_users_repository.get_by_id.assert_called_once_with(user_id)
 
@@ -172,18 +137,14 @@ def test_get_current_user_invalid_session(service, mock_sessions_repository):
     assert "Invalid or expired session" in str(exc.value)
 
 
-def test_get_current_user_user_not_found(
-    service, mock_users_repository, mock_sessions_repository
-):
+def test_get_current_user_user_not_found(service, mock_sessions_repository):
     """Test getting current user when user is not found raises ValueError."""
     session_id = UUID("12345678-1234-5678-1234-567812345678")
-    user_id = 1
+    user_id = 2
 
     session = MagicMock()
     session.user_id = user_id
     mock_sessions_repository.get_active_by_id.return_value = session
-
-    mock_users_repository.get_by_id.return_value = None
 
     with pytest.raises(ValueError) as exc:
         service.get_current_user(session_id)

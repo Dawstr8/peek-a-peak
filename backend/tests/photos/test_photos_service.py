@@ -3,7 +3,7 @@ Tests for the PhotosService
 """
 
 from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from fastapi import UploadFile
@@ -12,7 +12,6 @@ from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
 from src.photos.service import PhotosService
 from src.uploads.service import UploadsService
-from src.users.models import User
 
 
 @pytest.fixture
@@ -58,12 +57,6 @@ def mock_file():
     file.filename = "test-photo.jpg"
     file.content_type = "image/jpeg"
     return file
-
-
-@pytest.fixture
-def mock_user():
-    """Create a mock user"""
-    return User(id=1, email="test@example.com", hashed_password="hashed")
 
 
 @pytest.mark.asyncio
