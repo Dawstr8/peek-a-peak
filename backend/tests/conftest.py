@@ -14,6 +14,7 @@ from src.peaks.models import Peak
 from src.uploads.services.local_storage import LocalFileStorage
 from tests.auth.auth_fixtures import logged_in_user, registered_user
 from tests.peaks.peak_fixtures import peak_coords, peak_models
+from tests.users.users_fixtures import db_user, mock_user, mock_users_repository
 
 
 @pytest.fixture
