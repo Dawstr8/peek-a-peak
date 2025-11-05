@@ -18,14 +18,14 @@ export default function Gallery() {
   const renderCard = ({ data: summitPhoto }: { data: SummitPhoto }) => (
     <SummitPhotoCard
       key={summitPhoto.id}
-      className="hover:shadow-lg hover:bg-gray-50 transition-all duration-200"
+      className="transition-all duration-200 hover:bg-gray-50 hover:shadow-lg"
       summitPhoto={summitPhoto}
       formatter={photoMetadataService.getFormatter()}
     />
   );
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <Masonry
         items={summitPhotos || []}
         render={renderCard}

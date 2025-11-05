@@ -54,7 +54,7 @@ export function UploadStep({
   return (
     <div className="space-y-6">
       {isError && (
-        <div className="bg-destructive/10 border border-destructive/30 text-destructive px-4 py-3 rounded-lg">
+        <div className="bg-destructive/10 border-destructive/30 text-destructive rounded-lg border px-4 py-3">
           {error.message}
         </div>
       )}
@@ -63,7 +63,7 @@ export function UploadStep({
         summitPhoto={summitPhoto}
         formatter={photoMetadataService.getFormatter()}
         uploadsBaseUrl=""
-        className="max-w-1/2 mx-auto"
+        className="mx-auto max-w-1/2"
       />
       <div className="flex justify-center gap-4">
         <Button variant="outline" onClick={back}>

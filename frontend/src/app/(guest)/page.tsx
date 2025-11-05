@@ -51,32 +51,32 @@ export default async function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative text-primary-foreground bg-gradient-to-b from-primary to-[var(--hero-gradient-to)]">
+      <section className="text-primary-foreground from-primary relative bg-gradient-to-b to-[var(--hero-gradient-to)]">
         <div className="absolute inset-0 overflow-hidden opacity-50">
           <div
             className="absolute inset-0 bg-[url('/mountains-pattern.svg')] bg-bottom bg-no-repeat"
             style={{ backgroundSize: "cover" }}
           ></div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">
               Document Your Mountain Adventures
             </h1>
-            <p className="text-xl mb-8 text-primary-foreground/90">
+            <p className="text-primary-foreground/90 mb-8 text-xl">
               Track and share your conquests of Polish peaks with weather data,
               locations, and beautiful memories.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="secondary" asChild size="lg">
                 <Link href="/upload">
-                  <Camera className="w-4 h-4" />
+                  <Camera className="h-4 w-4" />
                   Upload Your Summit
                 </Link>
               </Button>
               <Button variant="outline" className="bg-invert" asChild size="lg">
                 <Link href="/gallery">
-                  <Mountain className="w-4 h-4" />
+                  <Mountain className="h-4 w-4" />
                   Explore Gallery
                 </Link>
               </Button>
@@ -86,23 +86,23 @@ export default async function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-foreground">
+      <section className="bg-muted/30 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="text-foreground mb-4 text-3xl font-bold">
               How It Works
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
               Easily upload and organize your mountain adventures with smart
               features.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid gap-8 md:grid-cols-3">
             {features.map((feature) => (
               <Card key={feature.id}>
                 <CardHeader>
-                  <div className="w-12 h-12 bg-primary/15 text-primary rounded-full flex items-center justify-center mb-4">
+                  <div className="bg-primary/15 text-primary mb-4 flex h-12 w-12 items-center justify-center rounded-full">
                     <feature.icon className="h-6 w-6" />
                   </div>
                   <CardTitle>{feature.title}</CardTitle>
@@ -120,9 +120,9 @@ export default async function Home() {
 
       {/* Gallery Preview Section */}
       <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-3xl font-bold text-foreground">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 flex items-end justify-between">
+            <h2 className="text-foreground text-3xl font-bold">
               Recent Adventures
             </h2>
             <Button variant="ghost" asChild>
@@ -130,7 +130,7 @@ export default async function Home() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {peaks.map((peak) => (
               <Card key={peak.id}>
                 <div className="relative h-48">
@@ -140,28 +140,28 @@ export default async function Home() {
                     fill
                     className="object-cover"
                   />
-                  <Badge className="absolute bottom-2 right-2 bg-background/90 text-foreground border border-border/60">
-                    <MapPin className="w-3 h-3 mr-1" />
+                  <Badge className="bg-background/90 text-foreground border-border/60 absolute right-2 bottom-2 border">
+                    <MapPin className="mr-1 h-3 w-3" />
                     {peak.name}
                   </Badge>
                 </div>
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{peak.title}</CardTitle>
                     <Badge variant="outline" className="text-xs">
-                      <Calendar className="w-3 h-3 mr-1" />
+                      <Calendar className="mr-1 h-3 w-3" />
                       {peak.date}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex flex-wrap gap-2">
                     <Badge variant="secondary">
-                      <Cloud className="w-3 h-3 mr-1" />
+                      <Cloud className="mr-1 h-3 w-3" />
                       {peak.weather}
                     </Badge>
                     <Badge variant="secondary">
-                      <Mountain className="w-3 h-3 mr-1" />
+                      <Mountain className="mr-1 h-3 w-3" />
                       {peak.elevation}
                     </Badge>
                   </div>
@@ -174,17 +174,17 @@ export default async function Home() {
 
       {/* CTA Section */}
       <section className="bg-primary text-primary-foreground py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-6">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-6 text-3xl font-bold">
             Ready to document your mountain adventures?
           </h2>
-          <p className="text-xl mb-8 max-w-3xl mx-auto text-primary-foreground/90">
+          <p className="text-primary-foreground/90 mx-auto mb-8 max-w-3xl text-xl">
             Join our community of mountain enthusiasts and start tracking your
             conquests of Polish peaks.
           </p>
           <Button size="lg" asChild variant="secondary">
             <Link href="/upload">
-              <Camera className="w-4 h-4" />
+              <Camera className="h-4 w-4" />
               Upload Your First Summit
             </Link>
           </Button>

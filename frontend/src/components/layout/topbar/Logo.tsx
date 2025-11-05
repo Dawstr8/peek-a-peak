@@ -5,7 +5,7 @@ export default function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center hover:opacity-80 transition-opacity"
+      className="flex items-center transition-opacity hover:opacity-80"
     >
       <Image
         src="/logo.svg"
@@ -13,9 +13,9 @@ export default function Logo() {
         width={55}
         height={35}
         priority
-        className="h-7 w-auto mb-1"
+        className="mb-1 h-7 w-auto"
       />
-      <span className="ml-3 scroll-m-20 text-xl font-semibold tracking-tight text-primary">
+      <span className="text-primary ml-3 scroll-m-20 text-xl font-semibold tracking-tight">
         Polish Peaks
       </span>
     </Link>

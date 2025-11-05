@@ -46,9 +46,9 @@ export function SelectStep({ setFile, setMetadata, next }: SelectStepProps) {
     <div
       {...getRootProps()}
       className={cn(
-        "border-2 border-dashed rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer transition-colors",
+        "flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 transition-colors",
         isDragActive ? "border-primary bg-primary/10" : "border-border",
-        isPending && "opacity-50 cursor-not-allowed",
+        isPending && "cursor-not-allowed opacity-50",
       )}
     >
       <MessageBlock

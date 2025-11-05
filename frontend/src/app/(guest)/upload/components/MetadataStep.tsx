@@ -44,7 +44,7 @@ export function MetadataStep({
 
       {metadata.latitude && metadata.longitude && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">
+          <h4 className="text-muted-foreground text-sm font-medium">
             Location Preview
           </h4>
           <LocationMap

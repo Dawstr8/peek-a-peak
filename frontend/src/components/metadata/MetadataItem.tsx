@@ -15,12 +15,12 @@ interface MetadataItemProps {
 export function MetadataItem({ icon, title, description }: MetadataItemProps) {
   return (
     <Item>
-      <ItemMedia className="h-full text-muted-foreground">{icon}</ItemMedia>
+      <ItemMedia className="text-muted-foreground h-full">{icon}</ItemMedia>
       <ItemContent>
-        <ItemTitle className="text-sm font-medium text-muted-foreground">
+        <ItemTitle className="text-muted-foreground text-sm font-medium">
           {title}:
         </ItemTitle>
-        <ItemDescription className="text-base font-mono text-foreground">
+        <ItemDescription className="text-foreground font-mono text-base">
           {description}
         </ItemDescription>
       </ItemContent>

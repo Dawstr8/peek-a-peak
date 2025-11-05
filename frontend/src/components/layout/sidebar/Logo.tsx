@@ -17,7 +17,7 @@ export default function Logo() {
             width={55}
             height={35}
             priority
-            className="h-5 w-auto mb-1"
+            className="mb-1 h-5 w-auto"
           />
           <span>Polish Peaks</span>
         </SidebarMenuButton>

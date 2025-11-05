@@ -43,7 +43,7 @@ export function LocationMap({
   return (
     <div
       className={cn(
-        "rounded-lg overflow-hidden border border-border",
+        "border-border overflow-hidden rounded-lg border",
         className,
       )}
     >

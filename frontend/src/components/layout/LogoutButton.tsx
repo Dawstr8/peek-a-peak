@@ -20,7 +20,7 @@ export default function LogoutButton({ className }: LogoutButtonProps) {
   };
   return (
     <button
-      className={cn("flex gap-2 items-center justify-center", className)}
+      className={cn("flex items-center justify-center gap-2", className)}
       onClick={handleSignOut}
     >
       <LogOut className="h-4 w-4" />

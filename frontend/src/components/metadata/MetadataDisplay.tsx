@@ -23,11 +23,11 @@ export function MetadataDisplay({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Camera className="h-5 w-5 text-primary" />
+          <Camera className="text-primary h-5 w-5" />
           Photo metadata
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <MetadataItem
           icon={<MapPin />}
           title="Latitude"

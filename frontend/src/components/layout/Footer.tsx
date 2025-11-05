@@ -12,14 +12,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t bg-muted">
+    <footer className="bg-muted border-t">
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         {/* Main footer content */}
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           {/* Company section */}
           <div className="space-y-6">
             <Logo />
-            <p className="text-sm leading-6 text-muted-foreground">
+            <p className="text-muted-foreground text-sm leading-6">
               Document and share your mountain adventures across Poland. Track
               peaks, weather conditions, and create lasting memories of your
               summit conquests.
@@ -43,7 +43,7 @@ export default function Footer() {
 
           {/* Navigation Links */}
           <div className="mt-16 xl:col-span-2 xl:mt-0">
-            <h3 className="text-sm font-semibold leading-6 text-foreground">
+            <h3 className="text-foreground text-sm leading-6 font-semibold">
               Navigation
             </h3>
             <ul
@@ -64,11 +64,11 @@ export default function Footer() {
         {/* Bottom border */}
         <div className="mt-16 border-t pt-8 sm:mt-20 lg:mt-24">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center space-x-2 text-sm">
               <Mountain className="h-4 w-4" />
               <span>Made with passion for Polish mountains</span>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground sm:mt-0">
+            <p className="text-muted-foreground mt-4 text-sm sm:mt-0">
               &copy; {currentYear} Polish Peaks. All rights reserved.
             </p>
           </div>
