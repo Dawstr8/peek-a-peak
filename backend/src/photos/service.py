@@ -5,6 +5,7 @@ from fastapi import UploadFile
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
 from src.uploads.service import UploadsService
+from src.users.models import User
 
 
 class PhotosService:
@@ -28,7 +29,10 @@ class PhotosService:
         self.photos_repository = photos_repository
 
     async def upload_photo(
-        self, file: UploadFile, summit_photo_create: SummitPhotoCreate
+        self,
+        file: UploadFile,
+        summit_photo_create: SummitPhotoCreate,
+        current_user: User,
     ) -> SummitPhoto:
         """
         Upload a photo file and store it in the database with the provided metadata.
@@ -44,6 +48,7 @@ class PhotosService:
 
         photo = SummitPhoto(
             file_name=path.split("/")[-1],
+            owner_id=current_user.id,
             **summit_photo_create.model_dump(),
         )
 

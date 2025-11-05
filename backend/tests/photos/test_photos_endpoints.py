@@ -31,7 +31,7 @@ def test_get_all_photos_empty(client_with_db):
     assert resp.json() == []
 
 
-def test_get_all_photos(client_with_db):
+def test_get_all_photos(client_with_db, logged_in_user):
     """Test getting all photos"""
 
     client_with_db.post(
@@ -57,7 +57,7 @@ def test_get_all_photos(client_with_db):
         assert "file_name" in photo
 
 
-def test_get_all_photos_with_peaks(client_with_db, test_peaks):
+def test_get_all_photos_with_peaks(client_with_db, test_peaks, logged_in_user):
     """Test getting all photos includes peak information when assigned"""
 
     client_with_db.post(
@@ -97,7 +97,7 @@ def test_get_all_photos_with_peaks(client_with_db, test_peaks):
     assert photo_with_peak["peak"]["name"] == test_peaks[0].name
 
 
-def test_get_all_photos_sorted_by_captured_at_asc(client_with_db):
+def test_get_all_photos_sorted_by_captured_at_asc(client_with_db, logged_in_user):
     """Test getting all photos sorted by captured_at ascending"""
 
     photo_data_1 = {
@@ -136,7 +136,7 @@ def test_get_all_photos_sorted_by_captured_at_asc(client_with_db):
     assert captured_times == sorted(captured_times)
 
 
-def test_get_all_photos_sorted_by_captured_at_desc(client_with_db):
+def test_get_all_photos_sorted_by_captured_at_desc(client_with_db, logged_in_user):
     """Test getting all photos sorted by captured_at descending"""
 
     photo_data_1 = {
@@ -175,7 +175,9 @@ def test_get_all_photos_sorted_by_captured_at_desc(client_with_db):
     assert captured_times == sorted(captured_times, reverse=True)
 
 
-def test_get_all_photos_sorted_by_captured_at_default_order(client_with_db):
+def test_get_all_photos_sorted_by_captured_at_default_order(
+    client_with_db, logged_in_user
+):
     """Test getting all photos sorted by captured_at with default ascending order"""
 
     photo_data_1 = {
@@ -214,7 +216,7 @@ def test_get_all_photos_sorted_by_captured_at_default_order(client_with_db):
     assert captured_times == sorted(captured_times)
 
 
-def test_upload_photo_success(client_with_db):
+def test_upload_photo_success(client_with_db, logged_in_user):
     """Test successful photo upload"""
 
     resp = client_with_db.post(
@@ -230,7 +232,18 @@ def test_upload_photo_success(client_with_db):
     assert Path(f"test_uploads/{data['file_name']}").exists()
 
 
-def test_upload_invalid_file_type(client_with_db):
+def test_upload_photo_requires_auth(client_with_db):
+    """Test that uploading a photo requires authentication"""
+    response = client_with_db.post(
+        "/api/photos/",
+        files={"file": ("photo.jpg", b"imagedata", "image/jpeg")},
+        data={"summit_photo_create": "{}"},
+    )
+
+    assert response.status_code == 401
+
+
+def test_upload_invalid_file_type(client_with_db, logged_in_user):
     """Test upload with invalid file type"""
 
     resp = client_with_db.post(
@@ -247,6 +260,7 @@ def test_upload_with_metadata(
     client_with_db,
     test_peaks,
     peak_coords,
+    logged_in_user,
 ):
     """Test upload photo with metadata provided as JSON"""
     summit_photo_create = {
@@ -276,7 +290,9 @@ def test_upload_with_metadata(
     assert data["distance_to_peak"] is None
 
 
-def test_upload_without_peak_id(client_with_db, test_peaks, peak_coords):
+def test_upload_without_peak_id(
+    client_with_db, test_peaks, peak_coords, logged_in_user
+):
     """Test upload photo with GPS coordinates but no peak_id"""
     summit_photo_create = {
         "captured_at": "2025-10-06T14:30:00",
@@ -304,7 +320,7 @@ def test_upload_without_peak_id(client_with_db, test_peaks, peak_coords):
     assert data["distance_to_peak"] is None
 
 
-def test_upload_without_gps_data(client_with_db, test_peaks):
+def test_upload_without_gps_data(client_with_db, test_peaks, logged_in_user):
     """Test upload photo without GPS coordinates"""
     resp = client_with_db.post(
         "/api/photos/",
@@ -325,7 +341,7 @@ def test_upload_without_gps_data(client_with_db, test_peaks):
     assert data["distance_to_peak"] is None
 
 
-def test_get_photo_by_id(client_with_db):
+def test_get_photo_by_id(client_with_db, logged_in_user):
     """Test getting a specific photo by ID"""
     upload_resp = client_with_db.post(
         "/api/photos/",
@@ -345,7 +361,7 @@ def test_get_photo_by_id(client_with_db):
     assert photo_data["file_name"] == upload_data["file_name"]
 
 
-def test_get_nonexistent_photo(client_with_db):
+def test_get_nonexistent_photo(client_with_db, logged_in_user):
     """Test getting a photo that doesn't exist"""
     resp = client_with_db.get("/api/photos/9999")
 
@@ -353,7 +369,7 @@ def test_get_nonexistent_photo(client_with_db):
     assert resp.json()["detail"] == "Photo not found"
 
 
-def test_delete_photo_success(client_with_db):
+def test_delete_photo_success(client_with_db, logged_in_user):
     """Test deleting a photo successfully"""
     upload = client_with_db.post(
         "/api/photos/",
@@ -371,7 +387,7 @@ def test_delete_photo_success(client_with_db):
     assert not os.path.exists(file_path)
 
 
-def test_delete_nonexistent_photo(client_with_db):
+def test_delete_nonexistent_photo(client_with_db, logged_in_user):
     """Test deleting a photo that doesn't exist"""
     resp = client_with_db.delete("/api/photos/9999")
 
