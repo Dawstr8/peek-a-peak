@@ -35,7 +35,7 @@ export default function DashboardLayout({
             <SidebarTrigger />
           </div>
         </header>
-        <main className="flex-1">{children}</main>
+        <main className="container mx-auto flex-1 p-10">{children}</main>
         <Footer />
       </SidebarInset>
     </SidebarProvider>
