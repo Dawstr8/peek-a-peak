@@ -2,8 +2,6 @@
 Tests for the geo.py utility functions
 """
 
-import pytest
-
 from src.common.utils.geo import haversine_distance
 
 

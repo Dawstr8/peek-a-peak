@@ -10,10 +10,14 @@ from starlette.datastructures import Headers
 
 from main import app
 from src.database.core import get_db
-from src.peaks.models import Peak
 from src.uploads.services.local_storage import LocalFileStorage
 from tests.auth.auth_fixtures import logged_in_user, registered_user
-from tests.peaks.peak_fixtures import peak_coords, peak_models
+from tests.peaks.peaks_fixtures import (
+    coords_map,
+    db_peaks,
+    mock_peaks_map,
+    mock_peaks_repository,
+)
 from tests.photos.photos_fixtures import (
     db_photos,
     e2e_photo,
@@ -65,44 +69,6 @@ def test_db():
 
     with Session(engine) as db:
         yield db
-
-
-@pytest.fixture
-def test_peaks(test_db: Session):
-    """Create test peaks and save to database"""
-    peaks = [
-        Peak(
-            name="Rysy",
-            elevation=2499,
-            latitude=49.1795,
-            longitude=20.0881,
-            range="Tatry",
-        ),
-        Peak(
-            name="Śnieżka",
-            elevation=1602,
-            latitude=50.7361,
-            longitude=15.7400,
-            range="Karkonosze",
-        ),
-        Peak(
-            name="Babia Góra",
-            elevation=1725,
-            latitude=49.5731,
-            longitude=19.5297,
-            range="Beskidy",
-        ),
-    ]
-
-    for peak in peaks:
-        test_db.add(peak)
-
-    test_db.commit()
-
-    for peak in peaks:
-        test_db.refresh(peak)
-
-    return peaks
 
 
 @pytest.fixture

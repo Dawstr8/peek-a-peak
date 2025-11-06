@@ -61,8 +61,6 @@ def db_user(test_db) -> User:
     Creates and returns a real user in the test database.
     This fixture is useful for integration tests that need
     a real user in the database.
-
-    Requires the test_db fixture.
     """
     users_repo = UsersRepository(test_db)
     user = User(email="test@example.com", hashed_password="hashed_correct_password")

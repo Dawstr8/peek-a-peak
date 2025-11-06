@@ -1,10 +1,7 @@
-import pytest
 from fastapi.testclient import TestClient
 
-from src.peaks.models import Peak
 
-
-def test_get_peaks(client_with_db: TestClient, test_peaks: list[Peak]):
+def test_get_peaks(client_with_db: TestClient, db_peaks):
     """Test getting all peaks"""
     response = client_with_db.get("/api/peaks/")
 
@@ -34,15 +31,13 @@ def test_get_peaks_empty_database(client_with_db: TestClient):
     assert response.json() == []
 
 
-def test_find_nearest_peaks(
-    client_with_db: TestClient, test_peaks: list[Peak], peak_coords: dict
-):
+def test_find_nearest_peaks(client_with_db: TestClient, db_peaks, coords_map: dict):
     """Test finding nearest peaks to a location"""
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_rysy"][0],
-            "longitude": peak_coords["near_rysy"][1],
+            "latitude": coords_map["near_rysy"][0],
+            "longitude": coords_map["near_rysy"][1],
         },
     )
 
@@ -72,14 +67,14 @@ def test_find_nearest_peaks(
 
 
 def test_find_nearest_peaks_with_limit(
-    client_with_db: TestClient, test_peaks: list[Peak], peak_coords: dict
+    client_with_db: TestClient, db_peaks, coords_map: dict
 ):
     """Test finding nearest peaks with a custom limit"""
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_rysy"][0],
-            "longitude": peak_coords["near_rysy"][1],
+            "latitude": coords_map["near_rysy"][0],
+            "longitude": coords_map["near_rysy"][1],
             "limit": 2,
         },
     )
@@ -93,14 +88,14 @@ def test_find_nearest_peaks_with_limit(
 
 
 def test_find_nearest_peaks_from_sniezka(
-    client_with_db: TestClient, test_peaks: list[Peak], peak_coords: dict
+    client_with_db: TestClient, db_peaks, coords_map: dict
 ):
     """Test finding nearest peaks from coordinates near Śnieżka"""
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_sniezka"][0],
-            "longitude": peak_coords["near_sniezka"][1],
+            "latitude": coords_map["near_sniezka"][0],
+            "longitude": coords_map["near_sniezka"][1],
         },
     )
 
@@ -113,14 +108,14 @@ def test_find_nearest_peaks_from_sniezka(
 
 
 def test_find_nearest_peaks_empty_database(
-    client_with_db: TestClient, peak_coords: dict
+    client_with_db: TestClient, coords_map: dict
 ):
     """Test finding nearest peaks when the database is empty"""
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_rysy"][0],
-            "longitude": peak_coords["near_rysy"][1],
+            "latitude": coords_map["near_rysy"][0],
+            "longitude": coords_map["near_rysy"][1],
         },
     )
 
@@ -129,15 +124,15 @@ def test_find_nearest_peaks_empty_database(
 
 
 def test_find_nearest_peaks_with_max_distance(
-    client_with_db: TestClient, test_peaks: list[Peak], peak_coords: dict
+    client_with_db: TestClient, db_peaks, coords_map: dict
 ):
     """Test finding nearest peaks with max_distance filter"""
 
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_rysy"][0],
-            "longitude": peak_coords["near_rysy"][1],
+            "latitude": coords_map["near_rysy"][0],
+            "longitude": coords_map["near_rysy"][1],
             "max_distance": 100,
         },
     )
@@ -150,14 +145,14 @@ def test_find_nearest_peaks_with_max_distance(
 
 
 def test_find_nearest_peaks_max_distance_none(
-    client_with_db: TestClient, test_peaks: list[Peak], peak_coords: dict
+    client_with_db: TestClient, db_peaks, coords_map: dict
 ):
     """Test finding nearest peaks without max_distance (should include all)"""
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_rysy"][0],
-            "longitude": peak_coords["near_rysy"][1],
+            "latitude": coords_map["near_rysy"][0],
+            "longitude": coords_map["near_rysy"][1],
         },
     )
 
@@ -169,17 +164,17 @@ def test_find_nearest_peaks_max_distance_none(
 
 
 def test_find_nearest_peaks_missing_parameters(
-    client_with_db: TestClient, peak_coords: dict
+    client_with_db: TestClient, coords_map: dict
 ):
     """Test that missing required parameters return an error"""
     response = client_with_db.get(
-        "/api/peaks/find", params={"latitude": peak_coords["near_rysy"][0]}
+        "/api/peaks/find", params={"latitude": coords_map["near_rysy"][0]}
     )
 
     assert response.status_code == 422
 
     response = client_with_db.get(
-        "/api/peaks/find", params={"longitude": peak_coords["near_rysy"][1]}
+        "/api/peaks/find", params={"longitude": coords_map["near_rysy"][1]}
     )
 
     assert response.status_code == 422
@@ -190,12 +185,12 @@ def test_find_nearest_peaks_missing_parameters(
 
 
 def test_find_nearest_peaks_invalid_parameters(
-    client_with_db: TestClient, peak_coords: dict
+    client_with_db: TestClient, coords_map: dict
 ):
     """Test that invalid parameters return an error"""
     response = client_with_db.get(
         "/api/peaks/find",
-        params={"latitude": "invalid", "longitude": peak_coords["near_rysy"][1]},
+        params={"latitude": "invalid", "longitude": coords_map["near_rysy"][1]},
     )
 
     assert response.status_code == 422
@@ -203,8 +198,8 @@ def test_find_nearest_peaks_invalid_parameters(
     response = client_with_db.get(
         "/api/peaks/find",
         params={
-            "latitude": peak_coords["near_rysy"][0],
-            "longitude": peak_coords["near_rysy"][1],
+            "latitude": coords_map["near_rysy"][0],
+            "longitude": coords_map["near_rysy"][1],
             "limit": "invalid",
         },
     )
@@ -212,9 +207,9 @@ def test_find_nearest_peaks_invalid_parameters(
     assert response.status_code == 422
 
 
-def test_get_peak(client_with_db: TestClient, test_peaks: list[Peak]):
+def test_get_peak(client_with_db: TestClient, db_peaks):
     """Test getting a specific peak by ID"""
-    peak_id = test_peaks[0].id
+    peak_id = db_peaks[0].id
 
     response = client_with_db.get(f"/api/peaks/{peak_id}")
 
