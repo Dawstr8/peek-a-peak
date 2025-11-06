@@ -70,17 +70,16 @@ def mock_photos_repository(
     repo.get_by_id.side_effect = get_by_id
     repo.get_all.side_effect = get_all
     repo.delete.return_value = True
+
     return repo
 
 
 @pytest.fixture
-def db_photos(test_db, db_user, test_peaks, peak_coords) -> list[SummitPhoto]:
+def db_photos(test_db, db_user, db_peaks, coords_map) -> list[SummitPhoto]:
     """
     Creates and returns a list of real photos in the test database.
     This fixture is useful for integration tests that need
     real photos in the database.
-
-    Requires the test_db and test_peaks fixtures.
     """
     photos_repo = PhotosRepository(test_db)
 
@@ -90,10 +89,10 @@ def db_photos(test_db, db_user, test_peaks, peak_coords) -> list[SummitPhoto]:
             file_name="test1.jpg",
             uploaded_at=datetime(2025, 10, 1, 12, 0),
             captured_at=datetime(2025, 9, 30, 10, 0),
-            latitude=peak_coords["near_rysy"][0],
-            longitude=peak_coords["near_rysy"][1],
+            latitude=coords_map["near_rysy"][0],
+            longitude=coords_map["near_rysy"][1],
             altitude=2495,
-            peak_id=test_peaks[0].id,
+            peak_id=db_peaks[0].id,
             distance_to_peak=10.5,
         ),
         SummitPhoto(
@@ -101,10 +100,10 @@ def db_photos(test_db, db_user, test_peaks, peak_coords) -> list[SummitPhoto]:
             file_name="test2.jpg",
             uploaded_at=datetime(2025, 10, 2, 14, 0),
             captured_at=datetime(2025, 10, 1, 11, 0),
-            latitude=peak_coords["near_sniezka"][0],
-            longitude=peak_coords["near_sniezka"][1],
+            latitude=coords_map["near_sniezka"][0],
+            longitude=coords_map["near_sniezka"][1],
             altitude=1600,
-            peak_id=test_peaks[1].id,
+            peak_id=db_peaks[1].id,
             distance_to_peak=5.2,
         ),
     ]
@@ -116,23 +115,22 @@ def db_photos(test_db, db_user, test_peaks, peak_coords) -> list[SummitPhoto]:
 
 
 @pytest.fixture
-def e2e_photos(client_with_db, logged_in_user, test_peaks, peak_coords) -> list[dict]:
+def e2e_photos(client_with_db, logged_in_user, db_peaks, coords_map) -> list[dict]:
     """
     Creates and returns a list of photos through the API endpoints.
     This fixture is useful for end-to-end tests that need real photos
     created through the full application stack.
 
-    Requires client_with_db, logged_in_user, test_peaks, and peak_coords fixtures.
     Returns a list of photo responses from the API.
     """
     photo_data = [
         {
             "summit_photo_create": {
                 "captured_at": "2025-09-30T10:00:00",
-                "latitude": peak_coords["near_rysy"][0],
-                "longitude": peak_coords["near_rysy"][1],
+                "latitude": coords_map["near_rysy"][0],
+                "longitude": coords_map["near_rysy"][1],
                 "altitude": 2495.0,
-                "peak_id": test_peaks[0].id,
+                "peak_id": db_peaks[0].id,
                 "distance_to_peak": 10.5,
             },
             "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
@@ -140,8 +138,8 @@ def e2e_photos(client_with_db, logged_in_user, test_peaks, peak_coords) -> list[
         {
             "summit_photo_create": {
                 "captured_at": "2025-10-01T11:00:00",
-                "latitude": peak_coords["near_sniezka"][0],
-                "longitude": peak_coords["near_sniezka"][1],
+                "latitude": coords_map["near_sniezka"][0],
+                "longitude": coords_map["near_sniezka"][1],
                 "altitude": 1602.0,
             },
             "file": ("photo2.jpg", b"imagedata2", "image/jpeg"),
@@ -168,7 +166,6 @@ def e2e_photo(e2e_photos) -> dict:
     This fixture is useful for end-to-end tests that need a real photo
     created through the full application stack.
 
-    Requires the e2e_photos fixture.
     Returns the first photo response from the API.
     """
     return e2e_photos[0]

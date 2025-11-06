@@ -16,7 +16,7 @@ def test_photos_repository(test_db):
     return PhotosRepository(test_db)
 
 
-def test_save(test_photos_repository, test_peaks, db_user):
+def test_save(test_photos_repository, db_peaks, db_user):
     """Test saving a new summit photo"""
     new_photo = SummitPhoto(
         owner_id=db_user.id,
@@ -26,7 +26,7 @@ def test_save(test_photos_repository, test_peaks, db_user):
         longitude=19.5295,
         altitude=1720,
         distance_to_peak=3.8,
-        peak_id=test_peaks[0].id,
+        peak_id=db_peaks[0].id,
     )
 
     saved_photo = test_photos_repository.save(new_photo)
@@ -38,8 +38,8 @@ def test_save(test_photos_repository, test_peaks, db_user):
     assert saved_photo.longitude == 19.5295
     assert saved_photo.altitude == 1720
     assert saved_photo.distance_to_peak == 3.8
-    assert saved_photo.peak == test_peaks[0]
-    assert saved_photo.peak.id == test_peaks[0].id
+    assert saved_photo.peak == db_peaks[0]
+    assert saved_photo.peak.id == db_peaks[0].id
 
 
 def test_get_by_id(test_photos_repository, db_photos):

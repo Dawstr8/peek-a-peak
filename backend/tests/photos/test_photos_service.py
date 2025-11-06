@@ -49,14 +49,14 @@ async def test_upload_photo_with_metadata(
     mock_file,
     mock_uploads_service,
     mock_photos_repository,
-    peak_coords,
+    coords_map,
     mock_user,
 ):
     """Test uploading a photo with provided metadata"""
     summit_photo_create = SummitPhotoCreate(
         captured_at=datetime(2025, 10, 6, 14, 30, 0),
-        latitude=peak_coords["near_rysy"][0],
-        longitude=peak_coords["near_rysy"][1],
+        latitude=coords_map["near_rysy"][0],
+        longitude=coords_map["near_rysy"][1],
         altitude=2450.0,
         peak_id=1,
     )
@@ -72,8 +72,8 @@ async def test_upload_photo_with_metadata(
     assert result.distance_to_peak is None
     assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0)
     assert result.altitude == 2450.0
-    assert result.latitude == peak_coords["near_rysy"][0]
-    assert result.longitude == peak_coords["near_rysy"][1]
+    assert result.latitude == coords_map["near_rysy"][0]
+    assert result.longitude == coords_map["near_rysy"][1]
 
     mock_uploads_service.save_file.assert_called_once_with(
         mock_file, content_type_prefix="image/"

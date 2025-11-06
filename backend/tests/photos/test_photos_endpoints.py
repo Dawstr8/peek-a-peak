@@ -44,7 +44,7 @@ def test_get_all_photos(client_with_db, e2e_photos):
         assert "file_name" in photo
 
 
-def test_get_all_photos_with_peaks(client_with_db, test_peaks, e2e_photos):
+def test_get_all_photos_with_peaks(client_with_db, db_peaks, e2e_photos):
     """Test getting all photos includes peak information when assigned"""
     resp = client_with_db.get("/api/photos/")
 
@@ -60,8 +60,8 @@ def test_get_all_photos_with_peaks(client_with_db, test_peaks, e2e_photos):
 
     assert photo_with_peak is not None
     assert photo_with_peak["peak"] is not None
-    assert photo_with_peak["peak"]["id"] == test_peaks[0].id
-    assert photo_with_peak["peak"]["name"] == test_peaks[0].name
+    assert photo_with_peak["peak"]["id"] == db_peaks[0].id
+    assert photo_with_peak["peak"]["name"] == db_peaks[0].name
 
 
 def test_get_all_photos_sorted_by_captured_at_asc(client_with_db, e2e_photos):
@@ -142,15 +142,15 @@ def test_upload_invalid_file_type(client_with_db, logged_in_user):
 
 def test_upload_with_metadata(
     client_with_db,
-    test_peaks,
-    peak_coords,
+    db_peaks,
+    coords_map,
     logged_in_user,
 ):
     """Test upload photo with metadata provided as JSON"""
     summit_photo_create = {
         "captured_at": "2025-10-06T14:30:00",
-        "latitude": peak_coords["near_rysy"][0],
-        "longitude": peak_coords["near_rysy"][1],
+        "latitude": coords_map["near_rysy"][0],
+        "longitude": coords_map["near_rysy"][1],
         "altitude": 2450.0,
         "peak_id": None,
     }
@@ -174,14 +174,12 @@ def test_upload_with_metadata(
     assert data["distance_to_peak"] is None
 
 
-def test_upload_without_peak_id(
-    client_with_db, test_peaks, peak_coords, logged_in_user
-):
+def test_upload_without_peak_id(client_with_db, db_peaks, coords_map, logged_in_user):
     """Test upload photo with GPS coordinates but no peak_id"""
     summit_photo_create = {
         "captured_at": "2025-10-06T14:30:00",
-        "latitude": peak_coords["warsaw"][0],
-        "longitude": peak_coords["warsaw"][1],
+        "latitude": coords_map["warsaw"][0],
+        "longitude": coords_map["warsaw"][1],
         "altitude": 120.0,
     }
 
@@ -196,15 +194,15 @@ def test_upload_without_peak_id(
     assert data["id"] is not None
     assert data["file_name"] is not None
 
-    assert data["latitude"] == peak_coords["warsaw"][0]
-    assert data["longitude"] == peak_coords["warsaw"][1]
+    assert data["latitude"] == coords_map["warsaw"][0]
+    assert data["longitude"] == coords_map["warsaw"][1]
     assert data["altitude"] == 120.0
 
     assert data["peak_id"] is None
     assert data["distance_to_peak"] is None
 
 
-def test_upload_without_gps_data(client_with_db, test_peaks, logged_in_user):
+def test_upload_without_gps_data(client_with_db, db_peaks, logged_in_user):
     """Test upload photo without GPS coordinates"""
     resp = client_with_db.post(
         "/api/photos/",

@@ -13,7 +13,7 @@ def test_repository(test_db):
     return PeaksRepository(test_db)
 
 
-def test_get_all(test_repository, test_peaks):
+def test_get_all(test_repository, db_peaks):
     """Test retrieving all peaks"""
     peaks = test_repository.get_all()
 
@@ -23,9 +23,9 @@ def test_get_all(test_repository, test_peaks):
     assert any(peak.name == "Babia Góra" for peak in peaks)
 
 
-def test_get_by_id(test_repository, test_peaks):
+def test_get_by_id(test_repository, db_peaks):
     """Test retrieving a peak by ID"""
-    peak_id = test_peaks[0].id
+    peak_id = db_peaks[0].id
 
     peak = test_repository.get_by_id(peak_id)
 
