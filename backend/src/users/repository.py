@@ -34,9 +34,12 @@ class UsersRepository:
             self.db.commit()
         except IntegrityError as e:
             self.db.rollback()
-            if "unique" in str(e).lower() and "email" in str(e).lower():
-                raise ValueError("Email is already in use.")
-
+            error_str = str(e).lower()
+            if "unique" in error_str:
+                if "user.email" in error_str:
+                    raise ValueError("Email is already in use.")
+                if "user.username" in error_str:
+                    raise ValueError("Username is already taken.")
             raise
 
         self.db.refresh(user)
@@ -67,5 +70,19 @@ class UsersRepository:
             User if found, else None
         """
         statement = select(User).where(User.email == email)
+
+        return self.db.exec(statement).first()
+
+    def get_by_username(self, username: str) -> User | None:
+        """
+        Get a user by username.
+
+        Args:
+            username: Username of the user to retrieve
+
+        Returns:
+            User if found, else None
+        """
+        statement = select(User).where(User.username == username)
 
         return self.db.exec(statement).first()

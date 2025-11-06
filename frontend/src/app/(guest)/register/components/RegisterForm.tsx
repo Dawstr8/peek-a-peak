@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AuthClient } from "@/lib/auth/client";
-import type { User, UserCreate } from "@/lib/users/types";
+import type { UserCreate } from "@/lib/users/types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,14 @@ import { Input } from "@/components/ui/input";
 
 const registerSchema = z.object({
   email: z.email("Invalid email address"),
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .max(30, "Username must be less than 30 characters")
+    .regex(
+      /^[a-zA-Z0-9_.-]+$/,
+      "Username can only contain letters, numbers, underscores, hyphens, and periods",
+    ),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -35,13 +43,14 @@ export function RegisterForm({ handleRegisterSuccess }: RegisterFormProps) {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
+      username: "",
       password: "",
     },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (registerForm: UserCreate) => AuthClient.register(registerForm),
-    onSuccess: (user: User) => {
+    onSuccess: () => {
       handleRegisterSuccess();
     },
   });
@@ -49,6 +58,7 @@ export function RegisterForm({ handleRegisterSuccess }: RegisterFormProps) {
   const onSubmit = async (data: RegisterFormData) => {
     mutate({
       email: data.email,
+      username: data.username,
       password: data.password,
     });
   };
@@ -70,6 +80,25 @@ export function RegisterForm({ handleRegisterSuccess }: RegisterFormProps) {
                 <Input
                   type="email"
                   placeholder="Enter your email"
+                  {...field}
+                  disabled={isPending}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Choose your username"
                   {...field}
                   disabled={isPending}
                 />

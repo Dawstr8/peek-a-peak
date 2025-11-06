@@ -18,7 +18,10 @@ def mock_user() -> User:
     that don't need database interaction.
     """
     return User(
-        id=1, email="test@example.com", hashed_password="hashed_correct_password"
+        id=1,
+        email="test@example.com",
+        username="user",
+        hashed_password="hashed_correct_password",
     )
 
 
@@ -48,9 +51,13 @@ def mock_users_repository(mock_user: User):
     def get_by_id(user_id):
         return mock_user if user_id == mock_user.id else None
 
+    def get_by_username(username):
+        return mock_user if username == mock_user.username else None
+
     repo.save.side_effect = save
     repo.get_by_email.side_effect = get_by_email
     repo.get_by_id.side_effect = get_by_id
+    repo.get_by_username.side_effect = get_by_username
 
     return repo
 
@@ -63,6 +70,10 @@ def db_user(test_db) -> User:
     a real user in the database.
     """
     users_repo = UsersRepository(test_db)
-    user = User(email="test@example.com", hashed_password="hashed_correct_password")
+    user = User(
+        email="test@example.com",
+        username="user",
+        hashed_password="hashed_correct_password",
+    )
 
     return users_repo.save(user)

@@ -41,11 +41,26 @@ def service(
     )
 
 
-def test_authenticate_user_success(service, mock_user):
-    """Test successful user authentication."""
+def test_authenticate_user_success_with_email(
+    service, mock_user, mock_users_repository
+):
+    """Test successful user authentication using email."""
     result = service.authenticate_user(mock_user.email, "correct_password")
 
     assert result == mock_user
+    mock_users_repository.get_by_email.assert_called_once_with(mock_user.email)
+    mock_users_repository.get_by_username.assert_not_called()
+
+
+def test_authenticate_user_success_with_username(
+    service, mock_user, mock_users_repository
+):
+    """Test successful user authentication using username."""
+    result = service.authenticate_user(mock_user.username, "correct_password")
+
+    assert result == mock_user
+    mock_users_repository.get_by_email.assert_not_called()
+    mock_users_repository.get_by_username.assert_called_once_with(mock_user.username)
 
 
 def test_authenticate_user_wrong_password(service, mock_user):
@@ -65,12 +80,15 @@ def test_authenticate_user_not_found(service):
 @pytest.mark.asyncio
 async def test_register_user(service):
     """Test registering a new user through the service"""
-    user_create = UserCreate(email="test@example.com", password="password123")
+    user_create = UserCreate(
+        email="test@example.com", username="user", password="password123"
+    )
 
     user = await service.register_user(user_create)
 
     assert user.id == 1
     assert user.email == "test@example.com"
+    assert user.username == "user"
     assert hasattr(user, "hashed_password")
     assert user.hashed_password != "password123"
 

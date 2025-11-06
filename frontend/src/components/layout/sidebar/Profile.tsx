@@ -21,8 +21,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-function ProfileUser({ user }: { user: User }) {
-  const avatarInitial = user.email.charAt(0).toUpperCase();
+function ProfileUser({
+  user,
+  showEmail = false,
+}: {
+  user: User;
+  showEmail?: boolean;
+}) {
+  const avatarInitial = user.username.charAt(0).toUpperCase();
 
   return (
     <>
@@ -30,7 +36,8 @@ function ProfileUser({ user }: { user: User }) {
         <AvatarFallback className="rounded-lg">{avatarInitial}</AvatarFallback>
       </Avatar>
       <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate text-xs">{user.email}</span>
+        <span className="truncate font-medium">{user.username}</span>
+        {showEmail && <span className="truncate text-xs">{user.email}</span>}
       </div>
     </>
   );
@@ -64,7 +71,7 @@ export default function Profile({ user }: ProfileProps) {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <ProfileUser user={user} />
+                <ProfileUser user={user} showEmail />
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

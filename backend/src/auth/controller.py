@@ -1,7 +1,6 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Cookie, Form, HTTPException, Response, status
-from pydantic import EmailStr
 
 from src.auth.dependencies import auth_service_dep, current_user_dep
 from src.users.models import UserCreate, UserRead
@@ -57,7 +56,7 @@ async def read_me(
 async def login_with_session(
     response: Response,
     auth_service: auth_service_dep,
-    email: EmailStr = Form(...),
+    email_or_username: str = Form(...),
     password: str = Form(...),
 ):
     """
@@ -66,7 +65,7 @@ async def login_with_session(
     Args:
         response: FastAPI response object
         auth_service: An authentication service
-        email: User's email
+        email_or_username: User's email or username
         password: User's plain text password
 
     Returns:
@@ -76,7 +75,7 @@ async def login_with_session(
         HTTPException: If credentials are invalid
     """
     try:
-        session_id = auth_service.login_user(email, password)
+        session_id = auth_service.login_user(email_or_username, password)
 
     except ValueError:
         raise HTTPException(

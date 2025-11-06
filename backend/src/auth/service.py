@@ -29,18 +29,24 @@ class AuthService:
         self.sessions_repository = sessions_repository
         self.password_service = password_service
 
-    def authenticate_user(self, email: str, password: str) -> User | None:
+    def authenticate_user(self, email_or_username: str, password: str) -> User | None:
         """
-        Authenticate a user by email and password.
+        Authenticate a user by email/username and password.
 
         Args:
-            email: User's email
+            email_or_username: User's email or username
             password: User's plain text password
 
         Returns:
             User if authentication is successful, else None
         """
-        user = self.users_repository.get_by_email(email=email)
+
+        user = (
+            self.users_repository.get_by_email(email_or_username)
+            if "@" in email_or_username
+            else self.users_repository.get_by_username(email_or_username)
+        )
+
         if not user:
             return None
 
@@ -64,12 +70,12 @@ class AuthService:
 
         return self.users_repository.save(user)
 
-    def login_user(self, email: str, password: str) -> UUID:
+    def login_user(self, email_or_username: str, password: str) -> UUID:
         """
         Log in a user by authenticating their credentials and creating a new session.
 
         Args:
-            email: User's email
+            email_or_username: User's email or username
             password: User's plain text password
 
         Returns:
@@ -78,7 +84,7 @@ class AuthService:
         Raises:
             ValueError: If credentials are invalid
         """
-        user = self.authenticate_user(email, password)
+        user = self.authenticate_user(email_or_username, password)
         if not user:
             raise ValueError("Invalid credentials")
 
