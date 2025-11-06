@@ -69,7 +69,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="container mx-auto p-10">
+    <>
       <h1 className="text-primary mb-8 text-center text-3xl font-bold">
         Upload Summit Photo
       </h1>
@@ -83,6 +83,6 @@ export default function UploadPage() {
         </CardHeader>
         <CardContent>{renderStep()}</CardContent>
       </Card>
-    </div>
+    </>
   );
 }
