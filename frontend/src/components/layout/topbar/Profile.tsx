@@ -37,7 +37,7 @@ export default function Profile({ user }: ProfileProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2">
           <UserIcon className="h-4 w-4" />
-          <span className="text-sm">{user.email}</span>
+          <span className="text-sm">{user.username}</span>
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>

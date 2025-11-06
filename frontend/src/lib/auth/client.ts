@@ -7,9 +7,9 @@ import { API_ENDPOINTS } from "@/config/api";
  * AuthClient class for handling user-related API requests
  */
 export class AuthClient extends ApiClient {
-  static async login(email: string, password: string): Promise<User> {
+  static async login(emailOrUsername: string, password: string): Promise<User> {
     const formData = new FormData();
-    formData.append("email", email);
+    formData.append("email_or_username", emailOrUsername);
     formData.append("password", password);
 
     await this.post(API_ENDPOINTS.auth.login, formData);

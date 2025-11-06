@@ -12,7 +12,8 @@ LOGOUT_ENDPOINT = f"{BASE_URL}/logout"
 def test_register_user_success(client_with_db: TestClient):
     """Test registering a new user successfully"""
     response = client_with_db.post(
-        REGISTER_ENDPOINT, json={"email": "user1@example.com", "password": "pass123"}
+        REGISTER_ENDPOINT,
+        json={"email": "user1@example.com", "username": "user1", "password": "pass123"},
     )
 
     assert response.status_code == 201
@@ -21,30 +22,64 @@ def test_register_user_success(client_with_db: TestClient):
     assert "created_at" in data
 
 
-def test_register_user_duplicate_email(client_with_db: TestClient):
+def test_register_user_duplicate_email(client_with_db: TestClient, registered_user):
     """Test registering a user with a duplicate email"""
-    client_with_db.post(
-        REGISTER_ENDPOINT, json={"email": "user2@example.com", "password": "pass123"}
-    )
-
     response = client_with_db.post(
-        REGISTER_ENDPOINT, json={"email": "user2@example.com", "password": "pass456"}
+        REGISTER_ENDPOINT,
+        json={
+            "email": registered_user["email"],
+            "username": "user2_new",
+            "password": "pass456",
+        },
     )
 
     assert response.status_code == 400
     assert "already in use" in response.json()["detail"]
 
 
+def test_register_user_duplicate_username(client_with_db: TestClient, registered_user):
+    """Test registering a user with a duplicate username"""
+    response = client_with_db.post(
+        REGISTER_ENDPOINT,
+        json={
+            "email": "other@example.com",
+            "username": registered_user["username"],
+            "password": "pass456",
+        },
+    )
+
+    assert response.status_code == 400
+    assert "Username is already taken" in response.json()["detail"]
+
+
 def test_register_user_invalid_email(client_with_db: TestClient):
     """Test registering a user with invalid email format"""
     response = client_with_db.post(
-        REGISTER_ENDPOINT, json={"email": "invalid-email", "password": "pass123"}
+        REGISTER_ENDPOINT,
+        json={"email": "invalid-email", "username": "user1", "password": "pass123"},
     )
 
     assert response.status_code == 422
     data = response.json()
     assert "detail" in data
     assert any("email" in str(error) for error in data["detail"])
+
+
+def test_register_user_invalid_username(client_with_db: TestClient):
+    """Test registering a user with invalid username format"""
+    response = client_with_db.post(
+        REGISTER_ENDPOINT,
+        json={
+            "email": "valid@example.com",
+            "username": "invalid@username",
+            "password": "pass123",
+        },
+    )
+
+    assert response.status_code == 422
+    data = response.json()
+    assert "detail" in data
+    assert any("username" in str(error) for error in data["detail"])
 
 
 def test_read_me_success(client_with_db: TestClient, logged_in_user):
@@ -79,13 +114,33 @@ def test_read_me_invalid_session(client_with_db: TestClient):
     assert "Invalid or expired session" in data["detail"]
 
 
-def test_login_with_session_success(client_with_db: TestClient, registered_user):
-    """Test successful login and session creation"""
-
+def test_login_with_session_success_with_email(
+    client_with_db: TestClient, registered_user
+):
+    """Test successful login and session creation using email"""
     response = client_with_db.post(
         LOGIN_ENDPOINT,
         data={
-            "email": registered_user["email"],
+            "email_or_username": registered_user["email"],
+            "password": registered_user["password"],
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Login successful"}
+
+    assert "session_id" in response.cookies
+    assert response.cookies.get("session_id") is not None
+
+
+def test_login_with_session_success_with_username(
+    client_with_db: TestClient, registered_user
+):
+    """Test successful login and session creation using username"""
+    response = client_with_db.post(
+        LOGIN_ENDPOINT,
+        data={
+            "email_or_username": registered_user["username"],
             "password": registered_user["password"],
         },
     )
@@ -101,7 +156,7 @@ def test_login_with_session_invalid_credentials(client_with_db: TestClient):
     """Test login with invalid credentials"""
     response = client_with_db.post(
         LOGIN_ENDPOINT,
-        data={"email": "nonexistent@example.com", "password": "wrongpass"},
+        data={"email_or_username": "nonexistent@example.com", "password": "wrongpass"},
     )
 
     assert response.status_code == 401

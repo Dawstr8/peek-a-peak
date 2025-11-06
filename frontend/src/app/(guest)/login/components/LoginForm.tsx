@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
-  email: z.email("Invalid email address"),
+  emailOrUsername: z.string().min(1, "Email or username is required"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -36,20 +36,20 @@ export function LoginForm({ handleLoginSuccess }: LoginFormProps) {
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      emailOrUsername: "",
       password: "",
     },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async ({
-      email,
+      emailOrUsername,
       password,
     }: {
-      email: string;
+      emailOrUsername: string;
       password: string;
     }) => {
-      const user = await AuthClient.login(email, password);
+      const user = await AuthClient.login(emailOrUsername, password);
       login(user);
       return user;
     },
@@ -60,7 +60,7 @@ export function LoginForm({ handleLoginSuccess }: LoginFormProps) {
 
   const onSubmit = async (data: LoginFormData) => {
     mutate({
-      email: data.email,
+      emailOrUsername: data.emailOrUsername,
       password: data.password,
     });
   };
@@ -74,14 +74,14 @@ export function LoginForm({ handleLoginSuccess }: LoginFormProps) {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="emailOrUsername"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email or username</FormLabel>
               <FormControl>
                 <Input
-                  type="email"
-                  placeholder="Enter your email"
+                  type="text"
+                  placeholder="Enter your email or username"
                   {...field}
                   disabled={isPending}
                 />
