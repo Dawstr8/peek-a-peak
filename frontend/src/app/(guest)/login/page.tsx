@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { toast } from "sonner";
 
@@ -17,10 +17,13 @@ import { LoginForm } from "./components/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleLoginSuccess = () => {
     toast.success("Logged in successfully!");
-    router.push("/dashboard");
+
+    const returnTo = searchParams.get("returnTo");
+    router.push(returnTo || "/dashboard");
   };
 
   return (

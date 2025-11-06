@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthContext";
 import Footer from "@/components/layout/Footer";
@@ -18,8 +18,12 @@ export default function DashboardLayout({
 }) {
   const { user, isLoading } = useAuth();
 
+  const pathname = usePathname();
+
   if (!isLoading && !user) {
-    redirect("/login");
+    const searchParams = new URLSearchParams();
+    searchParams.set("returnTo", pathname);
+    redirect(`/login?${searchParams.toString()}`);
   }
 
   return (
