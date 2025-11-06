@@ -31,62 +31,29 @@ def test_get_all_photos_empty(client_with_db):
     assert resp.json() == []
 
 
-def test_get_all_photos(client_with_db, logged_in_user):
+def test_get_all_photos(client_with_db, e2e_photos):
     """Test getting all photos"""
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo1.jpg", b"imagedata1", "image/jpeg")},
-        data={"summit_photo_create": "{}"},
-    )
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo2.jpg", b"imagedata2", "image/jpeg")},
-        data={"summit_photo_create": "{}"},
-    )
-
     resp = client_with_db.get("/api/photos/")
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     for photo in photos:
         assert "id" in photo
         assert "file_name" in photo
 
 
-def test_get_all_photos_with_peaks(client_with_db, test_peaks, logged_in_user):
+def test_get_all_photos_with_peaks(client_with_db, test_peaks, e2e_photos):
     """Test getting all photos includes peak information when assigned"""
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo1.jpg", b"imagedata1", "image/jpeg")},
-        data={"summit_photo_create": "{}"},
-    )
-
-    photo_data_with_peak = {
-        "peak_id": test_peaks[0].id,
-        "distance_to_peak": 10.5,
-    }
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo2.jpg", b"imagedata2", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_with_peak)},
-    )
-
     resp = client_with_db.get("/api/photos/")
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     photo_without_peak = next((p for p in photos if p["peak_id"] is None), None)
-    photo_with_peak = next(
-        (p for p in photos if p["peak_id"] == test_peaks[0].id), None
-    )
+    photo_with_peak = next((p for p in photos if p["peak_id"] is not None), None)
 
     assert photo_without_peak is not None
     assert photo_without_peak["peak"] is None
@@ -97,120 +64,37 @@ def test_get_all_photos_with_peaks(client_with_db, test_peaks, logged_in_user):
     assert photo_with_peak["peak"]["name"] == test_peaks[0].name
 
 
-def test_get_all_photos_sorted_by_captured_at_asc(client_with_db, logged_in_user):
+def test_get_all_photos_sorted_by_captured_at_asc(client_with_db, e2e_photos):
     """Test getting all photos sorted by captured_at ascending"""
-
-    photo_data_1 = {
-        "captured_at": "2025-09-30T10:00:00",
-        "latitude": 49.1794,
-        "longitude": 20.0880,
-        "altitude": 2495.0,
-    }
-
-    photo_data_2 = {
-        "captured_at": "2025-10-01T11:00:00",
-        "latitude": 50.7361,
-        "longitude": 15.7398,
-        "altitude": 1602.0,
-    }
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo1.jpg", b"imagedata1", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_1)},
-    )
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo2.jpg", b"imagedata2", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_2)},
-    )
-
     resp = client_with_db.get("/api/photos/?sort_by=captured_at&order=asc")
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     captured_times = [photo["captured_at"] for photo in photos if photo["captured_at"]]
     assert captured_times == sorted(captured_times)
 
 
-def test_get_all_photos_sorted_by_captured_at_desc(client_with_db, logged_in_user):
+def test_get_all_photos_sorted_by_captured_at_desc(client_with_db, e2e_photos):
     """Test getting all photos sorted by captured_at descending"""
-
-    photo_data_1 = {
-        "captured_at": "2025-09-30T10:00:00",
-        "latitude": 49.1794,
-        "longitude": 20.0880,
-        "altitude": 2495.0,
-    }
-
-    photo_data_2 = {
-        "captured_at": "2025-10-01T11:00:00",
-        "latitude": 50.7361,
-        "longitude": 15.7398,
-        "altitude": 1602.0,
-    }
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo1.jpg", b"imagedata1", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_1)},
-    )
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo2.jpg", b"imagedata2", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_2)},
-    )
-
     resp = client_with_db.get("/api/photos/?sort_by=captured_at&order=desc")
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     captured_times = [photo["captured_at"] for photo in photos if photo["captured_at"]]
     assert captured_times == sorted(captured_times, reverse=True)
 
 
-def test_get_all_photos_sorted_by_captured_at_default_order(
-    client_with_db, logged_in_user
-):
+def test_get_all_photos_sorted_by_captured_at_default_order(client_with_db, e2e_photos):
     """Test getting all photos sorted by captured_at with default ascending order"""
-
-    photo_data_1 = {
-        "captured_at": "2025-09-30T10:00:00",
-        "latitude": 49.1794,
-        "longitude": 20.0880,
-        "altitude": 2495.0,
-    }
-
-    photo_data_2 = {
-        "captured_at": "2025-10-01T11:00:00",
-        "latitude": 50.7361,
-        "longitude": 15.7398,
-        "altitude": 1602.0,
-    }
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo1.jpg", b"imagedata1", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_1)},
-    )
-
-    client_with_db.post(
-        "/api/photos/",
-        files={"file": ("photo2.jpg", b"imagedata2", "image/jpeg")},
-        data={"summit_photo_create": json.dumps(photo_data_2)},
-    )
-
     resp = client_with_db.get("/api/photos/?sort_by=captured_at")
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     captured_times = [photo["captured_at"] for photo in photos if photo["captured_at"]]
     assert captured_times == sorted(captured_times)
@@ -341,16 +225,9 @@ def test_upload_without_gps_data(client_with_db, test_peaks, logged_in_user):
     assert data["distance_to_peak"] is None
 
 
-def test_get_photo_by_id(client_with_db, logged_in_user):
+def test_get_photo_by_id(client_with_db, e2e_photo):
     """Test getting a specific photo by ID"""
-    upload_resp = client_with_db.post(
-        "/api/photos/",
-        files={"file": ("specific_photo.jpg", b"specificimagedata", "image/jpeg")},
-        data={"summit_photo_create": "{}"},
-    )
-
-    upload_data = upload_resp.json()
-    photo_id = upload_data["id"]
+    photo_id = e2e_photo["id"]
 
     get_resp = client_with_db.get(f"/api/photos/{photo_id}")
 
@@ -358,7 +235,7 @@ def test_get_photo_by_id(client_with_db, logged_in_user):
     photo_data = get_resp.json()
 
     assert photo_data["id"] == photo_id
-    assert photo_data["file_name"] == upload_data["file_name"]
+    assert photo_data["file_name"] == e2e_photo["file_name"]
 
 
 def test_get_nonexistent_photo(client_with_db, logged_in_user):
@@ -369,16 +246,10 @@ def test_get_nonexistent_photo(client_with_db, logged_in_user):
     assert resp.json()["detail"] == "Photo not found"
 
 
-def test_delete_photo_success(client_with_db, logged_in_user):
+def test_delete_photo_success(client_with_db, e2e_photo):
     """Test deleting a photo successfully"""
-    upload = client_with_db.post(
-        "/api/photos/",
-        files={"file": ("delete_me.jpg", b"imagedata", "image/jpeg")},
-        data={"summit_photo_create": "{}"},
-    )
-    photo_data = upload.json()
-    photo_id = photo_data["id"]
-    file_path = f"test_uploads/{photo_data['file_name']}"
+    photo_id = e2e_photo["id"]
+    file_path = f"test_uploads/{e2e_photo['file_name']}"
 
     delete_resp = client_with_db.delete(f"/api/photos/{photo_id}")
 

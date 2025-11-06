@@ -14,6 +14,14 @@ from src.peaks.models import Peak
 from src.uploads.services.local_storage import LocalFileStorage
 from tests.auth.auth_fixtures import logged_in_user, registered_user
 from tests.peaks.peak_fixtures import peak_coords, peak_models
+from tests.photos.photos_fixtures import (
+    db_photos,
+    e2e_photo,
+    e2e_photos,
+    mock_photo,
+    mock_photos,
+    mock_photos_repository,
+)
 from tests.users.users_fixtures import db_user, mock_user, mock_users_repository
 
 

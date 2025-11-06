@@ -1,0 +1,174 @@
+"""
+Photo fixtures for testing across different test types: unit, integration, and e2e
+"""
+
+import json
+from datetime import datetime
+from unittest.mock import MagicMock
+
+import pytest
+
+from src.photos.models import SummitPhoto
+from src.photos.repository import PhotosRepository
+
+
+@pytest.fixture
+def mock_photos() -> list[SummitPhoto]:
+    """
+    Returns a list of mock Photo objects for unit tests.
+    This photos are not persisted anywhere and are useful for pure unit tests
+    that don't need database interaction.
+    """
+    return [
+        SummitPhoto(
+            id=1,
+            file_name="test-photo-1.jpg",
+            latitude=49.1794,
+            longitude=20.0880,
+        ),
+        SummitPhoto(
+            id=2,
+            file_name="test-photo-2.jpg",
+            latitude=49.1794,
+            longitude=20.0880,
+        ),
+    ]
+
+
+@pytest.fixture
+def mock_photo(mock_photos) -> SummitPhoto:
+    """
+    Returns a mock Photo object for unit tests.
+    This photo is not persisted anywhere and is useful for pure unit tests
+    that don't need database interaction.
+    """
+    return mock_photos[0]
+
+
+@pytest.fixture
+def mock_photos_repository(
+    mock_photo: SummitPhoto, mock_photos: list[SummitPhoto]
+) -> PhotosRepository:
+    """
+    Returns a mock PhotosRepository for unit tests.
+    This mock does not interact with a real database and is useful for pure unit tests
+    that don't need database interaction.
+    """
+    repo = MagicMock(spec=PhotosRepository)
+
+    def save(photo):
+        photo.id = 1
+        return photo
+
+    def get_by_id(photo_id):
+        return mock_photo if photo_id in [photo.id for photo in mock_photos] else None
+
+    def get_all(sort_by=None, order=None):
+        return mock_photos
+
+    repo.save.side_effect = save
+    repo.get_by_id.side_effect = get_by_id
+    repo.get_all.side_effect = get_all
+    repo.delete.return_value = True
+    return repo
+
+
+@pytest.fixture
+def db_photos(test_db, db_user, test_peaks, peak_coords) -> list[SummitPhoto]:
+    """
+    Creates and returns a list of real photos in the test database.
+    This fixture is useful for integration tests that need
+    real photos in the database.
+
+    Requires the test_db and test_peaks fixtures.
+    """
+    photos_repo = PhotosRepository(test_db)
+
+    photos = [
+        SummitPhoto(
+            owner_id=db_user.id,
+            file_name="test1.jpg",
+            uploaded_at=datetime(2025, 10, 1, 12, 0),
+            captured_at=datetime(2025, 9, 30, 10, 0),
+            latitude=peak_coords["near_rysy"][0],
+            longitude=peak_coords["near_rysy"][1],
+            altitude=2495,
+            peak_id=test_peaks[0].id,
+            distance_to_peak=10.5,
+        ),
+        SummitPhoto(
+            owner_id=db_user.id,
+            file_name="test2.jpg",
+            uploaded_at=datetime(2025, 10, 2, 14, 0),
+            captured_at=datetime(2025, 10, 1, 11, 0),
+            latitude=peak_coords["near_sniezka"][0],
+            longitude=peak_coords["near_sniezka"][1],
+            altitude=1600,
+            peak_id=test_peaks[1].id,
+            distance_to_peak=5.2,
+        ),
+    ]
+
+    for photo in photos:
+        photos_repo.save(photo)
+
+    return photos
+
+
+@pytest.fixture
+def e2e_photos(client_with_db, logged_in_user, test_peaks, peak_coords) -> list[dict]:
+    """
+    Creates and returns a list of photos through the API endpoints.
+    This fixture is useful for end-to-end tests that need real photos
+    created through the full application stack.
+
+    Requires client_with_db, logged_in_user, test_peaks, and peak_coords fixtures.
+    Returns a list of photo responses from the API.
+    """
+    photo_data = [
+        {
+            "summit_photo_create": {
+                "captured_at": "2025-09-30T10:00:00",
+                "latitude": peak_coords["near_rysy"][0],
+                "longitude": peak_coords["near_rysy"][1],
+                "altitude": 2495.0,
+                "peak_id": test_peaks[0].id,
+                "distance_to_peak": 10.5,
+            },
+            "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
+        },
+        {
+            "summit_photo_create": {
+                "captured_at": "2025-10-01T11:00:00",
+                "latitude": peak_coords["near_sniezka"][0],
+                "longitude": peak_coords["near_sniezka"][1],
+                "altitude": 1602.0,
+            },
+            "file": ("photo2.jpg", b"imagedata2", "image/jpeg"),
+        },
+    ]
+
+    created_photos = []
+    for photo in photo_data:
+        response = client_with_db.post(
+            "/api/photos/",
+            files={"file": photo["file"]},
+            data={"summit_photo_create": json.dumps(photo["summit_photo_create"])},
+        )
+        assert response.status_code == 200
+        created_photos.append(response.json())
+
+    return created_photos
+
+
+@pytest.fixture
+def e2e_photo(e2e_photos) -> dict:
+    """
+    Returns a single photo created through the API endpoints.
+    This fixture is useful for end-to-end tests that need a real photo
+    created through the full application stack.
+
+    Requires the e2e_photos fixture.
+    Returns the first photo response from the API.
+    """
+    return e2e_photos[0]
