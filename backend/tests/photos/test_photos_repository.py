@@ -16,46 +16,6 @@ def test_photos_repository(test_db):
     return PhotosRepository(test_db)
 
 
-@pytest.fixture()
-def test_photos(test_db, test_peaks, peak_coords, db_user):
-    """Create test summit photos and save to database"""
-
-    photos = [
-        SummitPhoto(
-            owner_id=db_user.id,
-            file_name="test1.jpg",
-            uploaded_at=datetime(2025, 10, 1, 12, 0),
-            captured_at=datetime(2025, 9, 30, 10, 0),
-            latitude=peak_coords["near_rysy"][0],
-            longitude=peak_coords["near_rysy"][1],
-            altitude=2495,
-            peak_id=test_peaks[0].id,
-            distance_to_peak=10.5,
-        ),
-        SummitPhoto(
-            owner_id=db_user.id,
-            file_name="test2.jpg",
-            uploaded_at=datetime(2025, 10, 2, 14, 0),
-            captured_at=datetime(2025, 10, 1, 11, 0),
-            latitude=peak_coords["near_sniezka"][0],
-            longitude=peak_coords["near_sniezka"][1],
-            altitude=1600,
-            peak_id=test_peaks[1].id,
-            distance_to_peak=5.2,
-        ),
-    ]
-
-    for photo in photos:
-        test_db.add(photo)
-
-    test_db.commit()
-
-    for photo in photos:
-        test_db.refresh(photo)
-
-    return photos
-
-
 def test_save(test_photos_repository, test_peaks, db_user):
     """Test saving a new summit photo"""
     new_photo = SummitPhoto(
@@ -82,18 +42,18 @@ def test_save(test_photos_repository, test_peaks, db_user):
     assert saved_photo.peak.id == test_peaks[0].id
 
 
-def test_get_by_id(test_photos_repository, test_photos):
+def test_get_by_id(test_photos_repository, db_photos):
     """Test retrieving a summit photo by ID"""
-    photo_id = test_photos[0].id
+    photo_id = db_photos[0].id
 
     photo = test_photos_repository.get_by_id(photo_id)
 
     assert photo is not None
-    assert photo.file_name == "test1.jpg"
-    assert photo.peak_id == test_photos[0].peak_id
-    assert photo.distance_to_peak == 10.5
+    assert photo.file_name == db_photos[0].file_name
+    assert photo.distance_to_peak == db_photos[0].distance_to_peak
+    assert photo.peak_id == db_photos[0].peak_id
     assert photo.peak is not None
-    assert photo.peak.id == test_photos[0].peak_id
+    assert photo.peak.id == db_photos[0].peak_id
 
 
 def test_get_by_id_non_existent(test_photos_repository):
@@ -103,31 +63,31 @@ def test_get_by_id_non_existent(test_photos_repository):
     assert non_existent_photo is None
 
 
-def test_get_all(test_photos_repository, test_photos):
+def test_get_all(test_photos_repository, db_photos):
     """Test retrieving all summit photos"""
     photos = test_photos_repository.get_all()
 
     assert photos is not None
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     photo_ids = [photo.id for photo in photos]
-    assert test_photos[0].id in photo_ids
-    assert test_photos[1].id in photo_ids
+    assert db_photos[0].id in photo_ids
+    assert db_photos[1].id in photo_ids
 
-    first_test_photo = next(photo for photo in photos if photo.id == test_photos[0].id)
-    assert first_test_photo.file_name == "test1.jpg"
-    assert first_test_photo.peak_id == test_photos[0].peak_id
-    assert first_test_photo.distance_to_peak == 10.5
-    assert first_test_photo.peak is not None
-    assert first_test_photo.peak.id == test_photos[0].peak_id
+    first_photo = next(photo for photo in photos if photo.id == db_photos[0].id)
+    assert first_photo.file_name == db_photos[0].file_name
+    assert first_photo.distance_to_peak == db_photos[0].distance_to_peak
+    assert first_photo.peak_id == db_photos[0].peak_id
+    assert first_photo.peak is not None
+    assert first_photo.peak.id == db_photos[0].peak_id
 
 
-def test_get_all_sorted_by_captured_at_asc(test_photos_repository, test_photos):
+def test_get_all_sorted_by_captured_at_asc(test_photos_repository, db_photos):
     """Test retrieving all summit photos sorted by captured_at ascending"""
     photos = test_photos_repository.get_all(sort_by="captured_at", order="asc")
 
     assert photos is not None
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     captured_times = [
         photo.captured_at for photo in photos if photo.captured_at is not None
@@ -135,12 +95,12 @@ def test_get_all_sorted_by_captured_at_asc(test_photos_repository, test_photos):
     assert captured_times == sorted(captured_times)
 
 
-def test_get_all_sorted_by_captured_at_desc(test_photos_repository, test_photos):
+def test_get_all_sorted_by_captured_at_desc(test_photos_repository, db_photos):
     """Test retrieving all summit photos sorted by captured_at descending"""
     photos = test_photos_repository.get_all(sort_by="captured_at", order="desc")
 
     assert photos is not None
-    assert len(photos) >= 2
+    assert len(photos) == 2
 
     captured_times = [
         photo.captured_at for photo in photos if photo.captured_at is not None
@@ -148,9 +108,9 @@ def test_get_all_sorted_by_captured_at_desc(test_photos_repository, test_photos)
     assert captured_times == sorted(captured_times, reverse=True)
 
 
-def test_delete(test_photos_repository, test_photos):
+def test_delete(test_photos_repository, db_photos):
     """Test deleting a summit photo"""
-    photo_id = test_photos[0].id
+    photo_id = db_photos[0].id
     photo = test_photos_repository.get_by_id(photo_id)
     assert photo is not None
 
