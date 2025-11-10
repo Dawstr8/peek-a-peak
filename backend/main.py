@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Polish Peaks API",
+    title="Peek-a-Peak API",
     description="API for managing Polish mountain summit photos and achievements",
     version="1.0.0",
     lifespan=lifespan,
@@ -45,5 +45,5 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
-        "service": "Polish Peaks API",
+        "service": "Peek-a-Peak API",
     }

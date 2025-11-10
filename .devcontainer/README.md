@@ -1,4 +1,4 @@
-# 🏔️ Polish Peaks - Development Container
+# 🏔️ Peek-a-Peak - Development Container
 
 Full-stack application with FastAPI backend and Next.js frontend, containerized for easy development.
 
