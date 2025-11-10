@@ -1,6 +1,6 @@
-# 🏔️ Polish Peaks - Backend
+# 🏔️ Peek-a-Peak - Backend
 
-This is the backend API for the Polish Peaks project, built with FastAPI (Python).
+This is the backend API for the Peek-a-Peak project, built with FastAPI (Python).
 
 ## 🛠️ Tech Stack
 

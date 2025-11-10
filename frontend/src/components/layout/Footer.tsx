@@ -25,7 +25,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-4">
         <div className="flex flex-col items-center justify-around gap-2 md:flex-row">
           <p className="text-muted-foreground order-1 text-sm md:order-0">
-            &copy; {currentYear} Polish Peaks
+            &copy; {currentYear} Peek-a-Peak
           </p>
           <div className="flex items-center space-x-4">
             {socials.map((social) => (

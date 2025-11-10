@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Polish Peaks Development Helper Script
+# Peek-a-Peak Development Helper Script
 
-echo "🏔️ Polish Peaks Development Environment"
+echo "🏔️ Peek-a-Peak Development Environment"
 echo "======================================"
 
 start_backend() {

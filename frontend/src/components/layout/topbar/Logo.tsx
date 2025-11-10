@@ -9,14 +9,16 @@ export default function Logo() {
     >
       <Image
         src="/logo.svg"
-        alt="Polish Peaks Mountains"
+        alt="Peek-a-Peak Mountains"
         width={55}
         height={35}
         priority
         className="mb-1 h-7 w-auto"
       />
-      <span className="text-primary ml-3 scroll-m-20 text-xl font-semibold tracking-tight">
-        Polish Peaks
+      <span className="ml-3 scroll-m-20 text-xl font-semibold tracking-tight whitespace-nowrap">
+        <span className="text-primary">Peek</span>
+        <span className="text-foreground">-a-</span>
+        <span className="text-chart-1">Peak</span>
       </span>
     </Link>
   );

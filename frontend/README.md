@@ -1,6 +1,6 @@
-# 🏔️ Polish Peaks - Frontend
+# 🏔️ Peek-a-Peak - Frontend
 
-This is the frontend application for the Polish Peaks project, built with Next.js, React, and TypeScript.
+This is the frontend application for the Peek-a-Peak project, built with Next.js, React, and TypeScript.
 
 ## 🛠️ Tech Stack
 
