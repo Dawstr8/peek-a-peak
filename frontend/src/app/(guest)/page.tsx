@@ -74,12 +74,6 @@ export default async function Home() {
                   Upload Your Summit
                 </Link>
               </Button>
-              <Button variant="outline" className="bg-invert" asChild size="lg">
-                <Link href="/gallery">
-                  <Mountain className="h-4 w-4" />
-                  Explore Gallery
-                </Link>
-              </Button>
             </div>
           </div>
         </div>
@@ -111,60 +105,6 @@ export default async function Home() {
                   <CardDescription className="text-base">
                     {feature.description}
                   </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Preview Section */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 flex items-end justify-between">
-            <h2 className="text-foreground text-3xl font-bold">
-              Recent Adventures
-            </h2>
-            <Button variant="ghost" asChild>
-              <Link href="/gallery">View all →</Link>
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {peaks.map((peak) => (
-              <Card key={peak.id}>
-                <div className="relative h-48">
-                  <Image
-                    src="/placeholder-mountain.svg"
-                    alt={`${peak.name} summit`}
-                    fill
-                    className="object-cover"
-                  />
-                  <Badge className="bg-background/90 text-foreground border-border/60 absolute right-2 bottom-2 border">
-                    <MapPin className="mr-1 h-3 w-3" />
-                    {peak.name}
-                  </Badge>
-                </div>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg">{peak.title}</CardTitle>
-                    <Badge variant="outline" className="text-xs">
-                      <Calendar className="mr-1 h-3 w-3" />
-                      {peak.date}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">
-                      <Cloud className="mr-1 h-3 w-3" />
-                      {peak.weather}
-                    </Badge>
-                    <Badge variant="secondary">
-                      <Mountain className="mr-1 h-3 w-3" />
-                      {peak.elevation}
-                    </Badge>
-                  </div>
                 </CardContent>
               </Card>
             ))}

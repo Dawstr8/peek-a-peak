@@ -33,6 +33,40 @@ async def get_all_photos(
         )
 
 
+@router.get("/user/{username}", response_model=List[SummitPhotoRead], tags=["photos"])
+async def get_user_photos(
+    photos_service: photos_service_dep,
+    current_user: current_user_dep,
+    username: str,
+    sort_by: Optional[str] = Query(None, description="Field to sort by"),
+    order: Optional[str] = Query(None, description="Sort order: 'asc' or 'desc'"),
+):
+    """
+    Get all photos uploaded by the current user.
+
+    Args:
+        username: Username of the user whose photos to retrieve
+        sort_by: Field to sort by (optional).
+        order: Sort order 'desc' for descending, otherwise ascending (SQL default). Only used if sort_by is provided.
+
+    Returns:
+        List[SummitPhotoRead]: List of photos uploaded by the current user, with peak information, sorted as specified or in default order.
+    """
+    if username != current_user.username:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to view these photos"
+        )
+
+    try:
+        return await photos_service.get_photos_by_user(
+            username, sort_by=sort_by, order=order
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve user photos: {str(e)}"
+        )
+
+
 @router.post("/", response_model=SummitPhotoRead, tags=["photos"])
 async def upload_photo(
     photos_service: photos_service_dep,

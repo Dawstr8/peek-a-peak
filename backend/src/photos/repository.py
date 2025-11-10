@@ -60,15 +60,26 @@ class PhotosRepository:
             List of SummitPhoto objects
         """
         statement = select(SummitPhoto)
+        statement = self._apply_sorting(statement, sort_by, order)
+        results = self.db.exec(statement).all()
+        return results
 
-        if sort_by and hasattr(SummitPhoto, sort_by):
-            column = getattr(SummitPhoto, sort_by)
-            statement = (
-                statement.order_by(desc(column))
-                if order == "desc"
-                else statement.order_by(column)
-            )
+    def get_by_owner_id(
+        self, owner_id: int, sort_by: Optional[str] = None, order: Optional[str] = None
+    ) -> List[SummitPhoto]:
+        """
+        Get all photos uploaded by a specific user.
 
+        Args:
+            user_id: ID of the user whose photos to retrieve
+            sort_by: Field to sort by (optional)
+            order: Sort order 'desc' for descending, otherwise ascending (SQL default)
+
+        Returns:
+            List of SummitPhoto objects uploaded by the specified user
+        """
+        statement = select(SummitPhoto).where(SummitPhoto.owner_id == owner_id)
+        statement = self._apply_sorting(statement, sort_by, order)
         results = self.db.exec(statement).all()
         return results
 
@@ -89,3 +100,27 @@ class PhotosRepository:
         self.db.delete(photo)
         self.db.commit()
         return True
+
+    def _apply_sorting(
+        self, statement, sort_by: Optional[str] = None, order: Optional[str] = None
+    ):
+        """
+        Apply sorting to a query statement.
+
+        Args:
+            statement: The SQLModel select statement
+            sort_by: Field to sort by (optional)
+            order: Sort order 'desc' for descending, otherwise ascending (SQL default)
+
+        Returns:
+            Modified statement with sorting applied
+        """
+        if sort_by and hasattr(SummitPhoto, sort_by):
+            column = getattr(SummitPhoto, sort_by)
+            statement = (
+                statement.order_by(desc(column))
+                if order == "desc"
+                else statement.order_by(column)
+            )
+
+        return statement

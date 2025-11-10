@@ -39,7 +39,7 @@ export function UploadStep({
     }) => PhotoClient.uploadPhoto(file, summitPhotoCreate),
     onSuccess: () => {
       toast.success("Photo uploaded successfully!");
-      router.push("/gallery");
+      router.push("/dashboard");
     },
   });
 

@@ -63,17 +63,31 @@ def mock_users_repository(mock_user: User):
 
 
 @pytest.fixture
-def db_user(test_db) -> User:
+def db_users(test_db) -> list[User]:
+    """
+    Creates and returns multiple real users in the test database.
+    This fixture is useful for integration tests that need
+    multiple real users in the database.
+    """
+    users_repo = UsersRepository(test_db)
+
+    users = [
+        User(
+            email=f"user{i}@example.com",
+            username=f"user{i}",
+            hashed_password=f"hashed_password{i}",
+        )
+        for i in range(1, 3)
+    ]
+
+    return [users_repo.save(user) for user in users]
+
+
+@pytest.fixture
+def db_user(db_users) -> User:
     """
     Creates and returns a real user in the test database.
     This fixture is useful for integration tests that need
     a real user in the database.
     """
-    users_repo = UsersRepository(test_db)
-    user = User(
-        email="test@example.com",
-        username="user",
-        hashed_password="hashed_correct_password",
-    )
-
-    return users_repo.save(user)
+    return db_users[0]

@@ -33,8 +33,9 @@ class SummitPhotoCreate(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
-    peak_id: Optional[int] = None
     distance_to_peak: Optional[float] = None
+
+    peak_id: Optional[int] = None
 
 
 class SummitPhotoRead(BaseModel):
@@ -47,6 +48,9 @@ class SummitPhotoRead(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
-    peak_id: Optional[int] = None
     distance_to_peak: Optional[float] = None
+
+    peak_id: Optional[int] = None
+    owner_id: int
+
     peak: Optional[Peak] = None
