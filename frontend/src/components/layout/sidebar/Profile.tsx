@@ -19,10 +19,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import UserAvatar from "@/components/users/UserAvatar";
+import UserPreview from "@/components/users/UserPreview";
 
 interface ProfileProps {
-  user: User;
+  user: User | null;
 }
 
 export default function Profile({ user }: ProfileProps) {
@@ -37,10 +37,7 @@ export default function Profile({ user }: ProfileProps) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <UserAvatar user={user} />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.username}</span>
-              </div>
+              <UserPreview user={user} />
               <EllipsisVertical className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -52,11 +49,9 @@ export default function Profile({ user }: ProfileProps) {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <UserAvatar user={user} />
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.username}</span>
-                  <span className="truncate text-xs">{user.email}</span>
-                </div>
+                <UserPreview user={user}>
+                  <span className="truncate text-xs">{user?.email}</span>
+                </UserPreview>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
