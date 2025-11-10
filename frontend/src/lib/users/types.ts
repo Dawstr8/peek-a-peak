@@ -5,7 +5,6 @@ export interface UserCreate {
 }
 
 export interface User {
-  id: number;
   email: string;
   username: string;
 }

@@ -5,6 +5,7 @@ Tests for the PhotosRepository
 from datetime import datetime
 
 import pytest
+from sqlmodel import select
 
 from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
@@ -68,6 +69,36 @@ def test_get_all(test_photos_repository, db_photos):
     photos = test_photos_repository.get_all()
 
     assert photos is not None
+    assert len(photos) == 3
+
+    photo_ids = [photo.id for photo in photos]
+    assert db_photos[0].id in photo_ids
+    assert db_photos[1].id in photo_ids
+    assert db_photos[2].id in photo_ids
+
+    first_photo = next(photo for photo in photos if photo.id == db_photos[0].id)
+    assert first_photo.file_name == db_photos[0].file_name
+    assert first_photo.distance_to_peak == db_photos[0].distance_to_peak
+    assert first_photo.peak_id == db_photos[0].peak_id
+    assert first_photo.peak is not None
+    assert first_photo.peak.id == db_photos[0].peak_id
+
+
+def test_get_all_with_sorting(test_photos_repository, db_photos):
+    """Test retrieving all summit photos with sorting parameters"""
+    photos_asc = test_photos_repository.get_all(sort_by="captured_at", order="asc")
+    photos_desc = test_photos_repository.get_all(sort_by="captured_at", order="desc")
+
+    assert len(photos_asc) == 3
+    assert len(photos_desc) == 3
+    assert photos_asc[0].id != photos_desc[0].id
+
+
+def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
+    """Test retrieving all summit photos"""
+    photos = test_photos_repository.get_by_owner_id(db_user.id)
+
+    assert photos is not None
     assert len(photos) == 2
 
     photo_ids = [photo.id for photo in photos]
@@ -82,30 +113,18 @@ def test_get_all(test_photos_repository, db_photos):
     assert first_photo.peak.id == db_photos[0].peak_id
 
 
-def test_get_all_sorted_by_captured_at_asc(test_photos_repository, db_photos):
-    """Test retrieving all summit photos sorted by captured_at ascending"""
-    photos = test_photos_repository.get_all(sort_by="captured_at", order="asc")
+def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, db_user):
+    """Test retrieving all summit photos with sorting parameters"""
+    photos_asc = test_photos_repository.get_by_owner_id(
+        owner_id=db_user.id, sort_by="captured_at", order="asc"
+    )
+    photos_desc = test_photos_repository.get_by_owner_id(
+        owner_id=db_user.id, sort_by="captured_at", order="desc"
+    )
 
-    assert photos is not None
-    assert len(photos) == 2
-
-    captured_times = [
-        photo.captured_at for photo in photos if photo.captured_at is not None
-    ]
-    assert captured_times == sorted(captured_times)
-
-
-def test_get_all_sorted_by_captured_at_desc(test_photos_repository, db_photos):
-    """Test retrieving all summit photos sorted by captured_at descending"""
-    photos = test_photos_repository.get_all(sort_by="captured_at", order="desc")
-
-    assert photos is not None
-    assert len(photos) == 2
-
-    captured_times = [
-        photo.captured_at for photo in photos if photo.captured_at is not None
-    ]
-    assert captured_times == sorted(captured_times, reverse=True)
+    assert len(photos_asc) == 2
+    assert len(photos_desc) == 2
+    assert photos_asc[0].id != photos_desc[0].id
 
 
 def test_delete(test_photos_repository, db_photos):
@@ -125,3 +144,51 @@ def test_delete_non_existent(test_photos_repository):
     """Test deleting a non-existent summit photo"""
     result = test_photos_repository.delete(999999)
     assert result is False
+
+
+def test_apply_sorting_asc(test_photos_repository, db_photos):
+    """Test applying ascending sort to a statement"""
+    statement = select(SummitPhoto)
+
+    sorted_statement = test_photos_repository._apply_sorting(
+        statement, sort_by="captured_at", order="asc"
+    )
+
+    photos = test_photos_repository.db.exec(sorted_statement).all()
+    captured_times = [p.captured_at for p in photos if p.captured_at is not None]
+    assert captured_times == sorted(captured_times)
+
+
+def test_apply_sorting_desc(test_photos_repository, db_photos):
+    """Test applying descending sort to a statement"""
+    statement = select(SummitPhoto)
+
+    sorted_statement = test_photos_repository._apply_sorting(
+        statement, sort_by="captured_at", order="desc"
+    )
+
+    photos = test_photos_repository.db.exec(sorted_statement).all()
+    captured_times = [p.captured_at for p in photos if p.captured_at is not None]
+    assert captured_times == sorted(captured_times, reverse=True)
+
+
+def test_apply_sorting_no_sort(test_photos_repository, db_photos):
+    """Test that no sorting is applied when sort_by is None"""
+    statement = select(SummitPhoto)
+
+    result_statement = test_photos_repository._apply_sorting(statement)
+
+    photos = test_photos_repository.db.exec(result_statement).all()
+    assert len(photos) == 3
+
+
+def test_apply_sorting_invalid_column(test_photos_repository, db_photos):
+    """Test that invalid column names are ignored"""
+    statement = select(SummitPhoto)
+
+    result_statement = test_photos_repository._apply_sorting(
+        statement, sort_by="invalid_column", order="desc"
+    )
+
+    photos = test_photos_repository.db.exec(result_statement).all()
+    assert len(photos) == 3

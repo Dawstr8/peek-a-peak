@@ -10,6 +10,7 @@ import pytest
 
 from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
+from tests.auth.auth_fixtures import temporary_login
 
 
 @pytest.fixture
@@ -66,8 +67,12 @@ def mock_photos_repository(
     def get_all(sort_by=None, order=None):
         return mock_photos
 
+    def get_by_owner_id(owner_id, sort_by=None, order=None):
+        return [photo for photo in mock_photos if photo.owner_id == owner_id]
+
     repo.save.side_effect = save
     repo.get_by_id.side_effect = get_by_id
+    repo.get_by_owner_id.side_effect = get_by_owner_id
     repo.get_all.side_effect = get_all
     repo.delete.return_value = True
 
@@ -75,7 +80,7 @@ def mock_photos_repository(
 
 
 @pytest.fixture
-def db_photos(test_db, db_user, db_peaks, coords_map) -> list[SummitPhoto]:
+def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto]:
     """
     Creates and returns a list of real photos in the test database.
     This fixture is useful for integration tests that need
@@ -85,7 +90,7 @@ def db_photos(test_db, db_user, db_peaks, coords_map) -> list[SummitPhoto]:
 
     photos = [
         SummitPhoto(
-            owner_id=db_user.id,
+            owner_id=db_users[0].id,
             file_name="test1.jpg",
             uploaded_at=datetime(2025, 10, 1, 12, 0),
             captured_at=datetime(2025, 9, 30, 10, 0),
@@ -96,10 +101,21 @@ def db_photos(test_db, db_user, db_peaks, coords_map) -> list[SummitPhoto]:
             distance_to_peak=10.5,
         ),
         SummitPhoto(
-            owner_id=db_user.id,
+            owner_id=db_users[0].id,
             file_name="test2.jpg",
             uploaded_at=datetime(2025, 10, 2, 14, 0),
             captured_at=datetime(2025, 10, 1, 11, 0),
+            latitude=coords_map["near_sniezka"][0],
+            longitude=coords_map["near_sniezka"][1],
+            altitude=1600,
+            peak_id=db_peaks[1].id,
+            distance_to_peak=5.2,
+        ),
+        SummitPhoto(
+            owner_id=db_users[1].id,
+            file_name="test3.jpg",
+            uploaded_at=datetime(2025, 10, 2, 14, 0),
+            captured_at=datetime(2025, 11, 1, 11, 0),
             latitude=coords_map["near_sniezka"][0],
             longitude=coords_map["near_sniezka"][1],
             altitude=1600,
@@ -115,7 +131,7 @@ def db_photos(test_db, db_user, db_peaks, coords_map) -> list[SummitPhoto]:
 
 
 @pytest.fixture
-def e2e_photos(client_with_db, logged_in_user, db_peaks, coords_map) -> list[dict]:
+def e2e_photos(client_with_db, registered_users, db_peaks, coords_map) -> list[dict]:
     """
     Creates and returns a list of photos through the API endpoints.
     This fixture is useful for end-to-end tests that need real photos
@@ -123,38 +139,57 @@ def e2e_photos(client_with_db, logged_in_user, db_peaks, coords_map) -> list[dic
 
     Returns a list of photo responses from the API.
     """
-    photo_data = [
-        {
-            "summit_photo_create": {
-                "captured_at": "2025-09-30T10:00:00",
-                "latitude": coords_map["near_rysy"][0],
-                "longitude": coords_map["near_rysy"][1],
-                "altitude": 2495.0,
-                "peak_id": db_peaks[0].id,
-                "distance_to_peak": 10.5,
+    photos_data = [
+        [
+            {
+                "summit_photo_create": {
+                    "captured_at": "2025-09-30T10:00:00",
+                    "latitude": coords_map["near_rysy"][0],
+                    "longitude": coords_map["near_rysy"][1],
+                    "altitude": 2495.0,
+                    "peak_id": db_peaks[0].id,
+                    "distance_to_peak": 10.5,
+                },
+                "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
             },
-            "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
-        },
-        {
-            "summit_photo_create": {
-                "captured_at": "2025-10-01T11:00:00",
-                "latitude": coords_map["near_sniezka"][0],
-                "longitude": coords_map["near_sniezka"][1],
-                "altitude": 1602.0,
+            {
+                "summit_photo_create": {
+                    "captured_at": "2025-10-01T11:00:00",
+                    "latitude": coords_map["near_sniezka"][0],
+                    "longitude": coords_map["near_sniezka"][1],
+                    "altitude": 1602.0,
+                },
+                "file": ("photo2.jpg", b"imagedata2", "image/jpeg"),
             },
-            "file": ("photo2.jpg", b"imagedata2", "image/jpeg"),
-        },
+        ],
+        [
+            {
+                "summit_photo_create": {
+                    "captured_at": "2025-11-01T11:00:00",
+                    "latitude": coords_map["near_sniezka"][0],
+                    "longitude": coords_map["near_sniezka"][1],
+                    "altitude": 1602.0,
+                },
+                "file": ("photo3.jpg", b"imagedata3", "image/jpeg"),
+            },
+        ],
     ]
 
     created_photos = []
-    for photo in photo_data:
-        response = client_with_db.post(
-            "/api/photos/",
-            files={"file": photo["file"]},
-            data={"summit_photo_create": json.dumps(photo["summit_photo_create"])},
-        )
-        assert response.status_code == 200
-        created_photos.append(response.json())
+    for i in range(2):
+        user = registered_users[i]
+        photos = photos_data[i]
+        with temporary_login(client_with_db, user["username"], user["password"]):
+            for photo in photos:
+                response = client_with_db.post(
+                    "/api/photos/",
+                    files={"file": photo["file"]},
+                    data={
+                        "summit_photo_create": json.dumps(photo["summit_photo_create"])
+                    },
+                )
+
+                created_photos.append(response.json())
 
     return created_photos
 

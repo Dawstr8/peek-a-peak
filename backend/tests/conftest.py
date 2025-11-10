@@ -11,7 +11,7 @@ from starlette.datastructures import Headers
 from main import app
 from src.database.core import get_db
 from src.uploads.services.local_storage import LocalFileStorage
-from tests.auth.auth_fixtures import logged_in_user, registered_user
+from tests.auth.auth_fixtures import logged_in_user, registered_user, registered_users
 from tests.peaks.peaks_fixtures import (
     coords_map,
     db_peaks,
@@ -26,7 +26,12 @@ from tests.photos.photos_fixtures import (
     mock_photos,
     mock_photos_repository,
 )
-from tests.users.users_fixtures import db_user, mock_user, mock_users_repository
+from tests.users.users_fixtures import (
+    db_user,
+    db_users,
+    mock_user,
+    mock_users_repository,
+)
 
 
 @pytest.fixture

@@ -40,6 +40,23 @@ export const API_ENDPOINTS = {
 
       return `${API_BASE_URL}/photos?${params.toString()}`;
     },
+    getByUser: (
+      username: string,
+      sort_by: string | null = null,
+      order: "asc" | "desc" | null = null,
+    ) => {
+      const params = new URLSearchParams();
+
+      if (sort_by) {
+        params.append("sort_by", sort_by);
+      }
+
+      if (order) {
+        params.append("order", order);
+      }
+
+      return `${API_BASE_URL}/photos/user/${username}?${params.toString()}`;
+    },
     post: `${API_BASE_URL}/photos`,
   },
   peaks: {

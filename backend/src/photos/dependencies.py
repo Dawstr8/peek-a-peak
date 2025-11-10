@@ -12,6 +12,7 @@ from src.photos.repository import PhotosRepository
 from src.photos.service import PhotosService
 from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
+from src.users.repository import UsersRepository
 
 
 def get_uploads_service() -> UploadsService:
@@ -25,12 +26,18 @@ def get_photos_repository(db: db_dep) -> PhotosRepository:
     return PhotosRepository(db)
 
 
+def get_users_repository(db: db_dep) -> UsersRepository:
+    """Provides a UsersRepository."""
+    return UsersRepository(db)
+
+
 def get_photos_service(
     uploads_service: UploadsService = Depends(get_uploads_service),
     photos_repository: PhotosRepository = Depends(get_photos_repository),
+    users_repository: UsersRepository = Depends(get_users_repository),
 ) -> PhotosService:
     """Provides a PhotosService with all required dependencies."""
-    return PhotosService(uploads_service, photos_repository)
+    return PhotosService(uploads_service, photos_repository, users_repository)
 
 
 photos_service_dep = Annotated[PhotosService, Depends(get_photos_service)]

@@ -1,4 +1,4 @@
-import { Images, LayoutDashboard, Mountain, Upload, User } from "lucide-react";
+import { LayoutDashboard, Mountain, Upload, User } from "lucide-react";
 
 import { useAuth } from "@/components/auth/AuthContext";
 import {
@@ -15,7 +15,6 @@ import Profile from "./sidebar/Profile";
 
 export const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Gallery", url: "/gallery", icon: Images },
   { title: "Peaks", url: "/peaks", icon: Mountain },
   { title: "Upload", url: "/upload", icon: Upload },
   { title: "Profile", url: "/profile", icon: User },
