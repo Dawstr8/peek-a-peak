@@ -1,16 +1,10 @@
-"use client";
-
-import { useAuth } from "@/components/auth/AuthContext";
-
-import CallToAction from "./topbar/CallToAction";
+import LoginButton from "./LoginButton";
+import RegisterButton from "./sidebar/RegisterButton";
 import HamburgerMenu from "./topbar/HamburgerMenu";
 import Logo from "./topbar/Logo";
 import Navigation from "./topbar/Navigation";
-import Profile from "./topbar/Profile";
 
 export default function Topbar() {
-  const { user } = useAuth();
-
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -18,8 +12,8 @@ export default function Topbar() {
           <Logo />
           <Navigation className="hidden md:flex" listClassName="space-x-2" />
           <div className="hidden items-center justify-center space-x-2 md:flex">
-            <Profile user={user} />
-            <CallToAction />
+            <LoginButton />
+            <RegisterButton />
           </div>
           <div className="md:hidden">
             <HamburgerMenu>
@@ -29,8 +23,8 @@ export default function Topbar() {
                   orientation="vertical"
                 />
                 <div className="mx-4 flex flex-col space-y-2">
-                  <CallToAction />
-                  <Profile user={user} />
+                  <RegisterButton />
+                  <LoginButton />
                 </div>
               </div>
             </HamburgerMenu>

@@ -11,8 +11,6 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
-import { navigation } from "@/config/navigation";
-
 export interface NavigationProps {
   className?: string;
   listClassName?: string;
@@ -29,7 +27,7 @@ export default function Navigation({
   return (
     <NavigationMenu className={className} orientation={orientation}>
       <NavigationMenuList className={listClassName}>
-        {navigation.map((route) => {
+        {[].map((route: { href: string; name: string }) => {
           const isActive = pathname === route.href;
           return (
             <NavigationMenuItem key={route.name}>
