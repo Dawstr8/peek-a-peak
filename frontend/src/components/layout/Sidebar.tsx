@@ -31,7 +31,9 @@ export function Sidebar() {
       <SidebarContent>
         <Navigation items={items} />
       </SidebarContent>
-      <SidebarFooter>{user && <Profile user={user} />}</SidebarFooter>
+      <SidebarFooter>
+        <Profile user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </SidebarUI>
   );
