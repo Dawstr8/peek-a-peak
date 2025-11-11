@@ -1,15 +1,17 @@
 {
   "name": "Peek-a-Peak Dev",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "dockerComposeFile": ["../docker-compose.dev.yaml"],
+  "service": "dev",
+  "workspaceFolder": "/workspaces/peek-a-peak",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
     },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20"
-    }
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
-  "forwardPorts": [3000, 8000],
   "postCreateCommand": "./.devcontainer/postCreate.sh",
   "customizations": {
     "vscode": {
@@ -29,13 +31,13 @@
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true
+          "source.fixAll.eslint": "explicit"
         },
         "[python]": {
           "editor.formatOnSave": true,
           "editor.defaultFormatter": "ms-python.black-formatter",
           "editor.codeActionsOnSave": {
-            "source.organizeImports": true
+            "source.organizeImports": "explicit"
           }
         },
         "python.formatting.provider": "black",
