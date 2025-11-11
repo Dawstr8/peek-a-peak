@@ -8,16 +8,31 @@ import type { PhotoMetadata } from "@/lib/metadata/types";
 import type { Peak } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { useStepper } from "@/hooks/use-stepper";
 
-import { MetadataStep } from "./components/MetadataStep";
-import { PeakStep } from "./components/PeakStep";
-import { SelectStep } from "./components/SelectStep";
-import { UploadStep } from "./components/UploadStep";
+import { MetadataStep } from "./MetadataStep";
+import { PeakStep } from "./PeakStep";
+import { SelectStep } from "./SelectStep";
+import { UploadStep } from "./UploadStep";
 
-export default function UploadPage() {
+interface UploadDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export default function UploadDialog({
+  open,
+  onOpenChange,
+}: UploadDialogProps) {
   const [file, setFile] = useState<File | null>(null);
   const [metadata, setMetadata] = useState<PhotoMetadata>({});
   const [summitPhotoCreate, setSummitPhotoCreate] =
@@ -69,20 +84,22 @@ export default function UploadPage() {
   };
 
   return (
-    <>
-      <h1 className="text-primary mb-8 text-center text-3xl font-bold">
-        Upload Summit Photo
-      </h1>
-
-      <Card className="border-border mx-auto max-w-3xl shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button>
+          <Upload className="size-4" />
+          Upload Summit Photo
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-5xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
             <Upload className="h-6 w-6" />
             <span>Share Your Mountain Adventure</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>{renderStep()}</CardContent>
-      </Card>
-    </>
+          </DialogTitle>
+        </DialogHeader>
+        <div>{renderStep()}</div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export default function CallToAction() {
   return (
     <Button asChild>
-      <Link href="/upload">
+      <Link href="/profile?upload=true">
         <Camera className="h-4 w-4" />
         Share Your Summit
       </Link>
