@@ -9,7 +9,7 @@ import { MessageBlock } from "@/components/common/MessageBlock";
 import CallToAction from "@/components/layout/topbar/CallToAction";
 import { Spinner } from "@/components/ui/spinner";
 
-import { SummitPhotoCard } from "./SummitPhotoCard";
+import { SummitPhotoHoverableCard } from "./SummitPhotoHoverableCard";
 
 interface SummitPhotosGridProps {
   summitPhotos: SummitPhoto[] | undefined;
@@ -45,11 +45,10 @@ export function SummitPhotosGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-0.5 sm:grid-cols-3 lg:grid-cols-4">
       {summitPhotos.map((summitPhoto) => (
-        <SummitPhotoCard
+        <SummitPhotoHoverableCard
           key={summitPhoto.id}
-          className="transition-all duration-200 hover:bg-gray-50 hover:shadow-lg"
           summitPhoto={summitPhoto}
           formatter={formatter}
         />
