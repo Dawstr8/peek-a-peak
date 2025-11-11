@@ -9,6 +9,7 @@ import {
   Sidebar as SidebarUI,
 } from "@/components/ui/sidebar";
 
+import CallToAction from "./sidebar/CallToAction";
 import Logo from "./sidebar/Logo";
 import Navigation from "./sidebar/Navigation";
 import Profile from "./sidebar/Profile";
@@ -28,6 +29,7 @@ export function Sidebar() {
         <Logo />
       </SidebarHeader>
       <SidebarContent>
+        <CallToAction />
         <Navigation items={items} />
       </SidebarContent>
       <SidebarFooter>

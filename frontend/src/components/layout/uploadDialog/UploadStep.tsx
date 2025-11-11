@@ -1,9 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 import { photoMetadataService } from "@/lib/metadata/service";
 import type { Peak } from "@/lib/peaks/types";
@@ -19,6 +16,7 @@ interface UploadStepProps {
   summitPhotoCreate: SummitPhotoCreate;
   selectedPeak: Peak | null;
   back: () => void;
+  next: () => void;
 }
 
 export function UploadStep({
@@ -26,9 +24,8 @@ export function UploadStep({
   summitPhotoCreate,
   selectedPeak,
   back,
+  next,
 }: UploadStepProps) {
-  const router = useRouter();
-
   const { isPending, isError, error, mutate } = useMutation({
     mutationFn: ({
       file,
@@ -38,8 +35,7 @@ export function UploadStep({
       summitPhotoCreate: SummitPhotoCreate | null;
     }) => PhotoClient.uploadPhoto(file, summitPhotoCreate),
     onSuccess: () => {
-      toast.success("Photo uploaded successfully!");
-      router.push("/dashboard");
+      next();
     },
   });
 
