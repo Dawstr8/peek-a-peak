@@ -69,7 +69,7 @@ export default async function Home() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="secondary" asChild size="lg">
-                <Link href="/upload">
+                <Link href="/profile?upload=true">
                   <Camera className="h-4 w-4" />
                   Upload Your Summit
                 </Link>
@@ -123,7 +123,7 @@ export default async function Home() {
             conquests of Polish peaks.
           </p>
           <Button size="lg" asChild variant="secondary">
-            <Link href="/upload">
+            <Link href="/profile?upload=true">
               <Camera className="h-4 w-4" />
               Upload Your First Summit
             </Link>
