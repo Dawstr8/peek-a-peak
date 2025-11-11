@@ -1,13 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Calendar, Camera, Cloud, MapPin, Mountain } from "lucide-react";
+import { Camera, Cloud, MapPin } from "lucide-react";
 
 import { checkIfAuthenticated } from "@/lib/auth/utils";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -15,10 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import peaksData from "@/data/sample-summit-photos.json";
-
-const peaks = peaksData;
 
 const features = [
   {
@@ -67,14 +59,6 @@ export default async function Home() {
               Track and share your conquests of Polish peaks with weather data,
               locations, and beautiful memories.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button variant="secondary" asChild size="lg">
-                <Link href="/profile?upload=true">
-                  <Camera className="h-4 w-4" />
-                  Upload Your Summit
-                </Link>
-              </Button>
-            </div>
           </div>
         </div>
       </section>
@@ -122,12 +106,6 @@ export default async function Home() {
             Join our community of mountain enthusiasts and start tracking your
             conquests of Polish peaks.
           </p>
-          <Button size="lg" asChild variant="secondary">
-            <Link href="/profile?upload=true">
-              <Camera className="h-4 w-4" />
-              Upload Your First Summit
-            </Link>
-          </Button>
         </div>
       </section>
     </>

@@ -5,6 +5,8 @@ import { redirect, usePathname } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthContext";
 import Footer from "@/components/layout/Footer";
 import { Sidebar } from "@/components/layout/Sidebar";
+import UploadDialog from "@/components/layout/UploadDialog";
+import { UploadDialogProvider } from "@/components/layout/UploadDialogContext";
 import {
   SidebarInset,
   SidebarProvider,
@@ -27,17 +29,20 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
-      <Sidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="px-4">
-            <SidebarTrigger />
-          </div>
-        </header>
-        <main className="container mx-auto flex-1 p-10">{children}</main>
-        <Footer />
-      </SidebarInset>
-    </SidebarProvider>
+    <UploadDialogProvider>
+      <SidebarProvider>
+        <Sidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <div className="px-4">
+              <SidebarTrigger />
+            </div>
+          </header>
+          <main className="container mx-auto flex-1 p-10">{children}</main>
+          <Footer />
+        </SidebarInset>
+      </SidebarProvider>
+      <UploadDialog />
+    </UploadDialogProvider>
   );
 }

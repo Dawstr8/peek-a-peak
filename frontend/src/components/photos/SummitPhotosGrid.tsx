@@ -1,12 +1,13 @@
 "use client";
 
-import { Camera } from "lucide-react";
+import { Camera, Plus } from "lucide-react";
 
 import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
 import { MessageBlock } from "@/components/common/MessageBlock";
-import CallToAction from "@/components/layout/topbar/CallToAction";
+import { useUploadDialog } from "@/components/layout/UploadDialogContext";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 import { SummitPhotoHoverableCard } from "./SummitPhotoHoverableCard";
@@ -22,6 +23,8 @@ export function SummitPhotosGrid({
   isLoading,
   formatter,
 }: SummitPhotosGridProps) {
+  const { openDialog } = useUploadDialog();
+
   if (isLoading) {
     return (
       <div className="flex w-full items-center justify-center py-20">
@@ -39,7 +42,10 @@ export function SummitPhotosGrid({
           description="Upload photos from your mountain adventures to create a personal diary of your achievements"
           className="mb-4"
         />
-        <CallToAction />
+        <Button onClick={openDialog}>
+          <Plus />
+          Add your first trip
+        </Button>
       </div>
     );
   }

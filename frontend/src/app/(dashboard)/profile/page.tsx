@@ -1,9 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { useSearchParams } from "next/navigation";
-
 import { useQuery } from "@tanstack/react-query";
 
 import { photoMetadataService } from "@/lib/metadata/service";
@@ -15,16 +11,8 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserAvatar from "@/components/users/UserAvatar";
 
-import UploadDialog from "./components/components/UploadDialog";
-
 export default function ProfilePage() {
   const { user, isLoading } = useAuth();
-  const searchParams = useSearchParams();
-  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-
-  useEffect(() => {
-    if (searchParams.get("upload") === "true") setUploadDialogOpen(true);
-  }, [searchParams]);
 
   const summitPhotosQuery = useQuery({
     queryKey: ["photos", "user", user?.username],
@@ -53,10 +41,6 @@ export default function ProfilePage() {
               <p className="truncate text-xs">{user.email}</p>
             </div>
           </div>
-          <UploadDialog
-            open={uploadDialogOpen}
-            onOpenChange={setUploadDialogOpen}
-          />
         </div>
       )}
       <Separator />

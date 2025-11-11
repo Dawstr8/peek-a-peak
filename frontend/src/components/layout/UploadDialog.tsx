@@ -2,43 +2,37 @@
 
 import { useState } from "react";
 
-import { Upload } from "lucide-react";
+import { Check, Upload } from "lucide-react";
 
 import type { PhotoMetadata } from "@/lib/metadata/types";
 import type { Peak } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
-import { Button } from "@/components/ui/button";
+import { MessageBlock } from "@/components/common/MessageBlock";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { useStepper } from "@/hooks/use-stepper";
 
-import { MetadataStep } from "./MetadataStep";
-import { PeakStep } from "./PeakStep";
-import { SelectStep } from "./SelectStep";
-import { UploadStep } from "./UploadStep";
+import { useUploadDialog } from "./UploadDialogContext";
+import { MetadataStep } from "./uploadDialog/MetadataStep";
+import { PeakStep } from "./uploadDialog/PeakStep";
+import { SelectStep } from "./uploadDialog/SelectStep";
+import { UploadStep } from "./uploadDialog/UploadStep";
 
-interface UploadDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+export default function UploadDialog() {
+  const { isOpen, closeDialog } = useUploadDialog();
 
-export default function UploadDialog({
-  open,
-  onOpenChange,
-}: UploadDialogProps) {
   const [file, setFile] = useState<File | null>(null);
   const [metadata, setMetadata] = useState<PhotoMetadata>({});
   const [summitPhotoCreate, setSummitPhotoCreate] =
     useState<SummitPhotoCreate | null>(null);
   const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
-  const { step, next, back } = useStepper(4);
+  const { step, next, back } = useStepper(5);
 
   const renderStep = () => {
     switch (step) {
@@ -74,9 +68,19 @@ export default function UploadDialog({
                 summitPhotoCreate={summitPhotoCreate}
                 selectedPeak={selectedPeak}
                 back={back}
+                next={next}
               />
             )}
           </>
+        );
+      case 4:
+        return (
+          <MessageBlock
+            iconComponent={Check}
+            title="Upload Successful!"
+            description="Your photo has been uploaded successfully."
+            className="my-8"
+          />
         );
       default:
         return null;
@@ -84,13 +88,7 @@ export default function UploadDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <Upload className="size-4" />
-          Upload Summit Photo
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogContent className="max-w-5xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
