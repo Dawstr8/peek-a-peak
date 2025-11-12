@@ -29,7 +29,7 @@ log_error() {
 trap 'log_error "An error occurred during setup! See above for details."' ERR
 
 log_section "Installing root npm dependencies"
-npm install
+cd dev && npm install && cd ..
 log_success "Root npm dependencies installed successfully"
 
 log_section "Installing backend Python dependencies"
