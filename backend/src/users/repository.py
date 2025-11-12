@@ -35,10 +35,10 @@ class UsersRepository:
         except IntegrityError as e:
             self.db.rollback()
             error_str = str(e).lower()
-            if "unique" in error_str:
-                if "user.email" in error_str:
+            if "duplicate key" in error_str:
+                if "ix_user_email" in error_str:
                     raise ValueError("Email is already in use.")
-                if "user.username" in error_str:
+                if "ix_user_username" in error_str:
                     raise ValueError("Username is already taken.")
             raise
 
