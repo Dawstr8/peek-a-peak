@@ -8,18 +8,6 @@ services:
       - backend
       - frontend
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    command: python3 -m fastapi dev main.py --host 0.0.0.0
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app:cached
-    environment:
-      - PYTHONUNBUFFERED=1
-
   frontend:
     build:
       context: ./frontend
@@ -33,3 +21,36 @@ services:
       - /app/.next
     depends_on:
       - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python3 -m fastapi dev main.py --host 0.0.0.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app:cached
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=postgres
+      - DB_NAME=peek_a_peak
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:18
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=peek_a_peak
+    volumes:
+      - postgresdata:/var/lib/postgresql
+
+volumes:
+  postgresdata:

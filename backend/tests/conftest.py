@@ -4,10 +4,12 @@ from pathlib import Path
 import pytest
 from fastapi import UploadFile
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
 from sqlmodel import Session, SQLModel, create_engine
-from sqlmodel.pool import StaticPool
 from starlette.datastructures import Headers
 
+from config import Config
 from main import app
 from src.database.core import get_db
 from src.uploads.services.local_storage import LocalFileStorage
@@ -59,21 +61,47 @@ def client_with_db(test_db):
     app.dependency_overrides.clear()
 
 
-@pytest.fixture
-def test_db():
-    """
-    Create a test database session with an in-memory SQLite database.
-    """
-    engine = create_engine(
-        "sqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-        echo=False,
-    )
-    SQLModel.metadata.create_all(engine)
+@pytest.fixture(scope="session")
+def db_engine():
+    test_db = "peek_a_peak_test"
+    postgres_url = f"{Config.POSTGRES_SERVER_URL}/postgres"
+    test_url = f"{Config.POSTGRES_SERVER_URL}/{test_db}"
 
-    with Session(engine) as db:
+    engine = create_engine(postgres_url, isolation_level="AUTOCOMMIT")
+    with engine.connect() as conn:
+        conn.execute(text(f"CREATE DATABASE {test_db}"))
+
+    test_engine = create_engine(test_url, echo=True)
+    SQLModel.metadata.create_all(test_engine)
+
+    yield test_engine
+
+    test_engine.dispose()
+
+    with engine.connect() as conn:
+        conn.execute(text(f"DROP DATABASE IF EXISTS {test_db}"))
+
+    engine.dispose()
+
+
+@pytest.fixture
+def test_db(db_engine):
+    """
+    Creates an isolated database session for each test.
+    Uses transactions that rollback after each test to ensure isolation.
+    """
+    connection = db_engine.connect()
+    transaction = connection.begin()
+
+    db = Session(bind=connection)
+
+    try:
         yield db
+    finally:
+        db.close()
+        if transaction.is_active:
+            transaction.rollback()
+        connection.close()
 
 
 @pytest.fixture

@@ -6,13 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from src.api import register_routes
-from src.database.core import create_db_and_tables
+from src.database.core import init_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Creating database tables...")
-    create_db_and_tables()
+    init_db()
     print("Database tables created successfully")
     yield
     pass

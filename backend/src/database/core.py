@@ -1,18 +1,18 @@
-from typing import Annotated
+from typing import Annotated, Generator
 
 from fastapi import Depends
 from sqlmodel import Session, SQLModel, create_engine
 
-DATABASE_URL = "sqlite:///./polish_peaks.db"
+from config import Config
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(Config.DATABASE_URL, echo=True)
 
 
-def create_db_and_tables():
+def init_db() -> None:
     SQLModel.metadata.create_all(engine)
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     with Session(engine) as db:
         yield db
 

@@ -10,9 +10,9 @@ def test_sessions_repository(test_db: Session) -> SessionsRepository:
     return SessionsRepository(test_db)
 
 
-def test_create_session(test_sessions_repository: SessionsRepository):
+def test_create_session(test_sessions_repository: SessionsRepository, db_user):
     """Test creating a new session"""
-    user_id = 1
+    user_id = db_user.id
     expires_in_days = 7
 
     session = test_sessions_repository.create(user_id, expires_in_days)
@@ -22,9 +22,9 @@ def test_create_session(test_sessions_repository: SessionsRepository):
     assert session.is_active
 
 
-def test_get_active_by_id_valid(test_sessions_repository: SessionsRepository):
+def test_get_active_by_id_valid(test_sessions_repository: SessionsRepository, db_user):
     """Test retrieving valid active session by ID"""
-    user_id = 1
+    user_id = db_user.id
     session = test_sessions_repository.create(user_id, expires_in_days=7)
 
     retrieved_session = test_sessions_repository.get_active_by_id(session.id)
@@ -35,9 +35,11 @@ def test_get_active_by_id_valid(test_sessions_repository: SessionsRepository):
     assert retrieved_session.is_active
 
 
-def test_get_active_by_id_expired(test_sessions_repository: SessionsRepository):
+def test_get_active_by_id_expired(
+    test_sessions_repository: SessionsRepository, db_user
+):
     """Test retrieving expired session by ID returns None"""
-    user_id = 1
+    user_id = db_user.id
     session = test_sessions_repository.create(user_id, expires_in_days=0)
 
     retrieved_session = test_sessions_repository.get_active_by_id(session.id)
@@ -45,9 +47,11 @@ def test_get_active_by_id_expired(test_sessions_repository: SessionsRepository):
     assert retrieved_session is None
 
 
-def test_get_active_by_id_invalidated(test_sessions_repository: SessionsRepository):
+def test_get_active_by_id_invalidated(
+    test_sessions_repository: SessionsRepository, db_user
+):
     """Test retrieving invalidated session by ID returns None"""
-    user_id = 1
+    user_id = db_user.id
     session = test_sessions_repository.create(user_id, expires_in_days=7)
     test_sessions_repository.invalidate_by_id(session.id)
 
@@ -56,9 +60,9 @@ def test_get_active_by_id_invalidated(test_sessions_repository: SessionsReposito
     assert retrieved_session is None
 
 
-def test_invalidate_by_id(test_sessions_repository: SessionsRepository):
+def test_invalidate_by_id(test_sessions_repository: SessionsRepository, db_user):
     """Test invalidating a session"""
-    user_id = 1
+    user_id = db_user.id
     session = test_sessions_repository.create(user_id, expires_in_days=7)
 
     test_sessions_repository.invalidate_by_id(session.id)
