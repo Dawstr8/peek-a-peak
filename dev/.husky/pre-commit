@@ -1,1 +1,2 @@
+cd dev
 npx lint-staged --allow-empty
