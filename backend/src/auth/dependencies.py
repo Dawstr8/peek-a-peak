@@ -54,7 +54,7 @@ async def get_current_user(
         )
 
     try:
-        return auth_service.get_current_user(session_id)
+        return await auth_service.get_current_user(session_id)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

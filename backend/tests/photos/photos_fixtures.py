@@ -4,9 +4,10 @@ Photo fixtures for testing across different test types: unit, integration, and e
 
 import json
 from datetime import datetime
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+import pytest_asyncio
 
 from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
@@ -57,30 +58,30 @@ def mock_photos_repository(
     """
     repo = MagicMock(spec=PhotosRepository)
 
-    def save(photo):
+    async def save(photo):
         photo.id = 1
         return photo
 
-    def get_by_id(photo_id):
+    async def get_by_id(photo_id):
         return mock_photo if photo_id in [photo.id for photo in mock_photos] else None
 
-    def get_all(sort_by=None, order=None):
+    async def get_all(sort_by=None, order=None):
         return mock_photos
 
-    def get_by_owner_id(owner_id, sort_by=None, order=None):
+    async def get_by_owner_id(owner_id, sort_by=None, order=None):
         return [photo for photo in mock_photos if photo.owner_id == owner_id]
 
-    repo.save.side_effect = save
-    repo.get_by_id.side_effect = get_by_id
-    repo.get_by_owner_id.side_effect = get_by_owner_id
-    repo.get_all.side_effect = get_all
-    repo.delete.return_value = True
+    repo.save = AsyncMock(side_effect=save)
+    repo.get_by_id = AsyncMock(side_effect=get_by_id)
+    repo.get_by_owner_id = AsyncMock(side_effect=get_by_owner_id)
+    repo.get_all = AsyncMock(side_effect=get_all)
+    repo.delete = AsyncMock(return_value=True)
 
     return repo
 
 
-@pytest.fixture
-def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto]:
+@pytest_asyncio.fixture
+async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto]:
     """
     Creates and returns a list of real photos in the test database.
     This fixture is useful for integration tests that need
@@ -124,14 +125,18 @@ def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto]:
         ),
     ]
 
+    saved_photos = []
     for photo in photos:
-        photos_repo.save(photo)
+        saved_photo = await photos_repo.save(photo)
+        saved_photos.append(saved_photo)
 
-    return photos
+    return saved_photos
 
 
-@pytest.fixture
-def e2e_photos(client_with_db, registered_users, db_peaks, coords_map) -> list[dict]:
+@pytest_asyncio.fixture
+async def e2e_photos(
+    client_with_db, registered_users, db_peaks, coords_map
+) -> list[dict]:
     """
     Creates and returns a list of photos through the API endpoints.
     This fixture is useful for end-to-end tests that need real photos
@@ -179,10 +184,10 @@ def e2e_photos(client_with_db, registered_users, db_peaks, coords_map) -> list[d
     for i in range(2):
         user = registered_users[i]
         photos = photos_data[i]
-        with temporary_login(client_with_db, user["username"], user["password"]):
+        async with temporary_login(client_with_db, user["username"], user["password"]):
             for photo in photos:
-                response = client_with_db.post(
-                    "/api/photos/",
+                response = await client_with_db.post(
+                    "/api/photos",
                     files={"file": photo["file"]},
                     data={
                         "summit_photo_create": json.dumps(photo["summit_photo_create"])

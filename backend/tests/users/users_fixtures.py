@@ -2,9 +2,10 @@
 User fixtures for testing across different test types: unit, integration, and e2e
 """
 
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+import pytest_asyncio
 
 from src.users.models import User
 from src.users.repository import UsersRepository
@@ -41,29 +42,29 @@ def mock_users_repository(mock_user: User):
     """
     repo = MagicMock(spec=UsersRepository)
 
-    def save(user):
+    async def save(user):
         user.id = 1
         return user
 
-    def get_by_email(email):
+    async def get_by_email(email):
         return mock_user if email == mock_user.email else None
 
-    def get_by_id(user_id):
+    async def get_by_id(user_id):
         return mock_user if user_id == mock_user.id else None
 
-    def get_by_username(username):
+    async def get_by_username(username):
         return mock_user if username == mock_user.username else None
 
-    repo.save.side_effect = save
-    repo.get_by_email.side_effect = get_by_email
-    repo.get_by_id.side_effect = get_by_id
-    repo.get_by_username.side_effect = get_by_username
+    repo.save = AsyncMock(side_effect=save)
+    repo.get_by_email = AsyncMock(side_effect=get_by_email)
+    repo.get_by_id = AsyncMock(side_effect=get_by_id)
+    repo.get_by_username = AsyncMock(side_effect=get_by_username)
 
     return repo
 
 
-@pytest.fixture
-def db_users(test_db) -> list[User]:
+@pytest_asyncio.fixture
+async def db_users(test_db) -> list[User]:
     """
     Creates and returns multiple real users in the test database.
     This fixture is useful for integration tests that need
@@ -80,7 +81,12 @@ def db_users(test_db) -> list[User]:
         for i in range(1, 3)
     ]
 
-    return [users_repo.save(user) for user in users]
+    saved_users = []
+    for user in users:
+        saved_user = await users_repo.save(user)
+        saved_users.append(saved_user)
+
+    return saved_users
 
 
 @pytest.fixture

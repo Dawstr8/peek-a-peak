@@ -2,9 +2,10 @@
 Peak fixtures for testing across different test types: unit, integration, and e2e
 """
 
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+import pytest_asyncio
 
 from src.peaks.models import Peak
 from src.peaks.repository import PeaksRepository
@@ -67,24 +68,24 @@ def mock_peaks_repository(mock_peaks_map) -> PeaksRepository:
     """
     repo = MagicMock(spec=PeaksRepository)
 
-    def get_all():
+    async def get_all():
         return [peak for peak in mock_peaks_map.values()]
 
-    def get_by_id(peak_id):
+    async def get_by_id(peak_id):
         for peak in mock_peaks_map.values():
             if peak.id == peak_id:
                 return peak
 
         return None
 
-    repo.get_all.side_effect = get_all
-    repo.get_by_id.side_effect = get_by_id
+    repo.get_all = AsyncMock(side_effect=get_all)
+    repo.get_by_id = AsyncMock(side_effect=get_by_id)
 
     return repo
 
 
-@pytest.fixture
-def db_peaks(test_db) -> list[Peak]:
+@pytest_asyncio.fixture
+async def db_peaks(test_db) -> list[Peak]:
     """
     Creates and returns a list of Peak models in the test database.
     This fixture is useful for integration and e2e tests that require
@@ -117,9 +118,9 @@ def db_peaks(test_db) -> list[Peak]:
     for peak in peaks:
         test_db.add(peak)
 
-    test_db.commit()
+    await test_db.commit()
 
     for peak in peaks:
-        test_db.refresh(peak)
+        await test_db.refresh(peak)
 
     return peaks

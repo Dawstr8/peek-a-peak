@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from sqlmodel import Session, desc, select
+from sqlmodel import desc, select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.photos.models import SummitPhoto
 
@@ -10,7 +11,7 @@ class PhotosRepository:
     Repository for SummitPhoto data access operations.
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         """
         Initialize the PhotosRepository.
 
@@ -19,7 +20,7 @@ class PhotosRepository:
         """
         self.db = db
 
-    def save(self, photo: SummitPhoto) -> SummitPhoto:
+    async def save(self, photo: SummitPhoto) -> SummitPhoto:
         """
         Save a photo to the database.
 
@@ -30,11 +31,11 @@ class PhotosRepository:
             The saved SummitPhoto with database ID assigned
         """
         self.db.add(photo)
-        self.db.commit()
-        self.db.refresh(photo)
+        await self.db.commit()
+        await self.db.refresh(photo)
         return photo
 
-    def get_by_id(self, photo_id: int) -> Optional[SummitPhoto]:
+    async def get_by_id(self, photo_id: int) -> Optional[SummitPhoto]:
         """
         Get a specific photo by ID.
 
@@ -44,9 +45,9 @@ class PhotosRepository:
         Returns:
             SummitPhoto if found, None otherwise
         """
-        return self.db.get(SummitPhoto, photo_id)
+        return await self.db.get(SummitPhoto, photo_id)
 
-    def get_all(
+    async def get_all(
         self, sort_by: Optional[str] = None, order: Optional[str] = None
     ) -> List[SummitPhoto]:
         """
@@ -61,10 +62,10 @@ class PhotosRepository:
         """
         statement = select(SummitPhoto)
         statement = self._apply_sorting(statement, sort_by, order)
-        results = self.db.exec(statement).all()
-        return results
+        result = await self.db.exec(statement)
+        return result.all()
 
-    def get_by_owner_id(
+    async def get_by_owner_id(
         self, owner_id: int, sort_by: Optional[str] = None, order: Optional[str] = None
     ) -> List[SummitPhoto]:
         """
@@ -80,10 +81,10 @@ class PhotosRepository:
         """
         statement = select(SummitPhoto).where(SummitPhoto.owner_id == owner_id)
         statement = self._apply_sorting(statement, sort_by, order)
-        results = self.db.exec(statement).all()
-        return results
+        result = await self.db.exec(statement)
+        return result.all()
 
-    def delete(self, photo_id: int) -> bool:
+    async def delete(self, photo_id: int) -> bool:
         """
         Delete a photo by ID.
 
@@ -93,12 +94,12 @@ class PhotosRepository:
         Returns:
             True if photo was deleted, False if not found
         """
-        photo = self.get_by_id(photo_id)
+        photo = await self.get_by_id(photo_id)
         if not photo:
             return False
 
-        self.db.delete(photo)
-        self.db.commit()
+        await self.db.delete(photo)
+        await self.db.commit()
         return True
 
     def _apply_sorting(

@@ -1,11 +1,12 @@
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 
 import pytest
-from fastapi.testclient import TestClient
+import pytest_asyncio
+from httpx import AsyncClient
 
 
-@pytest.fixture
-def registered_users(client_with_db):
+@pytest_asyncio.fixture
+async def registered_users(client_with_db):
     """Creates and returns a list of registered users for testing"""
     users_data = [
         {
@@ -17,7 +18,7 @@ def registered_users(client_with_db):
     ]
 
     for user_data in users_data:
-        client_with_db.post("/api/auth/register", json=user_data)
+        await client_with_db.post("/api/auth/register", json=user_data)
 
     return users_data
 
@@ -28,14 +29,14 @@ def registered_user(registered_users):
     return registered_users[0]
 
 
-@pytest.fixture
-def logged_in_user(client_with_db, registered_user):
+@pytest_asyncio.fixture
+async def logged_in_user(client_with_db, registered_user):
     """Creates and returns a logged-in user with active session for testing"""
     email = registered_user["email"]
     username = registered_user["username"]
     password = registered_user["password"]
 
-    client_with_db.post(
+    await client_with_db.post(
         "/api/auth/login",
         data={"email_or_username": email, "password": password},
     )
@@ -47,15 +48,15 @@ def logged_in_user(client_with_db, registered_user):
     }
 
 
-@contextmanager
-def temporary_login(client: TestClient, email_or_username: str, password: str):
+@asynccontextmanager
+async def temporary_login(client: AsyncClient, email_or_username: str, password: str):
     """
     Context manager that logs in a user, yields control, then logs out.
 
     Usage:
-        with temporary_login(client, registered_users[0]):
+        async with temporary_login(client, registered_users[0]):
             # Your code here - user is logged in
-            response = client.post("/api/photos/", ...)
+            response = await client.post("/api/photos", ...)
         # User is automatically logged out after the block
 
     Args:
@@ -63,7 +64,7 @@ def temporary_login(client: TestClient, email_or_username: str, password: str):
         email_or_username: The email or username of the user to log in
         password: The password of the user to log in
     """
-    client.post(
+    await client.post(
         "/api/auth/login",
         data={
             "email_or_username": email_or_username,
@@ -74,4 +75,4 @@ def temporary_login(client: TestClient, email_or_username: str, password: str):
     try:
         yield client
     finally:
-        client.post("/api/auth/logout")
+        await client.post("/api/auth/logout")

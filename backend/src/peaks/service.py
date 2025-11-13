@@ -24,16 +24,16 @@ class PeaksService:
         """
         self.peaks_repository = peaks_repository
 
-    def get_all(self) -> List[Peak]:
+    async def get_all(self) -> List[Peak]:
         """
         Retrieve all peaks.
 
         Returns:
             List of all peaks
         """
-        return self.peaks_repository.get_all()
+        return await self.peaks_repository.get_all()
 
-    def get_by_id(self, peak_id: int) -> Optional[Peak]:
+    async def get_by_id(self, peak_id: int) -> Optional[Peak]:
         """
         Get a specific peak by ID.
 
@@ -43,9 +43,9 @@ class PeaksService:
         Returns:
             Peak if found, None otherwise
         """
-        return self.peaks_repository.get_by_id(peak_id)
+        return await self.peaks_repository.get_by_id(peak_id)
 
-    def find_nearest_peaks(
+    async def find_nearest_peaks(
         self,
         latitude: float,
         longitude: float,
@@ -63,7 +63,7 @@ class PeaksService:
         Returns:
             List of dictionaries containing peak and its distance from the point
         """
-        peaks = self.peaks_repository.get_all()
+        peaks = await self.peaks_repository.get_all()
 
         if not peaks:
             return []

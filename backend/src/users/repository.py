@@ -1,4 +1,5 @@
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.users.models import User
 
@@ -8,7 +9,7 @@ class UsersRepository:
     Repository for User data access operations.
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         """
         Initialize the UsersRepository.
 
@@ -17,7 +18,7 @@ class UsersRepository:
         """
         self.db = db
 
-    def save(self, user: User) -> User:
+    async def save(self, user: User) -> User:
         """
         Save a user to the database. Raises ValueError if email already exists.
 
@@ -31,9 +32,9 @@ class UsersRepository:
 
         self.db.add(user)
         try:
-            self.db.commit()
+            await self.db.commit()
         except IntegrityError as e:
-            self.db.rollback()
+            await self.db.rollback()
             error_str = str(e).lower()
             if "duplicate key" in error_str:
                 if "ix_user_email" in error_str:
@@ -42,10 +43,10 @@ class UsersRepository:
                     raise ValueError("Username is already taken.")
             raise
 
-        self.db.refresh(user)
+        await self.db.refresh(user)
         return user
 
-    def get_by_id(self, user_id: int) -> User | None:
+    async def get_by_id(self, user_id: int) -> User | None:
         """
         Get a user by ID.
 
@@ -57,9 +58,10 @@ class UsersRepository:
         """
         statement = select(User).where(User.id == user_id)
 
-        return self.db.exec(statement).first()
+        result = await self.db.exec(statement)
+        return result.first()
 
-    def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> User | None:
         """
         Get a user by email.
 
@@ -71,9 +73,10 @@ class UsersRepository:
         """
         statement = select(User).where(User.email == email)
 
-        return self.db.exec(statement).first()
+        result = await self.db.exec(statement)
+        return result.first()
 
-    def get_by_username(self, username: str) -> User | None:
+    async def get_by_username(self, username: str) -> User | None:
         """
         Get a user by username.
 
@@ -85,4 +88,5 @@ class UsersRepository:
         """
         statement = select(User).where(User.username == username)
 
-        return self.db.exec(statement).first()
+        result = await self.db.exec(statement)
+        return result.first()

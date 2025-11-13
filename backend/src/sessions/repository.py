@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from uuid import UUID
 
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.sessions.models import Session as UserSession
 
@@ -11,7 +12,7 @@ class SessionsRepository:
     Repository for managing user sessions.
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         """
         Initialize the SessionsRepository.
 
@@ -20,7 +21,7 @@ class SessionsRepository:
         """
         self.db = db
 
-    def create(self, user_id: int, expires_in_days: int) -> UserSession:
+    async def create(self, user_id: int, expires_in_days: int) -> UserSession:
         """
         Create a new user session.
 
@@ -37,12 +38,12 @@ class SessionsRepository:
         )
 
         self.db.add(session)
-        self.db.commit()
-        self.db.refresh(session)
+        await self.db.commit()
+        await self.db.refresh(session)
 
         return session
 
-    def get_active_by_id(self, session_id: UUID) -> UserSession | None:
+    async def get_active_by_id(self, session_id: UUID) -> UserSession | None:
         """
         Get an active session by ID.
 
@@ -58,17 +59,18 @@ class SessionsRepository:
             UserSession.expires_at > datetime.utcnow(),
         )
 
-        return self.db.exec(statement).first()
+        result = await self.db.exec(statement)
+        return result.first()
 
-    def invalidate_by_id(self, session_id: UUID) -> None:
+    async def invalidate_by_id(self, session_id: UUID) -> None:
         """
         Invalidate a session.
 
         Args:
             session_id: UUID of the session to invalidate
         """
-        session = self.get_active_by_id(session_id)
+        session = await self.get_active_by_id(session_id)
 
         if session:
             session.is_active = False
-            self.db.commit()
+            await self.db.commit()
