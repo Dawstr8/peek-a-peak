@@ -17,7 +17,8 @@ def test_photos_repository(test_db):
     return PhotosRepository(test_db)
 
 
-def test_save(test_photos_repository, db_peaks, db_user):
+@pytest.mark.asyncio
+async def test_save(test_photos_repository, db_peaks, db_user):
     """Test saving a new summit photo"""
     new_photo = SummitPhoto(
         owner_id=db_user.id,
@@ -30,7 +31,7 @@ def test_save(test_photos_repository, db_peaks, db_user):
         peak_id=db_peaks[0].id,
     )
 
-    saved_photo = test_photos_repository.save(new_photo)
+    saved_photo = await test_photos_repository.save(new_photo)
 
     assert saved_photo.id is not None
     assert saved_photo.file_name == "new_photo.jpg"
@@ -43,11 +44,12 @@ def test_save(test_photos_repository, db_peaks, db_user):
     assert saved_photo.peak.id == db_peaks[0].id
 
 
-def test_get_by_id(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_get_by_id(test_photos_repository, db_photos):
     """Test retrieving a summit photo by ID"""
     photo_id = db_photos[0].id
 
-    photo = test_photos_repository.get_by_id(photo_id)
+    photo = await test_photos_repository.get_by_id(photo_id)
 
     assert photo is not None
     assert photo.file_name == db_photos[0].file_name
@@ -57,16 +59,18 @@ def test_get_by_id(test_photos_repository, db_photos):
     assert photo.peak.id == db_photos[0].peak_id
 
 
-def test_get_by_id_non_existent(test_photos_repository):
+@pytest.mark.asyncio
+async def test_get_by_id_non_existent(test_photos_repository):
     """Test retrieving a non-existent summit photo by ID"""
-    non_existent_photo = test_photos_repository.get_by_id(999999)
+    non_existent_photo = await test_photos_repository.get_by_id(999999)
 
     assert non_existent_photo is None
 
 
-def test_get_all(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_get_all(test_photos_repository, db_photos):
     """Test retrieving all summit photos"""
-    photos = test_photos_repository.get_all()
+    photos = await test_photos_repository.get_all()
 
     assert photos is not None
     assert len(photos) == 3
@@ -84,19 +88,25 @@ def test_get_all(test_photos_repository, db_photos):
     assert first_photo.peak.id == db_photos[0].peak_id
 
 
-def test_get_all_with_sorting(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_get_all_with_sorting(test_photos_repository, db_photos):
     """Test retrieving all summit photos with sorting parameters"""
-    photos_asc = test_photos_repository.get_all(sort_by="captured_at", order="asc")
-    photos_desc = test_photos_repository.get_all(sort_by="captured_at", order="desc")
+    photos_asc = await test_photos_repository.get_all(
+        sort_by="captured_at", order="asc"
+    )
+    photos_desc = await test_photos_repository.get_all(
+        sort_by="captured_at", order="desc"
+    )
 
     assert len(photos_asc) == 3
     assert len(photos_desc) == 3
     assert photos_asc[0].id != photos_desc[0].id
 
 
-def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
+@pytest.mark.asyncio
+async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
     """Test retrieving all summit photos"""
-    photos = test_photos_repository.get_by_owner_id(db_user.id)
+    photos = await test_photos_repository.get_by_owner_id(db_user.id)
 
     assert photos is not None
     assert len(photos) == 2
@@ -113,12 +123,13 @@ def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
     assert first_photo.peak.id == db_photos[0].peak_id
 
 
-def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, db_user):
+@pytest.mark.asyncio
+async def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, db_user):
     """Test retrieving all summit photos with sorting parameters"""
-    photos_asc = test_photos_repository.get_by_owner_id(
+    photos_asc = await test_photos_repository.get_by_owner_id(
         owner_id=db_user.id, sort_by="captured_at", order="asc"
     )
-    photos_desc = test_photos_repository.get_by_owner_id(
+    photos_desc = await test_photos_repository.get_by_owner_id(
         owner_id=db_user.id, sort_by="captured_at", order="desc"
     )
 
@@ -127,26 +138,30 @@ def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, db_user
     assert photos_asc[0].id != photos_desc[0].id
 
 
-def test_delete(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_delete(test_photos_repository, db_photos):
     """Test deleting a summit photo"""
     photo_id = db_photos[0].id
-    photo = test_photos_repository.get_by_id(photo_id)
+    photo = await test_photos_repository.get_by_id(photo_id)
     assert photo is not None
 
-    result = test_photos_repository.delete(photo_id)
+    result = await test_photos_repository.delete(photo_id)
     assert result is True
 
-    photo = test_photos_repository.get_by_id(photo_id)
+    photo = await test_photos_repository.get_by_id(photo_id)
     assert photo is None
 
 
-def test_delete_non_existent(test_photos_repository):
+@pytest.mark.asyncio
+async def test_delete_non_existent(test_photos_repository):
     """Test deleting a non-existent summit photo"""
-    result = test_photos_repository.delete(999999)
+    result = await test_photos_repository.delete(999999)
+
     assert result is False
 
 
-def test_apply_sorting_asc(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_apply_sorting_asc(test_photos_repository, db_photos):
     """Test applying ascending sort to a statement"""
     statement = select(SummitPhoto)
 
@@ -154,12 +169,13 @@ def test_apply_sorting_asc(test_photos_repository, db_photos):
         statement, sort_by="captured_at", order="asc"
     )
 
-    photos = test_photos_repository.db.exec(sorted_statement).all()
+    photos = (await test_photos_repository.db.exec(sorted_statement)).all()
     captured_times = [p.captured_at for p in photos if p.captured_at is not None]
     assert captured_times == sorted(captured_times)
 
 
-def test_apply_sorting_desc(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_apply_sorting_desc(test_photos_repository, db_photos):
     """Test applying descending sort to a statement"""
     statement = select(SummitPhoto)
 
@@ -167,22 +183,24 @@ def test_apply_sorting_desc(test_photos_repository, db_photos):
         statement, sort_by="captured_at", order="desc"
     )
 
-    photos = test_photos_repository.db.exec(sorted_statement).all()
+    photos = (await test_photos_repository.db.exec(sorted_statement)).all()
     captured_times = [p.captured_at for p in photos if p.captured_at is not None]
     assert captured_times == sorted(captured_times, reverse=True)
 
 
-def test_apply_sorting_no_sort(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_apply_sorting_no_sort(test_photos_repository, db_photos):
     """Test that no sorting is applied when sort_by is None"""
     statement = select(SummitPhoto)
 
     result_statement = test_photos_repository._apply_sorting(statement)
 
-    photos = test_photos_repository.db.exec(result_statement).all()
+    photos = (await test_photos_repository.db.exec(result_statement)).all()
     assert len(photos) == 3
 
 
-def test_apply_sorting_invalid_column(test_photos_repository, db_photos):
+@pytest.mark.asyncio
+async def test_apply_sorting_invalid_column(test_photos_repository, db_photos):
     """Test that invalid column names are ignored"""
     statement = select(SummitPhoto)
 
@@ -190,5 +208,5 @@ def test_apply_sorting_invalid_column(test_photos_repository, db_photos):
         statement, sort_by="invalid_column", order="desc"
     )
 
-    photos = test_photos_repository.db.exec(result_statement).all()
+    photos = (await test_photos_repository.db.exec(result_statement)).all()
     assert len(photos) == 3

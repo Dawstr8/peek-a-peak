@@ -12,7 +12,7 @@ from src.database.core import init_db
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Creating database tables...")
-    init_db()
+    await init_db()
     print("Database tables created successfully")
     yield
     pass

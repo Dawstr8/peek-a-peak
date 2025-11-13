@@ -55,7 +55,7 @@ class PhotosService:
             **summit_photo_create.model_dump(),
         )
 
-        saved_photo = self.photos_repository.save(photo)
+        saved_photo = await self.photos_repository.save(photo)
 
         return saved_photo
 
@@ -69,7 +69,7 @@ class PhotosService:
         Returns:
             SummitPhoto with peak information if found, None otherwise
         """
-        return self.photos_repository.get_by_id(photo_id)
+        return await self.photos_repository.get_by_id(photo_id)
 
     async def get_all_photos(
         self, sort_by: Optional[str] = None, order: Optional[str] = None
@@ -84,7 +84,7 @@ class PhotosService:
         Returns:
             List[SummitPhoto]: List of all photos with peak information
         """
-        return self.photos_repository.get_all(sort_by=sort_by, order=order)
+        return await self.photos_repository.get_all(sort_by=sort_by, order=order)
 
     async def get_photos_by_user(
         self, username: str, sort_by: Optional[str] = None, order: Optional[str] = None
@@ -100,9 +100,9 @@ class PhotosService:
         Returns:
             List[SummitPhoto]: List of photos uploaded by the specified user with peak information
         """
-        user = self.users_repository.get_by_username(username)
+        user = await self.users_repository.get_by_username(username)
 
-        return self.photos_repository.get_by_owner_id(
+        return await self.photos_repository.get_by_owner_id(
             user.id, sort_by=sort_by, order=order
         )
 
@@ -116,14 +116,14 @@ class PhotosService:
         Returns:
             bool: True if deletion was successful
         """
-        photo = self.photos_repository.get_by_id(photo_id)
+        photo = await self.photos_repository.get_by_id(photo_id)
         if not photo:
             return False
 
         file_deleted = await self.uploads_service.delete_file(photo.file_name)
 
         if file_deleted:
-            db_deleted = self.photos_repository.delete(photo_id)
+            db_deleted = await self.photos_repository.delete(photo_id)
             return db_deleted
 
         return False

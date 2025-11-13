@@ -13,9 +13,10 @@ def mock_peaks_service(mock_peaks_repository) -> PeaksService:
     return PeaksService(mock_peaks_repository)
 
 
-def test_get_all(mock_peaks_service, mock_peaks_repository):
+@pytest.mark.asyncio
+async def test_get_all(mock_peaks_service, mock_peaks_repository):
     """Test getting all peaks through the service"""
-    peaks = mock_peaks_service.get_all()
+    peaks = await mock_peaks_service.get_all()
 
     assert len(peaks) == 3
     assert peaks[0].name == "Rysy"
@@ -25,9 +26,10 @@ def test_get_all(mock_peaks_service, mock_peaks_repository):
     mock_peaks_repository.get_all.assert_called_once()
 
 
-def test_get_by_id(mock_peaks_map, mock_peaks_service, mock_peaks_repository):
+@pytest.mark.asyncio
+async def test_get_by_id(mock_peaks_map, mock_peaks_service, mock_peaks_repository):
     """Test getting a specific peak by ID through the service"""
-    peak = mock_peaks_service.get_by_id(mock_peaks_map["rysy"].id)
+    peak = await mock_peaks_service.get_by_id(mock_peaks_map["rysy"].id)
 
     assert peak is not None
     assert peak.id == mock_peaks_map["rysy"].id
@@ -36,18 +38,22 @@ def test_get_by_id(mock_peaks_map, mock_peaks_service, mock_peaks_repository):
     mock_peaks_repository.get_by_id.assert_called_once_with(1)
 
 
-def test_get_by_id_not_found(mock_peaks_service, mock_peaks_repository):
+@pytest.mark.asyncio
+async def test_get_by_id_not_found(mock_peaks_service, mock_peaks_repository):
     """Test getting a peak by ID when it doesn't exist"""
-    peak = mock_peaks_service.get_by_id(999)
+    peak = await mock_peaks_service.get_by_id(999)
 
     assert peak is None
 
     mock_peaks_repository.get_by_id.assert_called_once_with(999)
 
 
-def test_find_nearest_peaks(coords_map, mock_peaks_service, mock_peaks_repository):
+@pytest.mark.asyncio
+async def test_find_nearest_peaks(
+    coords_map, mock_peaks_service, mock_peaks_repository
+):
     """Test finding the nearest peaks"""
-    results = mock_peaks_service.find_nearest_peaks(
+    results = await mock_peaks_service.find_nearest_peaks(
         latitude=coords_map["near_rysy"][0],
         longitude=coords_map["near_rysy"][1],
         limit=5,
@@ -65,11 +71,12 @@ def test_find_nearest_peaks(coords_map, mock_peaks_service, mock_peaks_repositor
     mock_peaks_repository.get_all.assert_called_once()
 
 
-def test_find_nearest_peaks_respects_limit(
+@pytest.mark.asyncio
+async def test_find_nearest_peaks_respects_limit(
     coords_map, mock_peaks_service, mock_peaks_repository
 ):
     """Test that the limit parameter correctly limits the number of results"""
-    results = mock_peaks_service.find_nearest_peaks(
+    results = await mock_peaks_service.find_nearest_peaks(
         latitude=coords_map["near_rysy"][0],
         longitude=coords_map["near_rysy"][1],
         limit=2,
@@ -81,12 +88,13 @@ def test_find_nearest_peaks_respects_limit(
     mock_peaks_repository.get_all.assert_called_once()
 
 
-def test_find_nearest_peaks_with_max_distance(
+@pytest.mark.asyncio
+async def test_find_nearest_peaks_with_max_distance(
     coords_map, mock_peaks_service, mock_peaks_repository
 ):
     """Test that max_distance parameter filters peaks correctly"""
 
-    results = mock_peaks_service.find_nearest_peaks(
+    results = await mock_peaks_service.find_nearest_peaks(
         latitude=coords_map["near_rysy"][0],
         longitude=coords_map["near_rysy"][1],
         max_distance=100,
@@ -99,11 +107,12 @@ def test_find_nearest_peaks_with_max_distance(
     mock_peaks_repository.get_all.assert_called()
 
 
-def test_find_nearest_peaks_max_distance_none(
+@pytest.mark.asyncio
+async def test_find_nearest_peaks_max_distance_none(
     coords_map, mock_peaks_service, mock_peaks_repository
 ):
     """Test that max_distance=None includes all peaks"""
-    results = mock_peaks_service.find_nearest_peaks(
+    results = await mock_peaks_service.find_nearest_peaks(
         latitude=coords_map["near_rysy"][0],
         longitude=coords_map["near_rysy"][1],
         max_distance=None,

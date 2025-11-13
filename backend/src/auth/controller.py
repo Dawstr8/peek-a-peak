@@ -75,7 +75,7 @@ async def login_with_session(
         HTTPException: If credentials are invalid
     """
     try:
-        session_id = auth_service.login_user(email_or_username, password)
+        session_id = await auth_service.login_user(email_or_username, password)
 
     except ValueError:
         raise HTTPException(
@@ -113,7 +113,7 @@ async def logout_session(
         Success message
     """
     if session_id:
-        auth_service.logout_user(session_id=session_id)
+        await auth_service.logout_user(session_id=session_id)
 
     response.delete_cookie(key="session_id")
     return {"message": "Logout successful"}

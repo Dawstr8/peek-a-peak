@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.peaks.models import Peak
 
@@ -10,7 +11,7 @@ class PeaksRepository:
     Repository for Peak data access operations.
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         """
         Initialize the PeaksRepository.
 
@@ -19,7 +20,7 @@ class PeaksRepository:
         """
         self.db = db
 
-    def get_all(self) -> List[Peak]:
+    async def get_all(self) -> List[Peak]:
         """
         Retrieve all peaks.
 
@@ -27,9 +28,10 @@ class PeaksRepository:
             List of all peaks
         """
         query = select(Peak)
-        return self.db.exec(query).all()
+        result = await self.db.exec(query)
+        return result.all()
 
-    def get_by_id(self, peak_id: int) -> Optional[Peak]:
+    async def get_by_id(self, peak_id: int) -> Optional[Peak]:
         """
         Get a specific peak by ID.
 
@@ -39,4 +41,4 @@ class PeaksRepository:
         Returns:
             Peak if found, None otherwise
         """
-        return self.db.get(Peak, peak_id)
+        return await self.db.get(Peak, peak_id)

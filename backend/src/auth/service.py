@@ -29,7 +29,9 @@ class AuthService:
         self.sessions_repository = sessions_repository
         self.password_service = password_service
 
-    def authenticate_user(self, email_or_username: str, password: str) -> User | None:
+    async def authenticate_user(
+        self, email_or_username: str, password: str
+    ) -> User | None:
         """
         Authenticate a user by email/username and password.
 
@@ -42,9 +44,9 @@ class AuthService:
         """
 
         user = (
-            self.users_repository.get_by_email(email_or_username)
+            await self.users_repository.get_by_email(email_or_username)
             if "@" in email_or_username
-            else self.users_repository.get_by_username(email_or_username)
+            else await self.users_repository.get_by_username(email_or_username)
         )
 
         if not user:
@@ -68,9 +70,9 @@ class AuthService:
         hashed_password = self.password_service.get_hash(user_create.password)
         user = User(hashed_password=hashed_password, **user_create.model_dump())
 
-        return self.users_repository.save(user)
+        return await self.users_repository.save(user)
 
-    def login_user(self, email_or_username: str, password: str) -> UUID:
+    async def login_user(self, email_or_username: str, password: str) -> UUID:
         """
         Log in a user by authenticating their credentials and creating a new session.
 
@@ -84,23 +86,23 @@ class AuthService:
         Raises:
             ValueError: If credentials are invalid
         """
-        user = self.authenticate_user(email_or_username, password)
+        user = await self.authenticate_user(email_or_username, password)
         if not user:
             raise ValueError("Invalid credentials")
 
-        session = self.sessions_repository.create(user.id, expires_in_days=30)
+        session = await self.sessions_repository.create(user.id, expires_in_days=30)
         return session.id
 
-    def logout_user(self, session_id: UUID) -> None:
+    async def logout_user(self, session_id: UUID) -> None:
         """
         Log out a user by invalidating their session.
 
         Args:
             session_id: UUID of the session to invalidate
         """
-        self.sessions_repository.invalidate_by_id(session_id)
+        await self.sessions_repository.invalidate_by_id(session_id)
 
-    def get_current_user(self, session_id: UUID) -> User:
+    async def get_current_user(self, session_id: UUID) -> User:
         """
         Get the current authenticated user from a session ID.
 
@@ -112,11 +114,11 @@ class AuthService:
         Raises:
             ValueError: If session is invalid or expired
         """
-        session = self.sessions_repository.get_active_by_id(session_id)
+        session = await self.sessions_repository.get_active_by_id(session_id)
         if not session:
             raise ValueError("Invalid or expired session")
 
-        user = self.users_repository.get_by_id(session.user_id)
+        user = await self.users_repository.get_by_id(session.user_id)
         if not user:
             raise ValueError("User not found")
 
