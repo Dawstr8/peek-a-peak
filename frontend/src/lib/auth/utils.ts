@@ -6,7 +6,8 @@ export async function checkIfAuthenticated(): Promise<boolean> {
   const sessionCookie = cookieStore.get("session_id");
   if (!sessionCookie) return false;
 
-  const response = await fetch("http://backend:8000/api/auth/me", {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const response = await fetch(`${baseUrl}/api/auth/me`, {
     headers: {
       Cookie: `session_id=${sessionCookie.value}`,
     },

@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[Peak], tags=["peaks"])
+@router.get("", response_model=list[Peak], tags=["peaks"])
 def get_peaks(service: peaks_service_dep):
     """
     Retrieve all peaks.

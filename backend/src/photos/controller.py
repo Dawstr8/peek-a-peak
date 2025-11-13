@@ -9,7 +9,7 @@ from src.photos.models import SummitPhotoCreate, SummitPhotoRead
 router = APIRouter(prefix="/api/photos", tags=["photos"])
 
 
-@router.get("/", response_model=List[SummitPhotoRead], tags=["photos"])
+@router.get("", response_model=List[SummitPhotoRead], tags=["photos"])
 async def get_all_photos(
     photos_service: photos_service_dep,
     sort_by: Optional[str] = Query(None, description="Field to sort by"),
@@ -67,7 +67,7 @@ async def get_user_photos(
         )
 
 
-@router.post("/", response_model=SummitPhotoRead, tags=["photos"])
+@router.post("", response_model=SummitPhotoRead, tags=["photos"])
 async def upload_photo(
     photos_service: photos_service_dep,
     current_user: current_user_dep,
