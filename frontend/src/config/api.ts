@@ -7,10 +7,9 @@
  * Base API URL
  * @description This is the base URL for all API requests
  */
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+export const API_BASE_URL = "/api";
 
-export const UPLOADS_BASE_URL =
-  process.env.NEXT_PUBLIC_UPLOADS_BASE_URL || "/uploads/";
+export const UPLOADS_BASE_URL = "/uploads/";
 
 /**
  * API endpoints
