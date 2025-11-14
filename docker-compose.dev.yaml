@@ -43,7 +43,9 @@ services:
       - postgres
 
   postgres:
-    image: postgres:18
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "5432:5432"
@@ -52,6 +54,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=peek_a_peak
     volumes:
+      - ./postgres/init-postgis.sql:/docker-entrypoint-initdb.d/init-postgis.sql
       - postgresdata:/var/lib/postgresql
 
 volumes:

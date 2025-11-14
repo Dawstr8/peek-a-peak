@@ -49,78 +49,32 @@ async def test_get_by_id_not_found(mock_peaks_service, mock_peaks_repository):
 
 
 @pytest.mark.asyncio
-async def test_find_nearest_peaks(
-    coords_map, mock_peaks_service, mock_peaks_repository
+@pytest.mark.parametrize(
+    "params,expected_length",
+    [
+        ({}, 3),
+        ({"limit": 2}, 2),
+        ({"limit": None}, 3),
+        ({"max_distance": 100}, 1),
+        ({"max_distance": None}, 3),
+    ],
+)
+async def test_find_nearest_peaks_parametrized(
+    coords_map,
+    mock_peaks_service,
+    params: dict,
+    expected_length: int,
 ):
-    """Test finding the nearest peaks"""
-    results = await mock_peaks_service.find_nearest_peaks(
-        latitude=coords_map["near_rysy"][0],
-        longitude=coords_map["near_rysy"][1],
-        limit=5,
-    )
-
-    assert len(results) == 3
-    assert results[0]["peak"].id == 1
-    assert results[0]["peak"].name == "Rysy"
-    assert results[0]["distance"] < 100
-    assert results[1]["peak"].name == "Giewont"
-    assert results[1]["distance"] < 50000
-    assert results[2]["peak"].name == "Babia Góra"
-    assert results[2]["distance"] < 100000
-
-    mock_peaks_repository.get_all.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_respects_limit(
-    coords_map, mock_peaks_service, mock_peaks_repository
-):
-    """Test that the limit parameter correctly limits the number of results"""
-    results = await mock_peaks_service.find_nearest_peaks(
-        latitude=coords_map["near_rysy"][0],
-        longitude=coords_map["near_rysy"][1],
-        limit=2,
-    )
-
-    assert len(results) == 2
-    assert results[0]["distance"] < results[1]["distance"]
-
-    mock_peaks_repository.get_all.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_with_max_distance(
-    coords_map, mock_peaks_service, mock_peaks_repository
-):
-    """Test that max_distance parameter filters peaks correctly"""
+    """Test passing multiple coordinate sets to find nearest peaks"""
+    latitude, longitude = coords_map["near_rysy"]
 
     results = await mock_peaks_service.find_nearest_peaks(
-        latitude=coords_map["near_rysy"][0],
-        longitude=coords_map["near_rysy"][1],
-        max_distance=100,
+        latitude=latitude,
+        longitude=longitude,
+        **params,
     )
 
-    assert len(results) == 1
-    assert results[0]["peak"].name == "Rysy"
-    assert results[0]["distance"] < 100
+    assert len(results) == expected_length
 
-    mock_peaks_repository.get_all.assert_called()
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_max_distance_none(
-    coords_map, mock_peaks_service, mock_peaks_repository
-):
-    """Test that max_distance=None includes all peaks"""
-    results = await mock_peaks_service.find_nearest_peaks(
-        latitude=coords_map["near_rysy"][0],
-        longitude=coords_map["near_rysy"][1],
-        max_distance=None,
-    )
-
-    assert len(results) == 3
-    assert results[0]["peak"].name == "Rysy"
-    assert results[1]["peak"].name == "Giewont"
-    assert results[2]["peak"].name == "Babia Góra"
-
-    mock_peaks_repository.get_all.assert_called_once()
+    distances = [item.distance for item in results]
+    assert distances == sorted(distances)

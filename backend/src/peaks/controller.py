@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from src.peaks.dependencies import peaks_service_dep
-from src.peaks.models import Peak, PeakWithDistance
+from src.peaks.models import ReadPeak, ReadPeakWithDistance
 
 router = APIRouter(
     prefix="/api/peaks",
@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=list[Peak], tags=["peaks"])
+@router.get("", response_model=list[ReadPeak], tags=["peaks"])
 async def get_peaks(service: peaks_service_dep):
     """
     Retrieve all peaks.
@@ -17,7 +17,7 @@ async def get_peaks(service: peaks_service_dep):
     return await service.get_all()
 
 
-@router.get("/find", response_model=list[PeakWithDistance], tags=["peaks"])
+@router.get("/find", response_model=list[ReadPeakWithDistance], tags=["peaks"])
 async def find_nearest_peaks(
     service: peaks_service_dep,
     latitude: float,
@@ -42,7 +42,7 @@ async def find_nearest_peaks(
     )
 
 
-@router.get("/{peak_id}", response_model=Peak, tags=["peaks"])
+@router.get("/{peak_id}", response_model=ReadPeak, tags=["peaks"])
 async def get_peak(peak_id: int, service: peaks_service_dep):
     """
     Get a specific peak by ID.

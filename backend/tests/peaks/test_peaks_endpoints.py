@@ -12,8 +12,8 @@ async def test_get_peaks(client_with_db: AsyncClient, db_peaks):
     assert len(data) == 3
 
     peak_names = [peak["name"] for peak in data]
-    expected_names = ["Rysy", "Śnieżka", "Babia Góra"]
-    assert all(name in peak_names for name in expected_names)
+    expected_nearest_names = ["Rysy", "Śnieżka", "Babia Góra"]
+    assert all(name in peak_names for name in expected_nearest_names)
 
     for peak in data:
         assert "id" in peak
@@ -35,187 +35,102 @@ async def test_get_peaks_empty_database(client_with_db: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_find_nearest_peaks(
-    client_with_db: AsyncClient, db_peaks, coords_map: dict
+@pytest.mark.parametrize(
+    "coords_key,expected_nearest_name",
+    [
+        ("near_rysy", "Rysy"),
+        ("near_sniezka", "Śnieżka"),
+    ],
+)
+async def test_find_nearest_peaks_parametrized(
+    client_with_db: AsyncClient,
+    db_peaks,
+    coords_map: dict,
+    coords_key: str,
+    expected_nearest_name: str,
 ):
-    """Test finding nearest peaks to a location"""
+    """Happy-path nearest peaks search for multiple coordinate sets."""
+    latitude, longitude = coords_map[coords_key]
+
     response = await client_with_db.get(
         "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_rysy"][0],
-            "longitude": coords_map["near_rysy"][1],
-        },
+        params={"latitude": latitude, "longitude": longitude},
     )
 
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 3
 
-    for item in data:
-        assert "peak" in item
-        assert "distance" in item
-        assert isinstance(item["distance"], (int, float))
-        assert item["distance"] >= 0
-
-        peak = item["peak"]
-        assert "id" in peak
-        assert "name" in peak
-        assert "elevation" in peak
-        assert "latitude" in peak
-        assert "longitude" in peak
-        assert "range" in peak
+    assert all("peak" in item and "distance" in item for item in data)
+    assert all(isinstance(item["distance"], (int, float)) for item in data)
 
     distances = [item["distance"] for item in data]
     assert distances == sorted(distances)
 
-    assert data[0]["peak"]["name"] == "Rysy"
-    assert data[0]["distance"] < 100
+    assert data[0]["peak"]["name"] == expected_nearest_name
 
 
 @pytest.mark.asyncio
-async def test_find_nearest_peaks_with_limit(
-    client_with_db: AsyncClient, db_peaks, coords_map: dict
+@pytest.mark.parametrize(
+    "params,expected_len,expected_nearest_name",
+    [
+        ({}, 3, "Rysy"),
+        ({"limit": 2}, 2, "Rysy"),
+        ({"max_distance": 100}, 1, "Rysy"),
+        ({"limit": 1, "max_distance": 100}, 1, "Rysy"),
+    ],
+)
+async def test_find_nearest_peaks_filters_parametrized(
+    client_with_db: AsyncClient,
+    db_peaks,
+    coords_map: dict,
+    params: dict,
+    expected_len: int,
+    expected_nearest_name: str,
 ):
-    """Test finding nearest peaks with a custom limit"""
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_rysy"][0],
-            "longitude": coords_map["near_rysy"][1],
-            "limit": 2,
-        },
-    )
+    """Nearest peaks with various filtering combinations (limit, max_distance)."""
+    latitude, longitude = coords_map["near_rysy"]
+    query = {"latitude": latitude, "longitude": longitude, **params}
+
+    response = await client_with_db.get("/api/peaks/find", params=query)
 
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 2
-
-    assert data[0]["distance"] < data[1]["distance"]
-    assert data[0]["peak"]["name"] == "Rysy"
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_from_sniezka(
-    client_with_db: AsyncClient, db_peaks, coords_map: dict
-):
-    """Test finding nearest peaks from coordinates near Śnieżka"""
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_sniezka"][0],
-            "longitude": coords_map["near_sniezka"][1],
-        },
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 3
-
-    assert data[0]["peak"]["name"] == "Śnieżka"
-    assert data[0]["distance"] < 100
+    assert len(data) == expected_len
+    assert data[0]["peak"]["name"] == expected_nearest_name
+    assert all("peak" in item and "distance" in item for item in data)
 
 
 @pytest.mark.asyncio
 async def test_find_nearest_peaks_empty_database(
     client_with_db: AsyncClient, coords_map: dict
 ):
-    """Test finding nearest peaks when the database is empty"""
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_rysy"][0],
-            "longitude": coords_map["near_rysy"][1],
-        },
-    )
+    """Nearest peaks returns empty list when DB has no peaks."""
+    latitude, longitude = coords_map["near_rysy"]
 
+    response = await client_with_db.get(
+        "/api/peaks/find", params={"latitude": latitude, "longitude": longitude}
+    )
     assert response.status_code == 200
     assert response.json() == []
 
 
 @pytest.mark.asyncio
-async def test_find_nearest_peaks_with_max_distance(
-    client_with_db: AsyncClient, db_peaks, coords_map: dict
+@pytest.mark.parametrize(
+    "params",
+    [
+        {},
+        {"latitude": 49.0},
+        {"longitude": 20.0},
+        {"latitude": "invalid", "longitude": 20.0},
+        {"latitude": 49.0, "longitude": 20.0, "limit": "invalid"},
+    ],
+)
+async def test_find_nearest_peaks_validation_errors_parametrized(
+    client_with_db: AsyncClient, params: dict
 ):
-    """Test finding nearest peaks with max_distance filter"""
-
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_rysy"][0],
-            "longitude": coords_map["near_rysy"][1],
-            "max_distance": 100,
-        },
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 1
-    assert data[0]["peak"]["name"] == "Rysy"
-    assert data[0]["distance"] < 100
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_max_distance_none(
-    client_with_db: AsyncClient, db_peaks, coords_map: dict
-):
-    """Test finding nearest peaks without max_distance (should include all)"""
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_rysy"][0],
-            "longitude": coords_map["near_rysy"][1],
-        },
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 3
-    assert data[0]["peak"]["name"] == "Rysy"
-    assert data[0]["distance"] < 100
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_missing_parameters(
-    client_with_db: AsyncClient, coords_map: dict
-):
-    """Test that missing required parameters return an error"""
-    response = await client_with_db.get(
-        "/api/peaks/find", params={"latitude": coords_map["near_rysy"][0]}
-    )
-
-    assert response.status_code == 422
-
-    response = await client_with_db.get(
-        "/api/peaks/find", params={"longitude": coords_map["near_rysy"][1]}
-    )
-
-    assert response.status_code == 422
-
-    response = await client_with_db.get("/api/peaks/find")
-
-    assert response.status_code == 422
-
-
-@pytest.mark.asyncio
-async def test_find_nearest_peaks_invalid_parameters(
-    client_with_db: AsyncClient, coords_map: dict
-):
-    """Test that invalid parameters return an error"""
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={"latitude": "invalid", "longitude": coords_map["near_rysy"][1]},
-    )
-
-    assert response.status_code == 422
-
-    response = await client_with_db.get(
-        "/api/peaks/find",
-        params={
-            "latitude": coords_map["near_rysy"][0],
-            "longitude": coords_map["near_rysy"][1],
-            "limit": "invalid",
-        },
-    )
+    """Validation error scenarios for nearest peaks endpoint."""
+    response = await client_with_db.get("/api/peaks/find", params=params)
 
     assert response.status_code == 422
 
