@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
-from src.peaks.models import Peak
+from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
 
 
@@ -36,31 +36,28 @@ def mock_peaks_map() -> dict[str, Peak]:
             id=1,
             name="Rysy",
             elevation=2499,
-            latitude=49.1795,
-            longitude=20.0881,
+            location="POINT(20.0881 49.1795)",
             range="Tatry",
         ),
         "giewont": Peak(
             id=2,
             name="Giewont",
             elevation=1894,
-            latitude=49.2522,
-            longitude=19.9344,
+            location="POINT(19.9344 49.2522)",
             range="Tatry",
         ),
         "babia_gora": Peak(
             id=3,
             name="Babia Góra",
             elevation=1725,
-            latitude=49.5731,
-            longitude=19.5292,
+            location="POINT(19.5292 49.5731)",
             range="Beskidy",
         ),
     }
 
 
 @pytest.fixture
-def mock_peaks_repository(mock_peaks_map) -> PeaksRepository:
+def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
     """
     Returns a mock PeaksRepository for unit tests.
     This mock does not interact with a real database and is useful for pure unit tests
@@ -78,8 +75,39 @@ def mock_peaks_repository(mock_peaks_map) -> PeaksRepository:
 
         return None
 
+    async def get_nearest(
+        latitude: float, longitude: float, max_distance=None, limit=5
+    ):
+        if (latitude, longitude) == coords_map["near_rysy"]:
+            results = [
+                PeakWithDistance(peak=mock_peaks_map["rysy"], distance=50.0),
+                PeakWithDistance(peak=mock_peaks_map["giewont"], distance=30000.0),
+                PeakWithDistance(peak=mock_peaks_map["babia_gora"], distance=80000.0),
+            ]
+        elif (latitude, longitude) == coords_map["near_sniezka"]:
+            results = [
+                PeakWithDistance(peak=mock_peaks_map["giewont"], distance=150000.0),
+                PeakWithDistance(peak=mock_peaks_map["babia_gora"], distance=250000.0),
+                PeakWithDistance(peak=mock_peaks_map["rysy"], distance=400000.0),
+            ]
+        elif (latitude, longitude) == coords_map["warsaw"]:
+            results = [
+                PeakWithDistance(peak=mock_peaks_map["babia_gora"], distance=250000.0),
+                PeakWithDistance(peak=mock_peaks_map["giewont"], distance=300000.0),
+                PeakWithDistance(peak=mock_peaks_map["rysy"], distance=400000.0),
+            ]
+
+        results_within_distance = [
+            result
+            for result in results
+            if max_distance is None or result.distance <= max_distance
+        ]
+
+        return results_within_distance[:limit]
+
     repo.get_all = AsyncMock(side_effect=get_all)
     repo.get_by_id = AsyncMock(side_effect=get_by_id)
+    repo.get_nearest = AsyncMock(side_effect=get_nearest)
 
     return repo
 
@@ -95,22 +123,19 @@ async def db_peaks(test_db) -> list[Peak]:
         Peak(
             name="Rysy",
             elevation=2499,
-            latitude=49.1795,
-            longitude=20.0881,
+            location="POINT(20.0881 49.1795)",
             range="Tatry",
         ),
         Peak(
             name="Śnieżka",
             elevation=1602,
-            latitude=50.7361,
-            longitude=15.7400,
+            location="POINT(15.7400 50.7361)",
             range="Karkonosze",
         ),
         Peak(
             name="Babia Góra",
             elevation=1725,
-            latitude=49.5731,
-            longitude=19.5297,
+            location="POINT(19.5292 49.5731)",
             range="Beskidy",
         ),
     ]

@@ -34,6 +34,7 @@ async def test_db():
     )
 
     async with engine.begin() as conn:
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis"))
         await conn.run_sync(SQLModel.metadata.create_all)
 
     async with async_sessionmaker() as session:
