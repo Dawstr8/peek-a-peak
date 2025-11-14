@@ -284,7 +284,7 @@ async def test_upload_with_metadata(
         "latitude": coords_map["near_rysy"][0],
         "longitude": coords_map["near_rysy"][1],
         "altitude": 2450.0,
-        "peak_id": None,
+        "peak_id": db_peaks[0].id,
     }
 
     resp = await client_with_db.post(
