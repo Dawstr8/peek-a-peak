@@ -2,7 +2,7 @@
 Tests for the PhotosRepository
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from sqlmodel import select
@@ -23,7 +23,7 @@ async def test_save(test_photos_repository, db_peaks, db_user):
     new_photo = SummitPhoto(
         owner_id=db_user.id,
         file_name="new_photo.jpg",
-        captured_at=datetime(2025, 10, 5, 9, 0),
+        captured_at=datetime(2025, 10, 5, 9, 0, tzinfo=timezone.utc),
         latitude=49.5730,
         longitude=19.5295,
         altitude=1720,
@@ -35,7 +35,7 @@ async def test_save(test_photos_repository, db_peaks, db_user):
 
     assert saved_photo.id is not None
     assert saved_photo.file_name == "new_photo.jpg"
-    assert saved_photo.captured_at == datetime(2025, 10, 5, 9, 0)
+    assert saved_photo.captured_at == datetime(2025, 10, 5, 9, 0, tzinfo=timezone.utc)
     assert saved_photo.latitude == 49.5730
     assert saved_photo.longitude == 19.5295
     assert saved_photo.altitude == 1720

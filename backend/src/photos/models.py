@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.peaks.models import Peak
@@ -14,7 +15,10 @@ class SummitPhoto(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     file_name: str
     uploaded_at: datetime = Field(default_factory=datetime.utcnow)
-    captured_at: Optional[datetime] = None
+    captured_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True), nullable=True),
+    )
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
@@ -36,6 +40,18 @@ class SummitPhotoCreate(BaseModel):
     distance_to_peak: Optional[float] = None
 
     peak_id: Optional[int] = None
+
+    @field_validator("captured_at")
+    @classmethod
+    def validate_captured_at_timezone(cls, v: Optional[datetime]) -> Optional[datetime]:
+        if v is None:
+            return v
+        if v.tzinfo is None or v.tzinfo.utcoffset(v) is None:
+            raise ValueError(
+                "captured_at must be timezone-aware (include offset or tzinfo)."
+            )
+
+        return v
 
 
 class SummitPhotoRead(BaseModel):

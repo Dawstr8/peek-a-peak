@@ -3,7 +3,7 @@ Photo fixtures for testing across different test types: unit, integration, and e
 """
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -93,8 +93,8 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
         SummitPhoto(
             owner_id=db_users[0].id,
             file_name="test1.jpg",
-            uploaded_at=datetime(2025, 10, 1, 12, 0),
-            captured_at=datetime(2025, 9, 30, 10, 0),
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 9, 30, 10, 0, tzinfo=timezone.utc),
             latitude=coords_map["near_rysy"][0],
             longitude=coords_map["near_rysy"][1],
             altitude=2495,
@@ -104,8 +104,8 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
         SummitPhoto(
             owner_id=db_users[0].id,
             file_name="test2.jpg",
-            uploaded_at=datetime(2025, 10, 2, 14, 0),
-            captured_at=datetime(2025, 10, 1, 11, 0),
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
             latitude=coords_map["near_sniezka"][0],
             longitude=coords_map["near_sniezka"][1],
             altitude=1600,
@@ -115,8 +115,8 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
         SummitPhoto(
             owner_id=db_users[1].id,
             file_name="test3.jpg",
-            uploaded_at=datetime(2025, 10, 2, 14, 0),
-            captured_at=datetime(2025, 11, 1, 11, 0),
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 11, 1, 11, 0, tzinfo=timezone.utc),
             latitude=coords_map["near_sniezka"][0],
             longitude=coords_map["near_sniezka"][1],
             altitude=1600,
@@ -148,7 +148,7 @@ async def e2e_photos(
         [
             {
                 "summit_photo_create": {
-                    "captured_at": "2025-09-30T10:00:00",
+                    "captured_at": "2025-09-30T10:00:00Z",
                     "latitude": coords_map["near_rysy"][0],
                     "longitude": coords_map["near_rysy"][1],
                     "altitude": 2495.0,
@@ -159,7 +159,7 @@ async def e2e_photos(
             },
             {
                 "summit_photo_create": {
-                    "captured_at": "2025-10-01T11:00:00",
+                    "captured_at": "2025-10-01T11:00:00Z",
                     "latitude": coords_map["near_sniezka"][0],
                     "longitude": coords_map["near_sniezka"][1],
                     "altitude": 1602.0,
@@ -170,7 +170,7 @@ async def e2e_photos(
         [
             {
                 "summit_photo_create": {
-                    "captured_at": "2025-11-01T11:00:00",
+                    "captured_at": "2025-11-01T11:00:00Z",
                     "latitude": coords_map["near_sniezka"][0],
                     "longitude": coords_map["near_sniezka"][1],
                     "altitude": 1602.0,
