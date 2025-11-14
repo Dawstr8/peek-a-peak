@@ -1,4 +1,3 @@
-from contextlib import asynccontextmanager
 from datetime import datetime
 
 from fastapi import FastAPI
@@ -6,23 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from src.api import register_routes
-from src.database.core import init_db
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("Creating database tables...")
-    await init_db()
-    print("Database tables created successfully")
-    yield
-    pass
-
 
 app = FastAPI(
     title="Peek-a-Peak API",
     description="API for managing Polish mountain summit photos and achievements",
     version="1.0.0",
-    lifespan=lifespan,
 )
 
 

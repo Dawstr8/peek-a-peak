@@ -2,7 +2,7 @@
 Tests for the PhotosService
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import AsyncMock
 
 import pytest
@@ -56,7 +56,7 @@ async def test_upload_photo_with_metadata(
 ):
     """Test uploading a photo with provided metadata"""
     summit_photo_create = SummitPhotoCreate(
-        captured_at=datetime(2025, 10, 6, 14, 30, 0),
+        captured_at=datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc),
         latitude=coords_map["near_rysy"][0],
         longitude=coords_map["near_rysy"][1],
         altitude=2450.0,
@@ -72,7 +72,7 @@ async def test_upload_photo_with_metadata(
     assert result.file_name == mock_file.filename
     assert result.peak_id == 1
     assert result.distance_to_peak is None
-    assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0)
+    assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)
     assert result.altitude == 2450.0
     assert result.latitude == coords_map["near_rysy"][0]
     assert result.longitude == coords_map["near_rysy"][1]
@@ -124,7 +124,7 @@ async def test_upload_photo_with_partial_metadata(
 ):
     """Test uploading a photo with only some metadata fields"""
     summit_photo_create = SummitPhotoCreate(
-        captured_at=datetime(2025, 10, 6, 16, 45, 20),
+        captured_at=datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc),
         altitude=1500.0,
     )
 
@@ -137,7 +137,7 @@ async def test_upload_photo_with_partial_metadata(
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
     assert result.distance_to_peak is None
-    assert result.captured_at == datetime(2025, 10, 6, 16, 45, 20)
+    assert result.captured_at == datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc)
     assert result.altitude == 1500.0
     assert result.latitude is None
     assert result.longitude is None

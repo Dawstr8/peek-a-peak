@@ -280,7 +280,7 @@ async def test_upload_with_metadata(
 ):
     """Test upload photo with metadata provided as JSON"""
     summit_photo_create = {
-        "captured_at": "2025-10-06T14:30:00",
+        "captured_at": "2025-10-06T14:30:00Z",
         "latitude": coords_map["near_rysy"][0],
         "longitude": coords_map["near_rysy"][1],
         "altitude": 2450.0,
@@ -312,7 +312,7 @@ async def test_upload_without_peak_id(
 ):
     """Test upload photo with GPS coordinates but no peak_id"""
     summit_photo_create = {
-        "captured_at": "2025-10-06T14:30:00",
+        "captured_at": "2025-10-06T14:30:00Z",
         "latitude": coords_map["warsaw"][0],
         "longitude": coords_map["warsaw"][1],
         "altitude": 120.0,
