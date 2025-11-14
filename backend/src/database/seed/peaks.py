@@ -2,16 +2,18 @@
 Script to seed the database with sample Polish peaks
 """
 
-from sqlmodel import Session, select
+import asyncio
 
-from src.database.core import create_db_and_tables, engine
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
+
+from src.database.core import engine
 from src.peaks.models import Peak
 
 
 def seed_peaks():
     """Seed the database with sample Polish peaks"""
-
-    create_db_and_tables()
 
     # Sample Polish peaks data
     peaks_data = [
@@ -59,22 +61,26 @@ def seed_peaks():
         },
     ]
 
-    with Session(engine) as session:
-        existing_peaks = session.exec(select(Peak)).all()
-        if existing_peaks:
-            print(
-                f"Database already contains {len(existing_peaks)} peaks. Skipping seeding."
-            )
+    async def _seed():
+        async_session = async_sessionmaker(
+            engine, expire_on_commit=False, class_=AsyncSession
+        )
 
-            return
+        async with async_session() as session:
+            existing = (await session.exec(select(Peak))).all()
+            if existing:
+                print(
+                    f"Database already contains {len(existing)} peaks. Skipping seeding."
+                )
+                return
 
-        for peak_data in peaks_data:
-            peak = Peak(**peak_data)
-            session.add(peak)
-            print(f"Added peak: {peak_data['name']}")
+            for data in peaks_data:
+                session.add(Peak(**data))
 
-        session.commit()
-        print("Database seeding completed successfully!")
+            await session.commit()
+            print("Database seeding completed successfully!")
+
+    asyncio.run(_seed())
 
 
 if __name__ == "__main__":
