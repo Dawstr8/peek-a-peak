@@ -5,7 +5,7 @@ from pydantic import BaseModel, field_validator
 from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
-from src.peaks.models import Peak
+from src.peaks.models import Peak, ReadPeak
 from src.users.models import User
 
 
@@ -27,7 +27,7 @@ class SummitPhoto(SQLModel, table=True):
     owner_id: int = Field(foreign_key="user.id")
     peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
 
-    peak: Optional[Peak] = Relationship()
+    peak: Optional[Peak] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
 
 class SummitPhotoCreate(BaseModel):
@@ -69,4 +69,4 @@ class SummitPhotoRead(BaseModel):
     peak_id: Optional[int] = None
     owner_id: int
 
-    peak: Optional[Peak] = None
+    peak: Optional[ReadPeak] = None

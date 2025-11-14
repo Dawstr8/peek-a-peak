@@ -2,10 +2,9 @@
 Service for matching geographical coordinates to peaks
 """
 
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-from src.common.utils.geo import haversine_distance
-from src.peaks.models import Peak
+from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
 
 
@@ -51,38 +50,22 @@ class PeaksService:
         longitude: float,
         max_distance: float | None = None,
         limit: int = 5,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[PeakWithDistance]:
         """
-        Find the nearest peaks to a given latitude and longitude using Haversine distance.
+        Find the nearest peaks to a given latitude and longitude.
 
         Args:
             latitude: Latitude of the point
             longitude: Longitude of the point
+            max_distance: Optional maximum distance in meters to include
             limit: Maximum number of peaks to return (default: 5)
 
         Returns:
             List of dictionaries containing peak and its distance from the point
         """
-        peaks = await self.peaks_repository.get_all()
-
-        if not peaks:
-            return []
-
-        peaks_with_distance = [
-            {
-                "peak": peak,
-                "distance": haversine_distance(
-                    latitude, longitude, peak.latitude, peak.longitude
-                ),
-            }
-            for peak in peaks
-        ]
-
-        if max_distance is not None:
-            peaks_with_distance = [
-                peak for peak in peaks_with_distance if peak["distance"] <= max_distance
-            ]
-
-        peaks_by_nearest = sorted(peaks_with_distance, key=lambda x: x["distance"])
-
-        return peaks_by_nearest[:limit]
+        return await self.peaks_repository.get_nearest(
+            latitude=latitude,
+            longitude=longitude,
+            max_distance=max_distance,
+            limit=limit,
+        )
