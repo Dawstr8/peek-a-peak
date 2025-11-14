@@ -27,7 +27,7 @@ class SummitPhoto(SQLModel, table=True):
     owner_id: int = Field(foreign_key="user.id")
     peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
 
-    peak: Optional[Peak] = Relationship()
+    peak: Optional[Peak] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
 
 class SummitPhotoCreate(BaseModel):
