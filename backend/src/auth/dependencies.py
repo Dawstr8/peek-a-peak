@@ -3,7 +3,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, Path, status
 
 from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
@@ -63,3 +63,18 @@ async def get_current_user(
 
 
 current_user_dep = Annotated[User, Depends(get_current_user)]
+
+
+async def check_access_by_username(
+    current_user: current_user_dep, username: str = Path(...)
+) -> str:
+    """Ensures the current user is allowed to access the resources based on the given username."""
+    if username != current_user.username:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to access this resource"
+        )
+
+    return username
+
+
+check_access_by_username_dep = Annotated[str, Depends(check_access_by_username)]

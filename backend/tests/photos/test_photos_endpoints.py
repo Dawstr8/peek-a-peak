@@ -225,7 +225,7 @@ async def test_get_user_photos_forbidden_for_other_user(
     resp = await client_with_db.get(f"/api/photos/user/{other_username}")
 
     assert resp.status_code == 403
-    assert resp.json()["detail"] == "Not authorized to view these photos"
+    assert resp.json()["detail"] == "Not authorized to access this resource"
 
 
 @pytest.mark.asyncio

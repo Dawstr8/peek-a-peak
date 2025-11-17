@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
 
-from src.auth.dependencies import current_user_dep
+from src.auth.dependencies import check_access_by_username_dep, current_user_dep
 from src.photos.dependencies import photos_service_dep
 from src.photos.models import SummitPhotoCreate, SummitPhotoRead
 
@@ -36,8 +36,7 @@ async def get_all_photos(
 @router.get("/user/{username}", response_model=List[SummitPhotoRead], tags=["photos"])
 async def get_user_photos(
     photos_service: photos_service_dep,
-    current_user: current_user_dep,
-    username: str,
+    username: check_access_by_username_dep,
     sort_by: Optional[str] = Query(None, description="Field to sort by"),
     order: Optional[str] = Query(None, description="Sort order: 'asc' or 'desc'"),
 ):
@@ -52,11 +51,6 @@ async def get_user_photos(
     Returns:
         List[SummitPhotoRead]: List of photos uploaded by the current user, with peak information, sorted as specified or in default order.
     """
-    if username != current_user.username:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to view these photos"
-        )
-
     try:
         return await photos_service.get_photos_by_user(
             username, sort_by=sort_by, order=order
