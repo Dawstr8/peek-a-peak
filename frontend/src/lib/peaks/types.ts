@@ -1,10 +1,13 @@
+import { MountainRange } from "@/lib/mountain_ranges/types";
+
 export interface Peak {
   id: number;
   name: string;
   elevation: number;
   latitude: number;
   longitude: number;
-  range: string;
+
+  mountain_range: MountainRange;
 }
 
 export interface PeakWithDistance {

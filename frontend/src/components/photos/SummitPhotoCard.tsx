@@ -97,7 +97,7 @@ export function SummitPhotoCard({
                 {summitPhoto.peak.name}
               </ItemTitle>
               <ItemDescription className="flex w-full justify-between">
-                <span>{summitPhoto.peak.range}</span>
+                <span>{summitPhoto.peak.mountain_range.name}</span>
                 <span>
                   {formatter.formatAltitude(summitPhoto.peak.elevation)}
                 </span>

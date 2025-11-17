@@ -21,7 +21,7 @@ async def test_get_peaks(client_with_db: AsyncClient, db_peaks):
         assert "elevation" in peak
         assert "latitude" in peak
         assert "longitude" in peak
-        assert "range" in peak
+        assert "mountain_range" in peak
         assert "created_at" in peak
 
 
@@ -149,7 +149,7 @@ async def test_get_peak(client_with_db: AsyncClient, db_peaks):
     assert data["elevation"] == 2499
     assert data["latitude"] == 49.1795
     assert data["longitude"] == 20.0881
-    assert data["range"] == "Tatry"
+    assert data["mountain_range"]["name"] == "Tatry"
     assert "created_at" in data
 
 

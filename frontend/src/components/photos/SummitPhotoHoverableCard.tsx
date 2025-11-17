@@ -78,7 +78,7 @@ export function SummitPhotoHoverableCard({
                 {summitPhoto.peak.name}
               </ItemTitle>
               <ItemDescription className="text-background flex w-full justify-between">
-                <span>{summitPhoto.peak.range}</span>
+                <span>{summitPhoto.peak.mountain_range.name}</span>
                 <span>
                   {formatter.formatAltitude(summitPhoto.peak.elevation)}
                 </span>
