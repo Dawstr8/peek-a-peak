@@ -32,7 +32,20 @@ export default function UploadDialog() {
   const [summitPhotoCreate, setSummitPhotoCreate] =
     useState<SummitPhotoCreate | null>(null);
   const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
-  const { step, next, back } = useStepper(5);
+  const { step, next, back, reset } = useStepper(5);
+
+  const resetDialogState = () => {
+    setFile(null);
+    setMetadata({});
+    setSummitPhotoCreate(null);
+    setSelectedPeak(null);
+    reset();
+  };
+
+  const handleOpenChange = () => {
+    closeDialog();
+    resetDialogState();
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -88,7 +101,7 @@ export default function UploadDialog() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeDialog}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-5xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

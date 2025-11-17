@@ -5,6 +5,7 @@ export function useStepper(maxSteps: number) {
 
   const next = () => setStep((s) => Math.min(s + 1, maxSteps - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
+  const reset = () => setStep(0);
 
-  return { step, next, back };
+  return { step, next, back, reset };
 }
