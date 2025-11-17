@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from src.auth.controller import router as auth_router
-from src.peaks.controller import router as peaks_router
-from src.photos.controller import router as photos_router
+from src.auth.routes import router as auth_router
+from src.peaks.routes import router as peaks_router
+from src.photos.routes import router as photos_router
 
 
 def register_routes(app: FastAPI):
