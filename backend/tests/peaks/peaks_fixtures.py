@@ -25,7 +25,7 @@ def coords_map():
 
 
 @pytest.fixture
-def mock_peaks_map() -> dict[str, Peak]:
+def mock_peaks_map(mock_mountain_ranges_map) -> dict[str, Peak]:
     """
     Returns a dictionary mapping peak names to mock Peak objects for unit tests.
     These peaks are not persisted anywhere and are useful for pure unit tests
@@ -37,21 +37,21 @@ def mock_peaks_map() -> dict[str, Peak]:
             name="Rysy",
             elevation=2499,
             location="POINT(20.0881 49.1795)",
-            range="Tatry",
+            range_id=mock_mountain_ranges_map["tatry"].id,
         ),
         "giewont": Peak(
             id=2,
             name="Giewont",
             elevation=1894,
             location="POINT(19.9344 49.2522)",
-            range="Tatry",
+            range_id=mock_mountain_ranges_map["tatry"].id,
         ),
         "babia_gora": Peak(
             id=3,
             name="Babia Góra",
             elevation=1725,
             location="POINT(19.5292 49.5731)",
-            range="Beskidy",
+            range_id=mock_mountain_ranges_map["beskidy"].id,
         ),
     }
 
@@ -113,7 +113,7 @@ def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
 
 
 @pytest_asyncio.fixture
-async def db_peaks(test_db) -> list[Peak]:
+async def db_peaks(test_db, db_mountain_ranges) -> list[Peak]:
     """
     Creates and returns a list of Peak models in the test database.
     This fixture is useful for integration and e2e tests that require
@@ -124,19 +124,19 @@ async def db_peaks(test_db) -> list[Peak]:
             name="Rysy",
             elevation=2499,
             location="POINT(20.0881 49.1795)",
-            range="Tatry",
+            mountain_range_id=db_mountain_ranges[0].id,
         ),
         Peak(
             name="Śnieżka",
             elevation=1602,
             location="POINT(15.7400 50.7361)",
-            range="Karkonosze",
+            mountain_range_id=db_mountain_ranges[1].id,
         ),
         Peak(
             name="Babia Góra",
             elevation=1725,
             location="POINT(19.5292 49.5731)",
-            range="Beskidy",
+            mountain_range_id=db_mountain_ranges[2].id,
         ),
     ]
 

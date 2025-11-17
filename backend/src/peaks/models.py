@@ -6,7 +6,9 @@ from geoalchemy2.shape import to_shape
 from pydantic import BaseModel
 from shapely.geometry import Point
 from sqlalchemy import Column
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from src.mountain_ranges.models import MountainRange
 
 
 class Peak(SQLModel, table=True):
@@ -16,8 +18,12 @@ class Peak(SQLModel, table=True):
     location: Optional[object] = Field(
         sa_column=Column(Geography(geometry_type="POINT", srid=4326))
     )
-    range: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    mountain_range_id: int = Field(foreign_key="mountainrange.id")
+    mountain_range: MountainRange = Relationship(
+        sa_relationship_kwargs={"lazy": "selectin"}
+    )
 
     @property
     def latitude(self) -> Optional[float]:
@@ -44,8 +50,9 @@ class ReadPeak(BaseModel):
     elevation: int
     latitude: Optional[float]
     longitude: Optional[float]
-    range: str
     created_at: datetime
+
+    mountain_range: MountainRange
 
 
 class PeakWithDistance(BaseModel):

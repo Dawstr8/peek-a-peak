@@ -4,6 +4,7 @@ Tests for the PeaksRepository
 
 import pytest
 
+from src.mountain_ranges.models import MountainRange
 from src.peaks.repository import PeaksRepository
 
 
@@ -98,7 +99,8 @@ async def test_get_nearest_parametrized(
         assert peak.elevation is not None
         assert peak.latitude is not None
         assert peak.longitude is not None
-        assert peak.range is not None
+        assert peak.mountain_range_id is not None
+        assert isinstance(peak.mountain_range, MountainRange)
 
         assert isinstance(distance, float)
         assert 0 <= distance <= expected["distance"]

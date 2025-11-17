@@ -22,6 +22,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 
+from src.mountain_ranges.models import *
 from src.peaks.models import *
 from src.photos.models import *
 from src.sessions.models import *

@@ -11,28 +11,12 @@ from starlette.datastructures import Headers
 from main import app
 from src.database.core import get_db
 from src.uploads.services.local_storage import LocalFileStorage
-from tests.auth.auth_fixtures import logged_in_user, registered_user, registered_users
-from tests.database.database_fixtures import setup_database, test_db
-from tests.peaks.peaks_fixtures import (
-    coords_map,
-    db_peaks,
-    mock_peaks_map,
-    mock_peaks_repository,
-)
-from tests.photos.photos_fixtures import (
-    db_photos,
-    e2e_photo,
-    e2e_photos,
-    mock_photo,
-    mock_photos,
-    mock_photos_repository,
-)
-from tests.users.users_fixtures import (
-    db_user,
-    db_users,
-    mock_user,
-    mock_users_repository,
-)
+from tests.auth.auth_fixtures import *
+from tests.database.database_fixtures import *
+from tests.mountain_ranges.mountain_ranges_fixtures import *
+from tests.peaks.peaks_fixtures import *
+from tests.photos.photos_fixtures import *
+from tests.users.users_fixtures import *
 
 
 @pytest_asyncio.fixture
