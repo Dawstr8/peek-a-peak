@@ -32,7 +32,7 @@ export default function UploadDialog() {
   const [summitPhotoCreate, setSummitPhotoCreate] =
     useState<SummitPhotoCreate | null>(null);
   const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
-  const { step, next, back, reset } = useStepper(5);
+  const { step, next, back, reset, goTo } = useStepper(5);
 
   const resetDialogState = () => {
     setFile(null);
@@ -60,6 +60,7 @@ export default function UploadDialog() {
             setSummitPhotoCreate={setSummitPhotoCreate}
             back={back}
             next={next}
+            goTo={goTo}
           />
         );
       case 2:
@@ -80,7 +81,13 @@ export default function UploadDialog() {
                 file={file}
                 summitPhotoCreate={summitPhotoCreate}
                 selectedPeak={selectedPeak}
-                back={back}
+                back={() => {
+                  if (!metadata.latitude || !metadata.longitude) {
+                    goTo(1);
+                  } else {
+                    back();
+                  }
+                }}
                 next={next}
               />
             )}

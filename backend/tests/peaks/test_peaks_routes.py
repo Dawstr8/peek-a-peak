@@ -77,7 +77,8 @@ async def test_find_nearest_peaks_parametrized(
         ({}, 3, "Rysy"),
         ({"limit": 2}, 2, "Rysy"),
         ({"max_distance": 100}, 1, "Rysy"),
-        ({"limit": 1, "max_distance": 100}, 1, "Rysy"),
+        ({"name_filter": "rysy"}, 1, "Rysy"),
+        ({"limit": 1, "max_distance": 100, "name_filter": "rysy"}, 1, "Rysy"),
     ],
 )
 async def test_find_nearest_peaks_filters_parametrized(

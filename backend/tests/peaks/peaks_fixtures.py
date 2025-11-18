@@ -76,7 +76,7 @@ def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
         return None
 
     async def get_nearest(
-        latitude: float, longitude: float, max_distance=None, limit=5
+        latitude: float, longitude: float, max_distance=None, name_filter=None, limit=5
     ):
         if (latitude, longitude) == coords_map["near_rysy"]:
             results = [
@@ -102,6 +102,13 @@ def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
             for result in results
             if max_distance is None or result.distance <= max_distance
         ]
+
+        if name_filter:
+            results_within_distance = [
+                result
+                for result in results_within_distance
+                if name_filter.lower() in result.peak.name.lower()
+            ]
 
         return results_within_distance[:limit]
 

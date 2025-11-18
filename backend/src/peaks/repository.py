@@ -58,6 +58,7 @@ class PeaksRepository:
         longitude: float,
         max_distance: Optional[float] = None,
         limit: int = 5,
+        name_filter: Optional[str] = None,
     ) -> List[PeakWithDistance]:
         """Find nearest peaks to a given latitude and longitude.
 
@@ -66,6 +67,7 @@ class PeaksRepository:
             longitude: Longitude of the reference point
             max_distance: Maximum distance in meters to consider
             limit: Maximum number of results to return (ignored if 0 or negative)
+            name_filter: Optional substring to filter peak names (case-insensitive)
 
         Returns:
             List of PeakWithDistance models sorted by ascending distance.
@@ -85,6 +87,9 @@ class PeaksRepository:
 
         if max_distance is not None:
             query = query.where(ST_DWithin(Peak.location, target_point, max_distance))
+
+        if name_filter is not None:
+            query = query.where(Peak.name.ilike(f"%{name_filter}%"))
 
         result = await self.db.exec(query)
         rows = result.all()
