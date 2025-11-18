@@ -5,13 +5,22 @@ from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
 from pydantic import BaseModel
 from shapely.geometry import Point
-from sqlalchemy import Column
+from sqlalchemy import Column, UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.mountain_ranges.models import MountainRange
 
 
 class Peak(SQLModel, table=True):
+    __table_args__ = (
+        UniqueConstraint(
+            "name",
+            "elevation",
+            "mountain_range_id",
+            name="uq_peak_name_elevation_mountain_range",
+        ),
+    )
+
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     elevation: int
