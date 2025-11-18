@@ -18,12 +18,23 @@ class PeaksRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def save(self, peak: Peak) -> Peak:
+        self.db.add(peak)
+        await self.db.commit()
+        await self.db.refresh(peak)
+        return peak
+
     async def save_multiple(self, peaks: List[Peak]) -> None:
         self.db.add_all(peaks)
         await self.db.commit()
 
     async def get_all(self) -> List[Peak]:
         query = select(Peak)
+        result = await self.db.exec(query)
+        return result.all()
+
+    async def get_all_without_location(self) -> List[Peak]:
+        query = select(Peak).where(Peak.location.is_(None))
         result = await self.db.exec(query)
         return result.all()
 
