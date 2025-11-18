@@ -119,6 +119,8 @@ async def db_peaks(test_db, db_mountain_ranges) -> list[Peak]:
     This fixture is useful for integration and e2e tests that require
     actual database records.
     """
+    repository = PeaksRepository(test_db)
+
     peaks = [
         Peak(
             name="Rysy",
@@ -141,11 +143,6 @@ async def db_peaks(test_db, db_mountain_ranges) -> list[Peak]:
     ]
 
     for peak in peaks:
-        test_db.add(peak)
-
-    await test_db.commit()
-
-    for peak in peaks:
-        await test_db.refresh(peak)
+        await repository.save(peak)
 
     return peaks

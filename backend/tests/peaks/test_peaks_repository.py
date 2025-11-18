@@ -16,6 +16,52 @@ def test_repository(test_db):
 
 
 @pytest.mark.asyncio
+async def test_save(test_repository, db_mountain_ranges):
+    """Test saving a single peak"""
+    peak = Peak(
+        name="Test Peak",
+        elevation=2000,
+        mountain_range_id=db_mountain_ranges[0].id,
+    )
+
+    saved_peak = await test_repository.save(peak)
+
+    assert saved_peak.id is not None
+    assert saved_peak.name == "Test Peak"
+    assert saved_peak.elevation == 2000
+    assert saved_peak.mountain_range_id == db_mountain_ranges[0].id
+
+
+@pytest.mark.asyncio
+async def test_save_duplicate_name_elevation_and_mountain_range_raises_error(
+    test_repository, db_mountain_ranges
+):
+    """Test unique constraint when saving a single peak"""
+    name = "Unique Peak"
+    elevation = 3000
+    mountain_range_id = db_mountain_ranges[0].id
+
+    peak1 = Peak(
+        name=name,
+        elevation=elevation,
+        mountain_range_id=mountain_range_id,
+    )
+
+    peak2 = Peak(
+        name=name,
+        elevation=elevation,
+        mountain_range_id=mountain_range_id,
+    )
+
+    await test_repository.save(peak1)
+
+    with pytest.raises(Exception) as exc_info:
+        await test_repository.save(peak2)
+
+    assert "uq_peak_name_elevation_mountain_range" in str(exc_info.value)
+
+
+@pytest.mark.asyncio
 async def test_save_multiple(test_repository, db_mountain_ranges):
     """Test saving multiple peaks"""
     peaks = [
@@ -88,6 +134,23 @@ async def test_get_all(test_repository, db_peaks):
     assert any(peak.name == "Rysy" for peak in peaks)
     assert any(peak.name == "Śnieżka" for peak in peaks)
     assert any(peak.name == "Babia Góra" for peak in peaks)
+
+
+@pytest.mark.asyncio
+async def test_get_all_without_location(test_repository, db_peaks):
+    """Test retrieving peaks without location"""
+    peak_without_location = Peak(
+        name="No Location Peak",
+        elevation=1200,
+        mountain_range_id=db_peaks[0].mountain_range_id,
+        location=None,
+    )
+    await test_repository.save(peak_without_location)
+
+    peaks = await test_repository.get_all_without_location()
+
+    assert len(peaks) == 1
+    assert any(peak.name == "No Location Peak" for peak in peaks)
 
 
 @pytest.mark.asyncio

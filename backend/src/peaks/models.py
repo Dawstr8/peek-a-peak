@@ -28,6 +28,7 @@ class Peak(SQLModel, table=True):
         sa_column=Column(Geography(geometry_type="POINT", srid=4326))
     )
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    wiki_page: Optional[str] = None
 
     mountain_range_id: int = Field(foreign_key="mountainrange.id")
     mountain_range: MountainRange = Relationship(

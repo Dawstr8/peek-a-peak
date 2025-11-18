@@ -11,7 +11,8 @@ from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.database.core import engine
-from src.database.seed.wikipedia_seed import seed_wikipedia
+from src.database.seed.basic_peaks_seed import seed_basic_peaks
+from src.database.seed.peak_location_enricher import enrich_peaks_with_locations
 
 
 async def _run_seed():
@@ -20,8 +21,11 @@ async def _run_seed():
     )
 
     async with async_session() as db:
-        print("Seeding wikipedia data...")
-        await seed_wikipedia(db)
+        print("Seeding basic peaks data...")
+        await seed_basic_peaks(db)
+
+        print("Enriching peaks with location data...")
+        await enrich_peaks_with_locations(db)
 
         print("Database seeding completed successfully!")
 
