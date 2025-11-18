@@ -62,8 +62,9 @@ export const API_ENDPOINTS = {
     find: (
       latitude: number,
       longitude: number,
-      max_distance?: number,
       limit: number = 5,
+      name_filter?: string,
+      max_distance?: number,
     ) => {
       const params = new URLSearchParams({
         latitude: latitude.toString(),
@@ -73,6 +74,10 @@ export const API_ENDPOINTS = {
 
       if (max_distance !== undefined) {
         params.append("max_distance", max_distance.toString());
+      }
+
+      if (name_filter !== undefined && name_filter.trim() !== "") {
+        params.append("name_filter", name_filter);
       }
 
       return `${API_BASE_URL}/peaks/find?${params.toString()}`;

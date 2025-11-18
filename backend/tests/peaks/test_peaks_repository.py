@@ -245,6 +245,57 @@ async def test_get_by_name_elevation_and_mountain_range(test_repository, db_peak
                 {"name": "Rysy", "distance": 400000.0},
             ],
         ),
+        (
+            "near_rysy",
+            {"name_filter": "rysy"},
+            [
+                {"name": "Rysy", "distance": 100.0},
+            ],
+        ),
+        (
+            "near_rysy",
+            {"name_filter": "RYSY"},
+            [
+                {"name": "Rysy", "distance": 100.0},
+            ],
+        ),
+        (
+            "near_rysy",
+            {"name_filter": "babia"},
+            [
+                {"name": "Babia Góra", "distance": 80000.0},
+            ],
+        ),
+        (
+            "near_rysy",
+            {"name_filter": "śnieżka"},
+            [
+                {"name": "Śnieżka", "distance": 400000.0},
+            ],
+        ),
+        (
+            "near_rysy",
+            {"name_filter": "nonexistent"},
+            [],
+        ),
+        (
+            "near_rysy",
+            {
+                "max_distance": 1000,
+                "name_filter": "babia",
+            },
+            [],
+        ),
+        (
+            "near_rysy",
+            {
+                "max_distance": 100000,
+                "name_filter": "babia",
+            },
+            [
+                {"name": "Babia Góra", "distance": 80000.0},
+            ],
+        ),
     ],
 )
 async def test_get_nearest_parametrized(

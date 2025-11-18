@@ -2,23 +2,17 @@
 
 import { useState } from "react";
 
-import { useQuery } from "@tanstack/react-query";
-
-import { PeakClient } from "@/lib/peaks/client";
 import type { Peak, PeakWithDistance } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
 import { Button } from "@/components/ui/button";
 
-import { PeakSelect } from "./PeaksSelect";
-
-const MAX_DISTANCE = 10000; // 10 km
-const LIMIT = 6;
+import { PeakSearchInput } from "./PeakSearchInput";
 
 interface PeakStepProps {
   summitPhotoCreate: SummitPhotoCreate | null;
   setSummitPhotoCreate: (summitPhotoCreate: SummitPhotoCreate) => void;
-  setSelectedPeak: (peak: Peak) => void;
+  setSelectedPeak: (peak: Peak | null) => void;
   back: () => void;
   next: () => void;
 }
@@ -30,26 +24,21 @@ export function PeakStep({
   back,
   next,
 }: PeakStepProps) {
-  const [selectedPeakId, setSelectedPeakId] = useState<number | null>(null);
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+
   const { latitude, longitude } = summitPhotoCreate || {};
 
-  const {
-    data: peaksWithDistance,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["nearby-peaks", latitude, longitude],
-    queryFn: () =>
-      PeakClient.findNearbyPeaks(latitude!, longitude!, MAX_DISTANCE, LIMIT),
-    enabled: !!latitude && !!longitude,
-  });
+  const handleSelect = (peakWithDistance: PeakWithDistance | null) => {
+    const isSelected = peakWithDistance !== null;
+    const peak = isSelected ? peakWithDistance.peak : null;
+    const distance = isSelected ? peakWithDistance.distance : undefined;
+    const peakId = isSelected ? peakWithDistance.peak.id : undefined;
 
-  const handleSelect = ({ peak, distance }: PeakWithDistance) => {
-    setSelectedPeakId(peak.id);
+    setIsSelected(isSelected);
     setSelectedPeak(peak);
     setSummitPhotoCreate({
       ...summitPhotoCreate,
-      peak_id: peak.id,
+      peak_id: peakId,
       distance_to_peak: distance,
     });
   };
@@ -64,21 +53,23 @@ export function PeakStep({
         </p>
       </div>
 
-      <PeakSelect
-        peaksWithDistance={peaksWithDistance || []}
-        isLoading={isLoading}
-        error={error}
-        selectedId={selectedPeakId}
-        onSelect={handleSelect}
-      />
+      {latitude && longitude && (
+        <PeakSearchInput
+          latitude={latitude}
+          longitude={longitude}
+          onSelect={handleSelect}
+        />
+      )}
 
-      <div className="flex justify-center gap-4">
-        <Button variant="outline" onClick={back}>
-          Back
-        </Button>
-        <Button onClick={next} size="lg">
-          Confirm Peak Selection
-        </Button>
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-center gap-4">
+          <Button variant="outline" onClick={back}>
+            Back
+          </Button>
+          <Button onClick={next} size="lg">
+            {isSelected ? "Confirm Selection" : "Skip Peak Selection"}
+          </Button>
+        </div>
       </div>
     </div>
   );

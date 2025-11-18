@@ -20,6 +20,7 @@ interface MetadataStepProps {
   setSummitPhotoCreate: (summitPhotoCreate: SummitPhotoCreate) => void;
   back: () => void;
   next: () => void;
+  goTo: (targetStep: number) => void;
 }
 
 export function MetadataStep({
@@ -27,11 +28,17 @@ export function MetadataStep({
   setSummitPhotoCreate,
   back,
   next,
+  goTo,
 }: MetadataStepProps) {
   const handleAccept = () => {
     const summitPhotoCreate = mapPhotoMetadataToSummitPhotoCreate(metadata);
     setSummitPhotoCreate(summitPhotoCreate);
-    next();
+
+    if (!metadata.latitude || !metadata.longitude) {
+      goTo(3);
+    } else {
+      next();
+    }
   };
 
   return (

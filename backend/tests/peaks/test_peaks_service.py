@@ -57,6 +57,9 @@ async def test_get_by_id_not_found(mock_peaks_service, mock_peaks_repository):
         ({"limit": None}, 3),
         ({"max_distance": 100}, 1),
         ({"max_distance": None}, 3),
+        ({"name_filter": "rysy"}, 1),
+        ({"name_filter": "nonexistent"}, 0),
+        ({"name_filter": None}, 3),
     ],
 )
 async def test_find_nearest_peaks_parametrized(
