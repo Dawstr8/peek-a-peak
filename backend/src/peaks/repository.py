@@ -14,41 +14,32 @@ from src.peaks.models import Peak, PeakWithDistance
 
 
 class PeaksRepository:
-    """
-    Repository for Peak data access operations.
-    """
 
     def __init__(self, db: AsyncSession):
-        """
-        Initialize the PeaksRepository.
-
-        Args:
-            db: Database session
-        """
         self.db = db
 
-    async def get_all(self) -> List[Peak]:
-        """
-        Retrieve all peaks.
+    async def save_multiple(self, peaks: List[Peak]) -> None:
+        self.db.add_all(peaks)
+        await self.db.commit()
 
-        Returns:
-            List of all peaks
-        """
+    async def get_all(self) -> List[Peak]:
         query = select(Peak)
         result = await self.db.exec(query)
         return result.all()
 
     async def get_by_id(self, peak_id: int) -> Optional[Peak]:
-        """
-        Get a specific peak by ID.
-
-        Args:
-            peak_id: ID of the peak to retrieve
-
-        Returns:
-            Peak if found, None otherwise
-        """
         return await self.db.get(Peak, peak_id)
+
+    async def get_by_name_elevation_and_mountain_range(
+        self, peak_name: str, elevation: int, mountain_range_id: int
+    ) -> Optional[Peak]:
+        query = select(Peak).where(
+            Peak.name == peak_name,
+            Peak.elevation == elevation,
+            Peak.mountain_range_id == mountain_range_id,
+        )
+        result = await self.db.exec(query)
+        return result.first()
 
     async def get_nearest(
         self,

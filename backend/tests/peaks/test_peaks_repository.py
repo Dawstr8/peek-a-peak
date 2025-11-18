@@ -5,6 +5,7 @@ Tests for the PeaksRepository
 import pytest
 
 from src.mountain_ranges.models import MountainRange
+from src.peaks.models import Peak
 from src.peaks.repository import PeaksRepository
 
 
@@ -12,6 +13,70 @@ from src.peaks.repository import PeaksRepository
 def test_repository(test_db):
     """Create a PeaksRepository instance for testing"""
     return PeaksRepository(test_db)
+
+
+@pytest.mark.asyncio
+async def test_save_multiple(test_repository, db_mountain_ranges):
+    """Test saving multiple peaks"""
+    peaks = [
+        Peak(
+            name="Test Peak 1",
+            elevation=1000,
+            mountain_range_id=db_mountain_ranges[0].id,
+        ),
+        Peak(
+            name="Test Peak 2",
+            elevation=1000,
+            mountain_range_id=db_mountain_ranges[0].id,
+        ),
+        Peak(
+            name="Test Peak 1",
+            elevation=1500,
+            mountain_range_id=db_mountain_ranges[0].id,
+        ),
+        Peak(
+            name="Test Peak 1",
+            elevation=1000,
+            mountain_range_id=db_mountain_ranges[1].id,
+        ),
+    ]
+
+    await test_repository.save_multiple(peaks)
+
+    all_peaks = await test_repository.get_all()
+    names = [peak.name for peak in all_peaks]
+
+    assert len(all_peaks) == 4
+    assert "Test Peak 1" in names
+    assert "Test Peak 2" in names
+
+
+@pytest.mark.asyncio
+async def test_save_multiple_duplicate_name_elevation_and_mountain_range_raises_error(
+    test_repository, db_mountain_ranges
+):
+    """Test unique constraint when saving multiple peaks"""
+    name = "Unique Peak"
+    elevation = 3000
+    mountain_range_id = db_mountain_ranges[0].id
+
+    peaks = [
+        Peak(
+            name=name,
+            elevation=elevation,
+            mountain_range_id=mountain_range_id,
+        ),
+        Peak(
+            name=name,
+            elevation=elevation,
+            mountain_range_id=mountain_range_id,
+        ),
+    ]
+
+    with pytest.raises(Exception) as exc_info:
+        await test_repository.save_multiple(peaks)
+
+    assert "uq_peak_name_elevation_mountain_range" in str(exc_info.value)
 
 
 @pytest.mark.asyncio
@@ -37,6 +102,45 @@ async def test_get_by_id(test_repository, db_peaks):
     assert peak.elevation == 2499
 
     peak = await test_repository.get_by_id(999999)
+    assert peak is None
+
+
+@pytest.mark.asyncio
+async def test_get_by_name_elevation_and_mountain_range(test_repository, db_peaks):
+    """Test retrieving a peak by name, elevation, and mountain range ID"""
+    peak = await test_repository.get_by_name_elevation_and_mountain_range(
+        peak_name=db_peaks[0].name,
+        elevation=db_peaks[0].elevation,
+        mountain_range_id=db_peaks[0].mountain_range_id,
+    )
+
+    assert peak is not None
+    assert peak.name == db_peaks[0].name
+    assert peak.elevation == db_peaks[0].elevation
+    assert peak.mountain_range_id == db_peaks[0].mountain_range_id
+
+    peak = await test_repository.get_by_name_elevation_and_mountain_range(
+        peak_name="Nonexistent Peak",
+        elevation=db_peaks[0].elevation,
+        mountain_range_id=db_peaks[0].mountain_range_id,
+    )
+
+    assert peak is None
+
+    peak = await test_repository.get_by_name_elevation_and_mountain_range(
+        peak_name=db_peaks[0].name,
+        elevation=9999,
+        mountain_range_id=db_peaks[0].mountain_range_id,
+    )
+
+    assert peak is None
+
+    peak = await test_repository.get_by_name_elevation_and_mountain_range(
+        peak_name=db_peaks[0].name,
+        elevation=db_peaks[0].elevation,
+        mountain_range_id=9999,
+    )
+
     assert peak is None
 
 
