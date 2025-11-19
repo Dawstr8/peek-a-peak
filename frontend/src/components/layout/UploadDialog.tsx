@@ -20,7 +20,6 @@ import { useStepper } from "@/hooks/use-stepper";
 
 import { useUploadDialog } from "./UploadDialogContext";
 import { MetadataStep } from "./uploadDialog/MetadataStep";
-import { PeakStep } from "./uploadDialog/PeakStep";
 import { SelectStep } from "./uploadDialog/SelectStep";
 import { UploadStep } from "./uploadDialog/UploadStep";
 
@@ -32,7 +31,7 @@ export default function UploadDialog() {
   const [summitPhotoCreate, setSummitPhotoCreate] =
     useState<SummitPhotoCreate | null>(null);
   const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
-  const { step, next, back, reset, goTo } = useStepper(5);
+  const { step, next, back, reset } = useStepper(5);
 
   const resetDialogState = () => {
     setFile(null);
@@ -57,23 +56,15 @@ export default function UploadDialog() {
         return (
           <MetadataStep
             metadata={metadata}
-            setSummitPhotoCreate={setSummitPhotoCreate}
+            onAccept={(summitPhotoCreate, peak) => {
+              setSummitPhotoCreate(summitPhotoCreate);
+              setSelectedPeak(peak);
+            }}
             back={back}
             next={next}
-            goTo={goTo}
           />
         );
       case 2:
-        return (
-          <PeakStep
-            summitPhotoCreate={summitPhotoCreate}
-            setSummitPhotoCreate={setSummitPhotoCreate}
-            setSelectedPeak={setSelectedPeak}
-            back={back}
-            next={next}
-          />
-        );
-      case 3:
         return (
           <>
             {file && summitPhotoCreate && (
@@ -81,19 +72,13 @@ export default function UploadDialog() {
                 file={file}
                 summitPhotoCreate={summitPhotoCreate}
                 selectedPeak={selectedPeak}
-                back={() => {
-                  if (!metadata.latitude || !metadata.longitude) {
-                    goTo(1);
-                  } else {
-                    back();
-                  }
-                }}
+                back={back}
                 next={next}
               />
             )}
           </>
         );
-      case 4:
+      case 3:
         return (
           <MessageBlock
             iconComponent={Check}

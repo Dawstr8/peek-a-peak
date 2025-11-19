@@ -1,14 +1,19 @@
 "use client";
 
+import { useState } from "react";
+
 import dynamic from "next/dynamic";
 
 import { photoMetadataService } from "@/lib/metadata/service";
 import type { PhotoMetadata } from "@/lib/metadata/types";
+import { Peak, PeakWithDistance } from "@/lib/peaks/types";
 import { mapPhotoMetadataToSummitPhotoCreate } from "@/lib/photos/mappers";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
 import { MetadataDisplay } from "@/components/metadata/MetadataDisplay";
 import { Button } from "@/components/ui/button";
+
+import { PeakSearchInput } from "./PeakSearchInput";
 
 const LocationMap = dynamic(
   () => import("./LocationMap").then((mod) => mod.LocationMap),
@@ -17,29 +22,45 @@ const LocationMap = dynamic(
 
 interface MetadataStepProps {
   metadata: PhotoMetadata;
-  setSummitPhotoCreate: (summitPhotoCreate: SummitPhotoCreate) => void;
+  onAccept: (summitPhotoCreate: SummitPhotoCreate, peak: Peak | null) => void;
   back: () => void;
   next: () => void;
-  goTo: (targetStep: number) => void;
 }
 
 export function MetadataStep({
   metadata,
-  setSummitPhotoCreate,
+  onAccept,
   back,
   next,
-  goTo,
 }: MetadataStepProps) {
-  const handleAccept = () => {
-    const summitPhotoCreate = mapPhotoMetadataToSummitPhotoCreate(metadata);
-    setSummitPhotoCreate(summitPhotoCreate);
+  const [summitPhotoCreate, setSummitPhotoCreate] = useState<SummitPhotoCreate>(
+    mapPhotoMetadataToSummitPhotoCreate(metadata),
+  );
 
-    if (!metadata.latitude || !metadata.longitude) {
-      goTo(3);
-    } else {
-      next();
-    }
+  const [peakWithDistance, setPeakWithDistance] =
+    useState<PeakWithDistance | null>(null);
+
+  const handleSelect = (peakWithDistance: PeakWithDistance | null) => {
+    const peakId = peakWithDistance ? peakWithDistance.peak.id : undefined;
+    const distance = peakWithDistance ? peakWithDistance.distance : undefined;
+
+    setPeakWithDistance(peakWithDistance);
+    setSummitPhotoCreate((prevSummitPhotoCreate) => ({
+      ...prevSummitPhotoCreate,
+      peak_id: peakId,
+      distance_to_peak: distance,
+    }));
   };
+
+  const handleAccept = () => {
+    onAccept(
+      summitPhotoCreate,
+      peakWithDistance ? peakWithDistance.peak : null,
+    );
+    next();
+  };
+
+  const { latitude, longitude } = metadata;
 
   return (
     <div className="space-y-6">
@@ -49,7 +70,15 @@ export function MetadataStep({
         className="bg-muted/20"
       />
 
-      {metadata.latitude && metadata.longitude && (
+      {latitude && longitude && (
+        <PeakSearchInput
+          latitude={latitude}
+          longitude={longitude}
+          onSelect={handleSelect}
+        />
+      )}
+
+      {latitude && longitude && (
         <div className="space-y-2">
           <h4 className="text-muted-foreground text-sm font-medium">
             Location Preview
@@ -58,10 +87,10 @@ export function MetadataStep({
             locations={[
               {
                 index: "photo-location",
-                latitude: metadata.latitude,
-                longitude: metadata.longitude,
+                latitude: latitude,
+                longitude: longitude,
                 title: "Photo Location",
-                popupContent: `${photoMetadataService.getFormatter().formatLatitude(metadata.latitude)} ${photoMetadataService.getFormatter().formatLongitude(metadata.longitude)}`,
+                popupContent: `${photoMetadataService.getFormatter().formatLatitude(latitude)} ${photoMetadataService.getFormatter().formatLongitude(longitude)}`,
               },
             ]}
           />
