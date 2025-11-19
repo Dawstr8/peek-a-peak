@@ -19,6 +19,8 @@ import {
 
 import { UPLOADS_BASE_URL } from "@/config/api";
 
+import { PhotoAspectRatio } from "./PhotoAspectRatio";
+
 interface SummitPhotoHoverableCardProps {
   summitPhoto: SummitPhoto;
   formatter: PhotoMetadataFormatter;
@@ -33,15 +35,11 @@ export function SummitPhotoHoverableCard({
   uploadsBaseUrl = UPLOADS_BASE_URL,
 }: SummitPhotoHoverableCardProps) {
   return (
-    <AspectRatio className={cn("group", className)} ratio={3 / 4}>
-      <div className="relative h-full w-full">
-        <Image
-          src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
-          alt={`Summit photo ${summitPhoto.id}`}
-          fill
-          className="object-cover"
-        />
-      </div>
+    <PhotoAspectRatio
+      className={cn("group", className)}
+      src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
+      alt={`Summit photo ${summitPhoto.id}`}
+    >
       <div className="text-background absolute inset-0 hidden flex-col justify-end space-y-4 bg-black/75 p-2 group-hover:flex">
         {summitPhoto.altitude && (
           <Item className="p-0">
@@ -87,6 +85,6 @@ export function SummitPhotoHoverableCard({
           </Item>
         )}
       </div>
-    </AspectRatio>
+    </PhotoAspectRatio>
   );
 }

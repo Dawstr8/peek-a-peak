@@ -54,15 +54,20 @@ export default function UploadDialog() {
         );
       case 1:
         return (
-          <MetadataStep
-            metadata={metadata}
-            onAccept={(summitPhotoCreate, peak) => {
-              setSummitPhotoCreate(summitPhotoCreate);
-              setSelectedPeak(peak);
-            }}
-            back={back}
-            next={next}
-          />
+          <>
+            {file && (
+              <MetadataStep
+                file={file}
+                metadata={metadata}
+                onAccept={(summitPhotoCreate, peak) => {
+                  setSummitPhotoCreate(summitPhotoCreate);
+                  setSelectedPeak(peak);
+                }}
+                back={back}
+                next={next}
+              />
+            )}
+          </>
         );
       case 2:
         return (
@@ -94,14 +99,16 @@ export default function UploadDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-5xl">
-        <DialogHeader>
+      <DialogContent className="px-0 lg:!max-w-5xl">
+        <DialogHeader className="px-6">
           <DialogTitle className="flex items-center gap-2">
-            <Upload className="h-6 w-6" />
+            <Upload className="size-6" />
             <span>Share Your Mountain Adventure</span>
           </DialogTitle>
         </DialogHeader>
-        <div>{renderStep()}</div>
+        <div className="max-h-[calc(90vh-80px)] overflow-auto px-6">
+          {renderStep()}
+        </div>
       </DialogContent>
     </Dialog>
   );

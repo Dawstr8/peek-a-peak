@@ -1,14 +1,12 @@
 "use client";
 
-import Image from "next/image";
-
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
 import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
+import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
 import {
   Card,
   CardContent,
@@ -52,16 +50,10 @@ export function SummitPhotoCard({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <AspectRatio ratio={3 / 4}>
-          <div className="relative h-full w-full">
-            <Image
-              src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
-              alt={`Summit photo ${summitPhoto.id}`}
-              fill
-              className="object-cover"
-            />
-          </div>
-        </AspectRatio>
+        <PhotoAspectRatio
+          src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
+          alt={`Summit photo ${summitPhoto.id}`}
+        />
         {summitPhoto.altitude && (
           <Item className="p-0">
             <ItemMedia>
