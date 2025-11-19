@@ -10,11 +10,17 @@ interface MetadataItemProps {
   icon: React.ReactNode;
   title: string;
   description: string;
+  className?: string;
 }
 
-export function MetadataItem({ icon, title, description }: MetadataItemProps) {
+export function MetadataItem({
+  icon,
+  title,
+  description,
+  className,
+}: MetadataItemProps) {
   return (
-    <Item>
+    <Item className={className}>
       <ItemMedia className="text-muted-foreground h-full">{icon}</ItemMedia>
       <ItemContent>
         <ItemTitle className="text-muted-foreground text-sm font-medium">

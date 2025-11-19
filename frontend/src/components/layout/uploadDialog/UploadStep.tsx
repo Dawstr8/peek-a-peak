@@ -59,7 +59,7 @@ export function UploadStep({
         summitPhoto={summitPhoto}
         formatter={photoMetadataService.getFormatter()}
         uploadsBaseUrl=""
-        className="mx-auto max-w-1/2"
+        className="mx-auto max-w-1/3"
       />
       <div className="flex justify-center gap-4">
         <Button variant="outline" onClick={back}>
