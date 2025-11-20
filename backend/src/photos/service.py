@@ -42,7 +42,7 @@ class PhotosService:
 
         Args:
             file: The uploaded photo file
-            summit_photo_create: Metadata for the photo (captured_at, latitude, longitude, altitude, peak_id, distance_to_peak)
+            summit_photo_create: Metadata for the photo (captured_at, latitude, longitude, altitude, peak_id)
 
         Returns:
             SummitPhoto: The saved photo object with peak information

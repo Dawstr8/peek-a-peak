@@ -99,7 +99,6 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             longitude=coords_map["near_rysy"][1],
             altitude=2495,
             peak_id=db_peaks[0].id,
-            distance_to_peak=10.5,
         ),
         SummitPhoto(
             owner_id=db_users[0].id,
@@ -110,7 +109,6 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             longitude=coords_map["near_sniezka"][1],
             altitude=1600,
             peak_id=db_peaks[1].id,
-            distance_to_peak=5.2,
         ),
         SummitPhoto(
             owner_id=db_users[1].id,
@@ -121,7 +119,6 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             longitude=coords_map["near_sniezka"][1],
             altitude=1600,
             peak_id=db_peaks[1].id,
-            distance_to_peak=5.2,
         ),
     ]
 
@@ -153,7 +150,6 @@ async def e2e_photos(
                     "longitude": coords_map["near_rysy"][1],
                     "altitude": 2495.0,
                     "peak_id": db_peaks[0].id,
-                    "distance_to_peak": 10.5,
                 },
                 "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
             },

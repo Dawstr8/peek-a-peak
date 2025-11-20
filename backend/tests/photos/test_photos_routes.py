@@ -303,7 +303,6 @@ async def test_upload_with_metadata(
     assert data["altitude"] == summit_photo_create["altitude"]
 
     assert data["peak_id"] == summit_photo_create["peak_id"]
-    assert data["distance_to_peak"] is None
 
 
 @pytest.mark.asyncio
@@ -334,7 +333,6 @@ async def test_upload_without_peak_id(
     assert data["altitude"] == 120.0
 
     assert data["peak_id"] is None
-    assert data["distance_to_peak"] is None
 
 
 @pytest.mark.asyncio
@@ -356,7 +354,6 @@ async def test_upload_without_gps_data(client_with_db, db_peaks, logged_in_user)
     assert data["altitude"] is None
 
     assert data["peak_id"] is None
-    assert data["distance_to_peak"] is None
 
 
 @pytest.mark.asyncio

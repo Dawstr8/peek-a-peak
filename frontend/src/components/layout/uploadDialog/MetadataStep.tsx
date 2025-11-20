@@ -8,7 +8,7 @@ import { ArrowUp, Clock } from "lucide-react";
 
 import { photoMetadataService } from "@/lib/metadata/service";
 import type { PhotoMetadata } from "@/lib/metadata/types";
-import { Peak, PeakWithDistance } from "@/lib/peaks/types";
+import { Peak } from "@/lib/peaks/types";
 import { mapPhotoMetadataToSummitPhotoCreate } from "@/lib/photos/mappers";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
@@ -44,28 +44,20 @@ export function MetadataStep({
     mapPhotoMetadataToSummitPhotoCreate(metadata),
   );
 
-  const [peakWithDistance, setPeakWithDistance] =
-    useState<PeakWithDistance | null>(null);
+  const [peak, setPeak] = useState<Peak | null>(null);
 
   const imageUrl = useImageUrl(file);
 
-  const handleSelect = (peakWithDistance: PeakWithDistance | null) => {
-    const peakId = peakWithDistance ? peakWithDistance.peak.id : undefined;
-    const distance = peakWithDistance ? peakWithDistance.distance : undefined;
-
-    setPeakWithDistance(peakWithDistance);
+  const handleSelect = (peak: Peak | null) => {
+    setPeak(peak);
     setSummitPhotoCreate((prevSummitPhotoCreate) => ({
       ...prevSummitPhotoCreate,
-      peak_id: peakId,
-      distance_to_peak: distance,
+      peak_id: peak?.id,
     }));
   };
 
   const handleAccept = () => {
-    onAccept(
-      summitPhotoCreate,
-      peakWithDistance ? peakWithDistance.peak : null,
-    );
+    onAccept(summitPhotoCreate, peak);
     next();
   };
 

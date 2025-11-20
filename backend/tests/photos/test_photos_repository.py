@@ -27,7 +27,6 @@ async def test_save(test_photos_repository, db_peaks, db_user):
         latitude=49.5730,
         longitude=19.5295,
         altitude=1720,
-        distance_to_peak=3.8,
         peak_id=db_peaks[0].id,
     )
 
@@ -39,7 +38,6 @@ async def test_save(test_photos_repository, db_peaks, db_user):
     assert saved_photo.latitude == 49.5730
     assert saved_photo.longitude == 19.5295
     assert saved_photo.altitude == 1720
-    assert saved_photo.distance_to_peak == 3.8
     assert saved_photo.peak == db_peaks[0]
     assert saved_photo.peak.id == db_peaks[0].id
 
@@ -53,7 +51,6 @@ async def test_get_by_id(test_photos_repository, db_photos):
 
     assert photo is not None
     assert photo.file_name == db_photos[0].file_name
-    assert photo.distance_to_peak == db_photos[0].distance_to_peak
     assert photo.peak_id == db_photos[0].peak_id
     assert photo.peak is not None
     assert photo.peak.id == db_photos[0].peak_id
@@ -82,7 +79,6 @@ async def test_get_all(test_photos_repository, db_photos):
 
     first_photo = next(photo for photo in photos if photo.id == db_photos[0].id)
     assert first_photo.file_name == db_photos[0].file_name
-    assert first_photo.distance_to_peak == db_photos[0].distance_to_peak
     assert first_photo.peak_id == db_photos[0].peak_id
     assert first_photo.peak is not None
     assert first_photo.peak.id == db_photos[0].peak_id
@@ -117,7 +113,6 @@ async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
 
     first_photo = next(photo for photo in photos if photo.id == db_photos[0].id)
     assert first_photo.file_name == db_photos[0].file_name
-    assert first_photo.distance_to_peak == db_photos[0].distance_to_peak
     assert first_photo.peak_id == db_photos[0].peak_id
     assert first_photo.peak is not None
     assert first_photo.peak.id == db_photos[0].peak_id
