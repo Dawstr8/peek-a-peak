@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { millisecondsInMinute } from "date-fns/constants";
-import { Check, MapPin } from "lucide-react";
+import { Check, Mountain } from "lucide-react";
 
 import { PeakClient } from "@/lib/peaks/client";
 import type { Peak } from "@/lib/peaks/types";
@@ -93,10 +93,10 @@ export function PeakSearchInput({
           aria-expanded={open}
           className="w-full cursor-pointer justify-between"
         >
-          <span className={cn(!displayValue && "text-foreground/75")}>
-            {displayValue || "Select where this photo was taken..."}
+          <span className={cn(!displayValue && "text-muted-foreground")}>
+            {displayValue || "Which peak is this?"}
           </span>
-          <MapPin className="size-4 shrink-0 opacity-50" />
+          <Mountain className="size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -105,7 +105,7 @@ export function PeakSearchInput({
       >
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Search for a peak..."
+            placeholder="Search peaks..."
             value={searchQuery}
             onValueChange={setSearchQuery}
           />

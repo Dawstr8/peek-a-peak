@@ -4,12 +4,13 @@ import { useState } from "react";
 
 import dynamic from "next/dynamic";
 
-import { ArrowUp, Clock } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 
 import { Peak } from "@/lib/peaks/types";
 import { photoDetailsFormatter as formatter } from "@/lib/photos/formatter";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
+import { DateTimePicker } from "@/components/common/DateTimePicker";
 import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
 import { PhotoDetail } from "@/components/photos/PhotoDetail";
 import { Button } from "@/components/ui/button";
@@ -37,18 +38,28 @@ export function ReviewStep({
   back,
 }: ReviewStepProps) {
   const [peak, setPeak] = useState<Peak | null>(null);
+  const [capturedAt, setCapturedAt] = useState<Date | undefined>(() => {
+    return summitPhotoCreate.captured_at
+      ? new Date(summitPhotoCreate.captured_at)
+      : undefined;
+  });
   const imageUrl = useImageUrl(file);
 
   const handleAccept = () => {
-    onAccept({ ...summitPhotoCreate, peak_id: peak?.id }, peak);
+    onAccept(
+      {
+        ...summitPhotoCreate,
+        peak_id: peak?.id,
+        captured_at: capturedAt?.toISOString() || undefined,
+      },
+      peak,
+    );
   };
 
-  const {
-    latitude,
-    longitude,
-    altitude,
-    captured_at: capturedAt,
-  } = summitPhotoCreate;
+  const { latitude, longitude, altitude } = summitPhotoCreate;
+  const originalCapturedAt = summitPhotoCreate.captured_at
+    ? new Date(summitPhotoCreate.captured_at)
+    : undefined;
 
   if (!imageUrl) {
     return (
@@ -73,14 +84,12 @@ export function ReviewStep({
               className="p-0"
             />
           )}
-          {capturedAt && (
-            <PhotoDetail
-              icon={<Clock />}
-              title="Captured"
-              description={formatter.formatCapturedAt(capturedAt)}
-              className="p-0"
-            />
-          )}
+
+          <DateTimePicker
+            originalValue={originalCapturedAt}
+            value={capturedAt}
+            onChange={setCapturedAt}
+          />
 
           {latitude && longitude && (
             <PeakSearchInput
