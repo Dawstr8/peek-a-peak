@@ -19,3 +19,10 @@ export interface SummitPhotoCreate {
   altitude?: number;
   peak_id?: number;
 }
+
+export interface PhotoDetailsFormatter {
+  formatLatitude(latitude?: number): string;
+  formatLongitude(longitude?: number): string;
+  formatAltitude(altitude?: number): string;
+  formatCapturedAt(capturedAt?: string): string;
+}

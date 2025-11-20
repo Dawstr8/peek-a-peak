@@ -6,19 +6,19 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 
-interface MetadataItemProps {
+interface PhotoDetailProps {
   icon: React.ReactNode;
   title: string;
   description: string;
   className?: string;
 }
 
-export function MetadataItem({
+export function PhotoDetail({
   icon,
   title,
   description,
   className,
-}: MetadataItemProps) {
+}: PhotoDetailProps) {
   return (
     <Item className={className}>
       <ItemMedia className="text-muted-foreground h-full">{icon}</ItemMedia>

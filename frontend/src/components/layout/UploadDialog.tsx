@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { Check, Upload } from "lucide-react";
 
-import type { PhotoMetadata } from "@/lib/metadata/types";
 import type { Peak } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
@@ -19,15 +18,14 @@ import {
 import { useStepper } from "@/hooks/use-stepper";
 
 import { useUploadDialog } from "./UploadDialogContext";
-import { MetadataStep } from "./uploadDialog/MetadataStep";
-import { SelectStep } from "./uploadDialog/SelectStep";
+import { PhotoStep } from "./uploadDialog/PhotoStep";
+import { ReviewStep } from "./uploadDialog/ReviewStep";
 import { UploadStep } from "./uploadDialog/UploadStep";
 
 export default function UploadDialog() {
   const { isOpen, closeDialog } = useUploadDialog();
 
   const [file, setFile] = useState<File | null>(null);
-  const [metadata, setMetadata] = useState<PhotoMetadata>({});
   const [summitPhotoCreate, setSummitPhotoCreate] =
     useState<SummitPhotoCreate | null>(null);
   const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
@@ -35,7 +33,6 @@ export default function UploadDialog() {
 
   const resetDialogState = () => {
     setFile(null);
-    setMetadata({});
     setSummitPhotoCreate(null);
     setSelectedPeak(null);
     reset();
@@ -50,21 +47,30 @@ export default function UploadDialog() {
     switch (step) {
       case 0:
         return (
-          <SelectStep setFile={setFile} setMetadata={setMetadata} next={next} />
+          <PhotoStep
+            onAccept={(summitPhotoCreate: SummitPhotoCreate, file: File) => {
+              setSummitPhotoCreate(summitPhotoCreate);
+              setFile(file);
+              next();
+            }}
+          />
         );
       case 1:
         return (
           <>
             {file && (
-              <MetadataStep
+              <ReviewStep
                 file={file}
-                metadata={metadata}
-                onAccept={(summitPhotoCreate, peak) => {
+                summitPhotoCreate={summitPhotoCreate!}
+                onAccept={(
+                  summitPhotoCreate: SummitPhotoCreate,
+                  peak: Peak | null,
+                ) => {
                   setSummitPhotoCreate(summitPhotoCreate);
                   setSelectedPeak(peak);
+                  next();
                 }}
                 back={back}
-                next={next}
               />
             )}
           </>

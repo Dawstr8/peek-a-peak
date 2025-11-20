@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { photoMetadataService } from "@/lib/metadata/service";
 import { PhotoClient } from "@/lib/photos/client";
+import { photoDetailsFormatter } from "@/lib/photos/formatter";
 
 import { useAuth } from "@/components/auth/AuthContext";
 import { SummitPhotosGrid } from "@/components/photos/SummitPhotosGrid";
@@ -47,7 +47,7 @@ export default function ProfilePage() {
       <SummitPhotosGrid
         summitPhotos={summitPhotosQuery.data}
         isLoading={!summitPhotosQuery.isEnabled || summitPhotosQuery.isLoading}
-        formatter={photoMetadataService.getFormatter()}
+        formatter={photoDetailsFormatter}
       />
     </div>
   );
