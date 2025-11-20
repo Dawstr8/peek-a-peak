@@ -9,7 +9,6 @@ export interface SummitPhoto {
   longitude?: number;
   altitude?: number;
   peak_id?: number;
-  distance_to_peak?: number;
   peak?: Peak;
 }
 
@@ -19,5 +18,4 @@ export interface SummitPhotoCreate {
   longitude?: number;
   altitude?: number;
   peak_id?: number;
-  distance_to_peak?: number;
 }

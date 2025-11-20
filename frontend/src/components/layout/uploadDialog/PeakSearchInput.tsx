@@ -7,7 +7,7 @@ import { millisecondsInMinute } from "date-fns/constants";
 import { Check, MapPin } from "lucide-react";
 
 import { PeakClient } from "@/lib/peaks/client";
-import type { PeakWithDistance } from "@/lib/peaks/types";
+import type { Peak } from "@/lib/peaks/types";
 import { cn } from "@/lib/utils";
 
 import { PeakListItem, PeakListItemSkeleton } from "@/components/peaks";
@@ -31,7 +31,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 interface PeakSearchInputProps {
   latitude: number;
   longitude: number;
-  onSelect: (peakWithDistance: PeakWithDistance | null) => void;
+  onSelect: (peakWithDistance: Peak | null) => void;
   limit?: number;
 }
 
@@ -42,8 +42,7 @@ export function PeakSearchInput({
   limit = 8,
 }: PeakSearchInputProps) {
   const [open, setOpen] = useState(false);
-  const [selectedPeakWithDistance, setSelectedPeakWithDistance] =
-    useState<PeakWithDistance | null>(null);
+  const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery);
@@ -66,26 +65,24 @@ export function PeakSearchInput({
   });
 
   const handleSelect = useCallback(
-    (peakWithDistance: PeakWithDistance) => {
+    (peak: Peak) => {
       setOpen(false);
 
-      if (selectedPeakWithDistance === peakWithDistance) {
-        setSelectedPeakWithDistance(null);
+      if (selectedPeak?.id === peak.id) {
+        setSelectedPeak(null);
         setSearchQuery("");
         onSelect(null);
         return;
       }
 
-      setSelectedPeakWithDistance(peakWithDistance);
-      setSearchQuery(peakWithDistance.peak.name);
-      onSelect(peakWithDistance);
+      setSelectedPeak(peak);
+      setSearchQuery(peak.name);
+      onSelect(peak);
     },
-    [onSelect, selectedPeakWithDistance],
+    [onSelect, selectedPeak],
   );
 
-  const displayValue = selectedPeakWithDistance
-    ? selectedPeakWithDistance.peak.name
-    : "";
+  const displayValue = selectedPeak ? selectedPeak.name : "";
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -140,7 +137,7 @@ export function PeakSearchInput({
                   <CommandItem
                     key={peakWithDistance.peak.id}
                     value={peakWithDistance.peak.name}
-                    onSelect={() => handleSelect(peakWithDistance)}
+                    onSelect={() => handleSelect(peakWithDistance.peak)}
                     className="cursor-pointer p-0"
                   >
                     <PeakListItem
@@ -150,8 +147,7 @@ export function PeakSearchInput({
                       <Check
                         className={cn(
                           "text-primary ml-auto size-4",
-                          selectedPeakWithDistance?.peak.id ===
-                            peakWithDistance.peak.id
+                          selectedPeak?.id === peakWithDistance.peak.id
                             ? "opacity-100"
                             : "opacity-0",
                         )}

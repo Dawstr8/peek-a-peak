@@ -71,7 +71,6 @@ async def test_upload_photo_with_metadata(
     assert result.owner_id == mock_user.id
     assert result.file_name == mock_file.filename
     assert result.peak_id == 1
-    assert result.distance_to_peak is None
     assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)
     assert result.altitude == 2450.0
     assert result.latitude == coords_map["near_rysy"][0]
@@ -102,7 +101,6 @@ async def test_upload_photo_without_metadata(
     assert result.owner_id == mock_user.id
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
-    assert result.distance_to_peak is None
     assert result.captured_at is None
     assert result.altitude is None
     assert result.latitude is None
@@ -136,7 +134,6 @@ async def test_upload_photo_with_partial_metadata(
     assert result.owner_id == mock_user.id
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
-    assert result.distance_to_peak is None
     assert result.captured_at == datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc)
     assert result.altitude == 1500.0
     assert result.latitude is None

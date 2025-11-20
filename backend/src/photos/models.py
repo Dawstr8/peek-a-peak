@@ -22,7 +22,6 @@ class SummitPhoto(SQLModel, table=True):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
-    distance_to_peak: Optional[float] = None
 
     owner_id: int = Field(foreign_key="user.id")
     peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
@@ -37,7 +36,6 @@ class SummitPhotoCreate(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
-    distance_to_peak: Optional[float] = None
 
     peak_id: Optional[int] = None
 
@@ -64,7 +62,6 @@ class SummitPhotoRead(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     altitude: Optional[float] = None
-    distance_to_peak: Optional[float] = None
 
     peak_id: Optional[int] = None
     owner_id: int
