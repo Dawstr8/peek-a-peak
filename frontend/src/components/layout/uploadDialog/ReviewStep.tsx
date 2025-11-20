@@ -6,14 +6,12 @@ import dynamic from "next/dynamic";
 
 import { ArrowUp, Clock } from "lucide-react";
 
-import { photoMetadataService } from "@/lib/metadata/service";
-import type { PhotoMetadata } from "@/lib/metadata/types";
 import { Peak } from "@/lib/peaks/types";
-import { mapPhotoMetadataToSummitPhotoCreate } from "@/lib/photos/mappers";
+import { photoDetailsFormatter as formatter } from "@/lib/photos/formatter";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
-import { MetadataItem } from "@/components/metadata/MetadataItem";
 import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
+import { PhotoDetail } from "@/components/photos/PhotoDetail";
 import { Button } from "@/components/ui/button";
 
 import { useImageUrl } from "@/hooks/use-image-url";
@@ -25,44 +23,32 @@ const LocationMap = dynamic(
   { ssr: false },
 );
 
-interface MetadataStepProps {
+interface ReviewStepProps {
   file: File;
-  metadata: PhotoMetadata;
+  summitPhotoCreate: SummitPhotoCreate;
   onAccept: (summitPhotoCreate: SummitPhotoCreate, peak: Peak | null) => void;
   back: () => void;
-  next: () => void;
 }
 
-export function MetadataStep({
+export function ReviewStep({
   file,
-  metadata,
+  summitPhotoCreate,
   onAccept,
   back,
-  next,
-}: MetadataStepProps) {
-  const [summitPhotoCreate, setSummitPhotoCreate] = useState<SummitPhotoCreate>(
-    mapPhotoMetadataToSummitPhotoCreate(metadata),
-  );
-
+}: ReviewStepProps) {
   const [peak, setPeak] = useState<Peak | null>(null);
-
   const imageUrl = useImageUrl(file);
 
-  const handleSelect = (peak: Peak | null) => {
-    setPeak(peak);
-    setSummitPhotoCreate((prevSummitPhotoCreate) => ({
-      ...prevSummitPhotoCreate,
-      peak_id: peak?.id,
-    }));
-  };
-
   const handleAccept = () => {
-    onAccept(summitPhotoCreate, peak);
-    next();
+    onAccept({ ...summitPhotoCreate, peak_id: peak?.id }, peak);
   };
 
-  const { latitude, longitude } = metadata;
-  const formatter = photoMetadataService.getFormatter();
+  const {
+    latitude,
+    longitude,
+    altitude,
+    captured_at: capturedAt,
+  } = summitPhotoCreate;
 
   if (!imageUrl) {
     return (
@@ -71,7 +57,6 @@ export function MetadataStep({
       </div>
     );
   }
-
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-6 lg:flex-row">
@@ -80,19 +65,19 @@ export function MetadataStep({
         </div>
 
         <div className="flex-1 space-y-6">
-          {metadata.altitude && (
-            <MetadataItem
+          {altitude && (
+            <PhotoDetail
               icon={<ArrowUp />}
               title="Altitude"
-              description={formatter.formatAltitude(metadata.altitude)}
+              description={formatter.formatAltitude(altitude)}
               className="p-0"
             />
           )}
-          {metadata.capturedAt && (
-            <MetadataItem
+          {capturedAt && (
+            <PhotoDetail
               icon={<Clock />}
               title="Captured"
-              description={formatter.formatCapturedAt(metadata.capturedAt)}
+              description={formatter.formatCapturedAt(capturedAt)}
               className="p-0"
             />
           )}
@@ -101,7 +86,7 @@ export function MetadataStep({
             <PeakSearchInput
               latitude={latitude}
               longitude={longitude}
-              onSelect={handleSelect}
+              onSelect={setPeak}
             />
           )}
 

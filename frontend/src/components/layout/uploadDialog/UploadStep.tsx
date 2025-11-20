@@ -2,9 +2,9 @@
 
 import { useMutation } from "@tanstack/react-query";
 
-import { photoMetadataService } from "@/lib/metadata/service";
 import type { Peak } from "@/lib/peaks/types";
 import { PhotoClient } from "@/lib/photos/client";
+import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import type { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
 
 import { SummitPhotoCard } from "@/components/photos/SummitPhotoCard";
@@ -57,7 +57,7 @@ export function UploadStep({
 
       <SummitPhotoCard
         summitPhoto={summitPhoto}
-        formatter={photoMetadataService.getFormatter()}
+        formatter={photoDetailsFormatter}
         uploadsBaseUrl=""
         className="mx-auto max-w-1/3"
       />

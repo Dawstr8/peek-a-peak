@@ -1,8 +1,8 @@
-import type { PhotoMetadataFormatter } from "./types";
+import { PhotoDetailsFormatter } from "./types";
 
 const NOT_AVAILABLE = "N/A";
 
-export class DefaultMetadataFormatter implements PhotoMetadataFormatter {
+class DefaultPhotoDetailsFormatter implements PhotoDetailsFormatter {
   formatLatitude(latitude?: number): string {
     return this.formatCoordinate(latitude);
   }
@@ -35,6 +35,4 @@ export class DefaultMetadataFormatter implements PhotoMetadataFormatter {
   }
 }
 
-export function createMetadataFormatter(): PhotoMetadataFormatter {
-  return new DefaultMetadataFormatter();
-}
+export const photoDetailsFormatter = new DefaultPhotoDetailsFormatter();

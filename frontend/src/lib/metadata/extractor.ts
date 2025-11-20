@@ -2,7 +2,7 @@ import * as exifr from "exifr";
 
 import type { PhotoMetadata, PhotoMetadataExtractor } from "./types";
 
-export class ExifMetadataExtractor implements PhotoMetadataExtractor {
+class ExifMetadataExtractor implements PhotoMetadataExtractor {
   async extract(file: File): Promise<PhotoMetadata> {
     try {
       const exif = await exifr.parse(file, {
@@ -27,6 +27,4 @@ export class ExifMetadataExtractor implements PhotoMetadataExtractor {
   }
 }
 
-export function createMetadataExtractor(): PhotoMetadataExtractor {
-  return new ExifMetadataExtractor();
-}
+export const exifMetadataExtractor = new ExifMetadataExtractor();

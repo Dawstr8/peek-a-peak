@@ -4,29 +4,32 @@ import { useMutation } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 
-import { photoMetadataService } from "@/lib/metadata/service";
+import { exifMetadataExtractor } from "@/lib/metadata/extractor";
 import type { PhotoMetadata } from "@/lib/metadata/types";
+import type { SummitPhotoCreate } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
 import { MessageBlock } from "@/components/common/MessageBlock";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
-interface SelectStepProps {
-  setFile: (file: File) => void;
-  setMetadata: (metadata: PhotoMetadata) => void;
-  next: () => void;
+interface PhotoStepProps {
+  onAccept: (summitPhotoCreate: SummitPhotoCreate, file: File) => void;
 }
 
-export function SelectStep({ setFile, setMetadata, next }: SelectStepProps) {
+export function PhotoStep({ onAccept }: PhotoStepProps) {
   const { mutate, isPending } = useMutation({
-    mutationFn: (file: File) => photoMetadataService.extractMetadata(file),
-    onSuccess: (metadata) => {
-      setMetadata(metadata);
-    },
-    onSettled: (metadata, error, file) => {
-      setFile(file);
-      next();
+    mutationFn: (file: File) => exifMetadataExtractor.extract(file),
+    onSuccess: (metadata: PhotoMetadata, file: File) => {
+      onAccept(
+        {
+          captured_at: metadata.capturedAt,
+          latitude: metadata.latitude,
+          longitude: metadata.longitude,
+          altitude: metadata.altitude,
+        },
+        file,
+      );
     },
   });
 
