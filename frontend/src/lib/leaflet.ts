@@ -22,6 +22,7 @@ export function initializeLeafletIcons() {
 
 export const MAP_CONFIG = {
   DEFAULT_ZOOM: 13,
+  DEFAULT_WIDE_ZOOM: 6,
   DEFAULT_HEIGHT: "300px",
   TILE_LAYER_URL: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   TILE_LAYER_ATTRIBUTION:

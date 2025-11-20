@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { millisecondsInMinute } from "date-fns/constants";
@@ -33,6 +33,7 @@ interface PeakSearchInputProps {
   longitude: number;
   onSelect: (peakWithDistance: Peak | null) => void;
   limit?: number;
+  disabled?: boolean;
 }
 
 export function PeakSearchInput({
@@ -40,6 +41,7 @@ export function PeakSearchInput({
   longitude,
   onSelect,
   limit = 8,
+  disabled = false,
 }: PeakSearchInputProps) {
   const [open, setOpen] = useState(false);
   const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
@@ -63,6 +65,12 @@ export function PeakSearchInput({
     enabled: !!latitude && !!longitude,
     staleTime: 5 * millisecondsInMinute,
   });
+
+  useEffect(() => {
+    if (disabled && open) {
+      setOpen(false);
+    }
+  }, [disabled, open]);
 
   const handleSelect = useCallback(
     (peak: Peak) => {
@@ -91,6 +99,7 @@ export function PeakSearchInput({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          disabled={disabled}
           className="w-full cursor-pointer justify-between"
         >
           <span className={cn(!displayValue && "text-muted-foreground")}>
