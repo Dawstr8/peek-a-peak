@@ -2,27 +2,24 @@
 
 import { useState } from "react";
 
-import dynamic from "next/dynamic";
-
-import { ArrowUp } from "lucide-react";
+import { LatLng } from "leaflet";
 
 import { Peak } from "@/lib/peaks/types";
-import { photoDetailsFormatter as formatter } from "@/lib/photos/formatter";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
 import { DateTimePicker } from "@/components/common/DateTimePicker";
+import { LocationPicker } from "@/components/common/LocationPicker";
 import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
-import { PhotoDetail } from "@/components/photos/PhotoDetail";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { useImageUrl } from "@/hooks/use-image-url";
 
 import { PeakSearchInput } from "./PeakSearchInput";
-
-const LocationMap = dynamic(
-  () => import("./LocationMap").then((mod) => mod.LocationMap),
-  { ssr: false },
-);
 
 interface ReviewStepProps {
   file: File;
@@ -37,13 +34,20 @@ export function ReviewStep({
   onAccept,
   back,
 }: ReviewStepProps) {
-  const [peak, setPeak] = useState<Peak | null>(null);
+  const imageUrl = useImageUrl(file);
+
+  const [location, setLocation] = useState<LatLng | undefined>(() => {
+    const { latitude: lat, longitude: lng, altitude: alt } = summitPhotoCreate;
+    return lat && lng ? new LatLng(lat, lng, alt) : undefined;
+  });
+
   const [capturedAt, setCapturedAt] = useState<Date | undefined>(() => {
     return summitPhotoCreate.captured_at
       ? new Date(summitPhotoCreate.captured_at)
       : undefined;
   });
-  const imageUrl = useImageUrl(file);
+
+  const [peak, setPeak] = useState<Peak | null>(null);
 
   const handleAccept = () => {
     onAccept(
@@ -51,14 +55,24 @@ export function ReviewStep({
         ...summitPhotoCreate,
         peak_id: peak?.id,
         captured_at: capturedAt?.toISOString() || undefined,
+        latitude: location?.lat,
+        longitude: location?.lng,
+        altitude: location?.alt,
       },
       peak,
     );
   };
 
-  const { latitude, longitude, altitude } = summitPhotoCreate;
-  const originalCapturedAt = summitPhotoCreate.captured_at
-    ? new Date(summitPhotoCreate.captured_at)
+  const {
+    latitude: lat,
+    longitude: lng,
+    altitude: alt,
+    captured_at: prevCapturedAt,
+  } = summitPhotoCreate;
+
+  const originalLocation = lat && lng ? new LatLng(lat, lng, alt) : undefined;
+  const originalCapturedAt = prevCapturedAt
+    ? new Date(prevCapturedAt)
     : undefined;
 
   if (!imageUrl) {
@@ -76,14 +90,11 @@ export function ReviewStep({
         </div>
 
         <div className="flex-1 space-y-6">
-          {altitude && (
-            <PhotoDetail
-              icon={<ArrowUp />}
-              title="Altitude"
-              description={formatter.formatAltitude(altitude)}
-              className="p-0"
-            />
-          )}
+          <LocationPicker
+            originalValue={originalLocation}
+            value={location}
+            onChange={setLocation}
+          />
 
           <DateTimePicker
             originalValue={originalCapturedAt}
@@ -91,34 +102,21 @@ export function ReviewStep({
             onChange={setCapturedAt}
           />
 
-          {latitude && longitude && (
-            <PeakSearchInput
-              latitude={latitude}
-              longitude={longitude}
-              onSelect={setPeak}
-            />
-          )}
-
-          {latitude && longitude && (
-            <div className="space-y-2">
-              <h4 className="text-muted-foreground text-sm font-medium">
-                Location
-              </h4>
-              <div className="h-64 overflow-hidden rounded-lg">
-                <LocationMap
-                  locations={[
-                    {
-                      index: "photo-location",
-                      latitude: latitude,
-                      longitude: longitude,
-                      title: "Photo Location",
-                      popupContent: `${formatter.formatLatitude(latitude)} ${formatter.formatLongitude(longitude)}`,
-                    },
-                  ]}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <PeakSearchInput
+                  disabled={!location}
+                  latitude={location?.lat ?? 0}
+                  longitude={location?.lng ?? 0}
+                  onSelect={setPeak}
                 />
               </div>
-            </div>
-          )}
+            </TooltipTrigger>
+            {!location && (
+              <TooltipContent>Select location first</TooltipContent>
+            )}
+          </Tooltip>
         </div>
       </div>
       <div className="flex justify-center gap-4">
