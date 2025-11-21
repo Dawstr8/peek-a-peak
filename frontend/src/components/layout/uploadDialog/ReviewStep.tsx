@@ -78,7 +78,14 @@ export function ReviewStep({
         </div>
 
         <div className="flex-1 space-y-6">
-          <LocationPicker value={location} onChange={setLocation} />
+          <LocationPicker
+            value={location}
+            onChange={setLocation}
+            targetLocation={
+              peak ? new LatLng(peak.lat, peak.lng, peak.elevation) : undefined
+            }
+            peaks={peak ? [peak] : []}
+          />
           <DateTimePicker value={capturedAt} onChange={setCapturedAt} />
           <Tooltip>
             <TooltipTrigger asChild>

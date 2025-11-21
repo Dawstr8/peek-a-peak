@@ -28,3 +28,19 @@ export const MAP_CONFIG = {
   TILE_LAYER_ATTRIBUTION:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 } as const;
+
+export function createPeakIcon(size = 24, color = "blue") {
+  const svg =
+    `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">` +
+    `<path d="M2 20 L12 3 L22 20 Z" fill="${color}" />` +
+    `</svg>`;
+
+  const html = `<span style="display:inline-block;line-height:0">${svg}</span>`;
+
+  return L.divIcon({
+    className: "peek-peak-icon",
+    html,
+    iconSize: [size, size],
+    iconAnchor: [Math.floor(size / 2), Math.floor(size * 0.7)],
+  });
+}
