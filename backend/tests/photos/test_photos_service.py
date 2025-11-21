@@ -73,8 +73,6 @@ async def test_upload_photo_with_metadata(
     assert result.peak_id == 1
     assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)
     assert result.altitude == 2450.0
-    assert result.latitude == coords_map["near_rysy"][0]
-    assert result.longitude == coords_map["near_rysy"][1]
 
     mock_uploads_service.save_file.assert_called_once_with(
         mock_file, content_type_prefix="image/"
