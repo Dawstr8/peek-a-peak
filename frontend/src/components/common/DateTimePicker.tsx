@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Calendar as CalendarIcon, Eraser, RotateCcw, X } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, dateEqual } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -22,19 +22,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { useValueChange } from "@/hooks/use-value-change";
+
 const DEFAULT_TIME = "12:00:00";
 
 interface DateTimePickerProps {
-  originalValue?: Date;
   value?: Date;
   onChange?: (date: Date | undefined) => void;
 }
 
-export function DateTimePicker({
-  originalValue,
-  value,
-  onChange,
-}: DateTimePickerProps) {
+export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
+  const { originalValue, hasValueChanged } = useValueChange<Date | undefined>(
+    value,
+    dateEqual,
+  );
+
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(value);
   const [time, setTime] = useState<string>(() => {
@@ -44,13 +46,6 @@ export function DateTimePicker({
   useEffect(() => {
     onChange?.(date && time ? combineDateAndTime(date, time) : undefined);
   }, [date, time, onChange]);
-
-  const hasValueChanged = () => {
-    if (!originalValue && !value) return false;
-    if (!originalValue || !value) return true;
-
-    return originalValue.getTime() !== value.getTime();
-  };
 
   const combineDateAndTime = (date: Date, time: string): Date => {
     const newDate = new Date(date);

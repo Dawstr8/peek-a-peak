@@ -63,18 +63,6 @@ export function ReviewStep({
     );
   };
 
-  const {
-    latitude: lat,
-    longitude: lng,
-    altitude: alt,
-    captured_at: prevCapturedAt,
-  } = summitPhotoCreate;
-
-  const originalLocation = lat && lng ? new LatLng(lat, lng, alt) : undefined;
-  const originalCapturedAt = prevCapturedAt
-    ? new Date(prevCapturedAt)
-    : undefined;
-
   if (!imageUrl) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -90,18 +78,8 @@ export function ReviewStep({
         </div>
 
         <div className="flex-1 space-y-6">
-          <LocationPicker
-            originalValue={originalLocation}
-            value={location}
-            onChange={setLocation}
-          />
-
-          <DateTimePicker
-            originalValue={originalCapturedAt}
-            value={capturedAt}
-            onChange={setCapturedAt}
-          />
-
+          <LocationPicker value={location} onChange={setLocation} />
+          <DateTimePicker value={capturedAt} onChange={setCapturedAt} />
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
