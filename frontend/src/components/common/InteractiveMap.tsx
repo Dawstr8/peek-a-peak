@@ -2,18 +2,24 @@
 
 import { useEffect } from "react";
 
-import { LatLng } from "leaflet";
+import { LatLng, LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
   MapContainer,
   Marker,
+  Polyline,
   Popup,
   TileLayer,
   useMap,
   useMapEvents,
 } from "react-leaflet";
 
-import { MAP_CONFIG, initializeLeafletIcons } from "@/lib/leaflet";
+import {
+  MAP_CONFIG,
+  createPeakIcon,
+  initializeLeafletIcons,
+} from "@/lib/leaflet";
+import { Peak } from "@/lib/peaks/types";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import { cn } from "@/lib/utils";
 
@@ -31,24 +37,48 @@ function LocationClickHandler({
   return null;
 }
 
-function MapCenterUpdater({ center }: { center: LatLng }) {
+function FitToLocationsUpdater({
+  location,
+  targetLocation,
+}: {
+  location?: LatLng;
+  targetLocation?: LatLng;
+}) {
   const map = useMap();
 
   useEffect(() => {
-    map.setView(center);
-  }, [map, center]);
+    try {
+      if (location && targetLocation) {
+        const avgLat = (location.lat + targetLocation.lat) / 2;
+        const avgLng = (location.lng + targetLocation.lng) / 2;
+        const center = new LatLng(avgLat, avgLng);
 
-  return null;
-}
+        const bounds = new LatLngBounds([
+          new LatLng(location.lat, location.lng),
+          new LatLng(targetLocation.lat, targetLocation.lng),
+        ]);
 
-function ZoomUpdater({ location }: { location?: LatLng }) {
-  const map = useMap();
+        const rawZoom = map.getBoundsZoom(bounds, false);
+        const maxZoom = 18;
+        const zoom = Math.min(rawZoom, maxZoom);
 
-  useEffect(() => {
-    if (!location) {
-      map.setZoom(MAP_CONFIG.DEFAULT_WIDE_ZOOM);
-    }
-  }, [map, location]);
+        map.setView(center, zoom);
+        return;
+      }
+
+      if (location) {
+        map.setView(location, MAP_CONFIG.DEFAULT_ZOOM);
+        return;
+      }
+
+      if (targetLocation) {
+        map.setView(targetLocation, MAP_CONFIG.DEFAULT_ZOOM);
+        return;
+      }
+
+      map.setView(KRAKOW, MAP_CONFIG.DEFAULT_WIDE_ZOOM);
+    } catch {}
+  }, [map, location, targetLocation]);
 
   return null;
 }
@@ -56,6 +86,8 @@ function ZoomUpdater({ location }: { location?: LatLng }) {
 interface InteractiveMapProps {
   location?: LatLng;
   onLocationSelect?: (location: LatLng) => void;
+  targetLocation: LatLng;
+  peaks: Peak[];
   zoom?: number;
   height?: string;
   className?: string;
@@ -65,6 +97,8 @@ interface InteractiveMapProps {
 export function InteractiveMap({
   location,
   onLocationSelect,
+  targetLocation,
+  peaks = [],
   zoom = location ? MAP_CONFIG.DEFAULT_ZOOM : MAP_CONFIG.DEFAULT_WIDE_ZOOM,
   height = MAP_CONFIG.DEFAULT_HEIGHT,
   className = "",
@@ -94,8 +128,10 @@ export function InteractiveMap({
           url={MAP_CONFIG.TILE_LAYER_URL}
         />
 
-        <MapCenterUpdater center={mapCenter} />
-        <ZoomUpdater location={location} />
+        <FitToLocationsUpdater
+          location={location}
+          targetLocation={targetLocation}
+        />
 
         {clickable && (
           <LocationClickHandler onLocationSelect={onLocationSelect} />
@@ -104,7 +140,7 @@ export function InteractiveMap({
         {location && (
           <Marker position={location}>
             <Popup>
-              Selected location:
+              <strong>Selected location</strong>
               <br />
               Latitude: {photoDetailsFormatter.formatLat(location.lat)}
               <br />
@@ -113,6 +149,29 @@ export function InteractiveMap({
               Altitude: {photoDetailsFormatter.formatAlt(location.alt)}
             </Popup>
           </Marker>
+        )}
+
+        {peaks.map((peak) => (
+          <Marker
+            key={peak.id}
+            position={new LatLng(peak.lat, peak.lng)}
+            icon={createPeakIcon(18, "green")}
+          >
+            <Popup>
+              <strong>{peak.name}</strong>
+              <br />
+              {photoDetailsFormatter.formatAlt(peak.elevation)}
+            </Popup>
+          </Marker>
+        ))}
+
+        {location && targetLocation && (
+          <Polyline
+            positions={[location, targetLocation]}
+            pathOptions={{
+              dashArray: "1 8",
+            }}
+          />
         )}
       </MapContainer>
     </div>

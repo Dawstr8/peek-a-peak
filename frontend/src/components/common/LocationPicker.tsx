@@ -3,6 +3,7 @@
 import { LatLng } from "leaflet";
 import { Eraser, RotateCcw } from "lucide-react";
 
+import { Peak } from "@/lib/peaks/types";
 import { latLngEqual } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,16 @@ import { InteractiveMap } from "./InteractiveMap";
 interface LocationPickerProps {
   value?: LatLng;
   onChange?: (value: LatLng | undefined) => void;
+  targetLocation?: LatLng;
+  peaks?: Peak[];
 }
 
-export function LocationPicker({ value, onChange }: LocationPickerProps) {
+export function LocationPicker({
+  value,
+  onChange,
+  targetLocation,
+  peaks = [],
+}: LocationPickerProps) {
   const { originalValue, hasValueChanged } = useValueChange<LatLng | undefined>(
     value,
     latLngEqual,
@@ -68,6 +76,8 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
         <InteractiveMap
           location={value}
           onLocationSelect={(newLocation) => onChange?.(newLocation)}
+          targetLocation={targetLocation!}
+          peaks={peaks}
           clickable={true}
         />
       </div>
