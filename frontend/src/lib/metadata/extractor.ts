@@ -13,9 +13,9 @@ class ExifMetadataExtractor implements PhotoMetadataExtractor {
       });
 
       return {
-        latitude: exif?.latitude,
-        longitude: exif?.longitude,
-        altitude: exif?.GPSAltitude,
+        lat: exif?.latitude,
+        lng: exif?.longitude,
+        alt: exif?.GPSAltitude,
         capturedAt: exif?.DateTimeOriginal
           ? new Date(exif.DateTimeOriginal).toISOString()
           : undefined,

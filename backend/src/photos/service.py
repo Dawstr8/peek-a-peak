@@ -42,24 +42,22 @@ class PhotosService:
 
         Args:
             file: The uploaded photo file
-            summit_photo_create: Metadata for the photo (captured_at, latitude, longitude, altitude, peak_id)
+            summit_photo_create: Metadata for the photo (captured_at, lat, lng, alt, peak_id)
 
         Returns:
             SummitPhoto: The saved photo object with peak information
         """
         path = await self.uploads_service.save_file(file, content_type_prefix="image/")
-        latitude, longitude = (
-            summit_photo_create.latitude,
-            summit_photo_create.longitude,
+        lat, lng = (
+            summit_photo_create.lat,
+            summit_photo_create.lng,
         )
 
         photo = SummitPhoto(
             file_name=path.split("/")[-1],
             owner_id=current_user.id,
             location=(
-                f"POINT({longitude} {latitude})"
-                if latitude is not None and longitude is not None
-                else None
+                f"POINT({lng} {lat})" if lat is not None and lng is not None else None
             ),
             **summit_photo_create.model_dump(),
         )

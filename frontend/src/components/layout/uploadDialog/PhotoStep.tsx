@@ -24,9 +24,9 @@ export function PhotoStep({ onAccept }: PhotoStepProps) {
       onAccept(
         {
           captured_at: metadata.capturedAt,
-          latitude: metadata.latitude,
-          longitude: metadata.longitude,
-          altitude: metadata.altitude,
+          lat: metadata.lat,
+          lng: metadata.lng,
+          alt: metadata.alt,
         },
         file,
       );

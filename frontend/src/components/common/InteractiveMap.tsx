@@ -106,11 +106,11 @@ export function InteractiveMap({
             <Popup>
               Selected location:
               <br />
-              Latitude: {photoDetailsFormatter.formatLatitude(location.lat)}
+              Latitude: {photoDetailsFormatter.formatLat(location.lat)}
               <br />
-              Longitude: {photoDetailsFormatter.formatLongitude(location.lng)}
+              Longitude: {photoDetailsFormatter.formatLng(location.lng)}
               <br />
-              Altitude: {photoDetailsFormatter.formatAltitude(location.alt)}
+              Altitude: {photoDetailsFormatter.formatAlt(location.alt)}
             </Popup>
           </Marker>
         )}

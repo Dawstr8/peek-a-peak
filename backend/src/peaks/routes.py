@@ -20,18 +20,18 @@ async def get_peaks(service: peaks_service_dep):
 @router.get("/find", response_model=list[ReadPeakWithDistance], tags=["peaks"])
 async def find_nearest_peaks(
     service: peaks_service_dep,
-    latitude: float,
-    longitude: float,
+    lat: float,
+    lng: float,
     max_distance: float | None = None,
     name_filter: str | None = None,
     limit: int = 5,
 ):
     """
-    Find the nearest peaks to a given latitude and longitude.
+    Find the nearest peaks to a given lat and lng.
 
     Args:
-        latitude: Latitude coordinate
-        longitude: Longitude coordinate
+        lat: Latitude coordinate
+        lng: Longitude coordinate
         max_distance: Maximum distance in meters (optional)
         name_filter: Optional substring to filter peak names (case-insensitive)
         limit: Maximum number of peaks to return (default: 5)
@@ -40,8 +40,8 @@ async def find_nearest_peaks(
         List of nearest peaks with distances in meters
     """
     return await service.find_nearest_peaks(
-        latitude=latitude,
-        longitude=longitude,
+        lat=lat,
+        lng=lng,
         max_distance=max_distance,
         name_filter=name_filter,
         limit=limit,

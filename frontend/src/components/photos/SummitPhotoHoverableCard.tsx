@@ -1,11 +1,8 @@
 "use client";
 
-import Image from "next/image";
-
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
-import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
+import type { PhotoDetailsFormatter } from "@/lib/photos/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +20,7 @@ import { PhotoAspectRatio } from "./PhotoAspectRatio";
 
 interface SummitPhotoHoverableCardProps {
   summitPhoto: SummitPhoto;
-  formatter: PhotoMetadataFormatter;
+  formatter: PhotoDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
@@ -34,6 +31,8 @@ export function SummitPhotoHoverableCard({
   className,
   uploadsBaseUrl = UPLOADS_BASE_URL,
 }: SummitPhotoHoverableCardProps) {
+  const { lat, lng, alt } = summitPhoto;
+
   return (
     <PhotoAspectRatio
       className={cn("group", className)}
@@ -41,27 +40,26 @@ export function SummitPhotoHoverableCard({
       alt={`Summit photo ${summitPhoto.id}`}
     >
       <div className="text-background absolute inset-0 hidden flex-col justify-end space-y-4 bg-black/75 p-2 group-hover:flex">
-        {summitPhoto.altitude && (
+        {alt && (
           <Item className="p-0">
             <ItemMedia>
               <ArrowUp />
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatAltitude(summitPhoto.altitude)}
+                {formatter.formatAlt(alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
         )}
-        {summitPhoto.latitude && summitPhoto.longitude && (
+        {lat && lng && (
           <Item className="p-0">
             <ItemMedia>
               <MapPin />
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatLatitude(summitPhoto.latitude)},{" "}
-                {formatter.formatLongitude(summitPhoto.longitude)}
+                {formatter.formatLat(lat)}, {formatter.formatLng(lng)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -77,9 +75,7 @@ export function SummitPhotoHoverableCard({
               </ItemTitle>
               <ItemDescription className="text-background flex w-full justify-between">
                 <span>{summitPhoto.peak.mountain_range.name}</span>
-                <span>
-                  {formatter.formatAltitude(summitPhoto.peak.elevation)}
-                </span>
+                <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
               </ItemDescription>
             </ItemContent>
           </Item>

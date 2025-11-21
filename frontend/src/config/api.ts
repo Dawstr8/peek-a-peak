@@ -60,15 +60,15 @@ export const API_ENDPOINTS = {
   },
   peaks: {
     find: (
-      latitude: number,
-      longitude: number,
+      lat: number,
+      lng: number,
       limit: number = 5,
       name_filter?: string,
       max_distance?: number,
     ) => {
       const params = new URLSearchParams({
-        latitude: latitude.toString(),
-        longitude: longitude.toString(),
+        lat: lat.toString(),
+        lng: lng.toString(),
         limit: limit.toString(),
       });
 

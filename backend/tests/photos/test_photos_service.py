@@ -57,9 +57,9 @@ async def test_upload_photo_with_metadata(
     """Test uploading a photo with provided metadata"""
     summit_photo_create = SummitPhotoCreate(
         captured_at=datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc),
-        latitude=coords_map["near_rysy"][0],
-        longitude=coords_map["near_rysy"][1],
-        altitude=2450.0,
+        lat=coords_map["near_rysy"][0],
+        lng=coords_map["near_rysy"][1],
+        alt=2450.0,
         peak_id=1,
     )
 
@@ -72,7 +72,7 @@ async def test_upload_photo_with_metadata(
     assert result.file_name == mock_file.filename
     assert result.peak_id == 1
     assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)
-    assert result.altitude == 2450.0
+    assert result.alt == 2450.0
 
     mock_uploads_service.save_file.assert_called_once_with(
         mock_file, content_type_prefix="image/"
@@ -100,9 +100,9 @@ async def test_upload_photo_without_metadata(
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
     assert result.captured_at is None
-    assert result.altitude is None
-    assert result.latitude is None
-    assert result.longitude is None
+    assert result.alt is None
+    assert result.lat is None
+    assert result.lng is None
 
     mock_uploads_service.save_file.assert_called_once_with(
         mock_file, content_type_prefix="image/"
@@ -121,7 +121,7 @@ async def test_upload_photo_with_partial_metadata(
     """Test uploading a photo with only some metadata fields"""
     summit_photo_create = SummitPhotoCreate(
         captured_at=datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc),
-        altitude=1500.0,
+        alt=1500.0,
     )
 
     result = await photos_service.upload_photo(
@@ -133,9 +133,9 @@ async def test_upload_photo_with_partial_metadata(
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
     assert result.captured_at == datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc)
-    assert result.altitude == 1500.0
-    assert result.latitude is None
-    assert result.longitude is None
+    assert result.alt == 1500.0
+    assert result.lat is None
+    assert result.lng is None
 
     mock_uploads_service.save_file.assert_called_once_with(
         mock_file, content_type_prefix="image/"

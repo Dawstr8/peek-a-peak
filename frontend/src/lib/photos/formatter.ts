@@ -3,18 +3,18 @@ import { PhotoDetailsFormatter } from "./types";
 const NOT_AVAILABLE = "N/A";
 
 class DefaultPhotoDetailsFormatter implements PhotoDetailsFormatter {
-  formatLatitude(latitude?: number): string {
-    return this.formatCoordinate(latitude);
+  formatLat(lat?: number): string {
+    return this.formatCoordinate(lat);
   }
 
-  formatLongitude(longitude?: number): string {
-    return this.formatCoordinate(longitude);
+  formatLng(lng?: number): string {
+    return this.formatCoordinate(lng);
   }
 
-  formatAltitude(altitude?: number): string {
-    if (altitude === undefined || altitude === null) return NOT_AVAILABLE;
+  formatAlt(alt?: number): string {
+    if (alt === undefined || alt === null) return NOT_AVAILABLE;
 
-    return `${altitude.toFixed(1)}m`;
+    return `${alt.toFixed(1)}m`;
   }
 
   formatCapturedAt(capturedAt?: string): string {

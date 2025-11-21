@@ -36,7 +36,7 @@ class Peak(SQLModel, table=True):
     )
 
     @property
-    def latitude(self) -> Optional[float]:
+    def lat(self) -> Optional[float]:
         if not self.location:
             return None
 
@@ -44,7 +44,7 @@ class Peak(SQLModel, table=True):
         return point.y
 
     @property
-    def longitude(self) -> Optional[float]:
+    def lng(self) -> Optional[float]:
         if not self.location:
             return None
 
@@ -58,8 +58,8 @@ class ReadPeak(BaseModel):
     id: int
     name: str
     elevation: int
-    latitude: Optional[float]
-    longitude: Optional[float]
+    lat: Optional[float]
+    lng: Optional[float]
     created_at: datetime
 
     mountain_range: MountainRange

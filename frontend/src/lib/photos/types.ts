@@ -5,24 +5,24 @@ export interface SummitPhoto {
   file_name: string;
   uploaded_at: string;
   captured_at?: string;
-  latitude?: number;
-  longitude?: number;
-  altitude?: number;
+  lat?: number;
+  lng?: number;
+  alt?: number;
   peak_id?: number;
   peak?: Peak;
 }
 
 export interface SummitPhotoCreate {
   captured_at?: string;
-  latitude?: number;
-  longitude?: number;
-  altitude?: number;
+  lat?: number;
+  lng?: number;
+  alt?: number;
   peak_id?: number;
 }
 
 export interface PhotoDetailsFormatter {
-  formatLatitude(latitude?: number): string;
-  formatLongitude(longitude?: number): string;
-  formatAltitude(altitude?: number): string;
+  formatLat(lat?: number): string;
+  formatLng(lng?: number): string;
+  formatAlt(alt?: number): string;
   formatCapturedAt(capturedAt?: string): string;
 }

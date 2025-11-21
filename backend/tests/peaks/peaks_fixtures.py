@@ -14,7 +14,7 @@ from src.peaks.repository import PeaksRepository
 @pytest.fixture
 def coords_map():
     """
-    Returns a dictionary mapping location names to (latitude, longitude) tuples.
+    Returns a dictionary mapping location names to (lat, lng) tuples.
     This is useful for tests that need specific coordinates.
     """
     return {
@@ -76,21 +76,21 @@ def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
         return None
 
     async def get_nearest(
-        latitude: float, longitude: float, max_distance=None, name_filter=None, limit=5
+        lat: float, lng: float, max_distance=None, name_filter=None, limit=5
     ):
-        if (latitude, longitude) == coords_map["near_rysy"]:
+        if (lat, lng) == coords_map["near_rysy"]:
             results = [
                 PeakWithDistance(peak=mock_peaks_map["rysy"], distance=50.0),
                 PeakWithDistance(peak=mock_peaks_map["giewont"], distance=30000.0),
                 PeakWithDistance(peak=mock_peaks_map["babia_gora"], distance=80000.0),
             ]
-        elif (latitude, longitude) == coords_map["near_sniezka"]:
+        elif (lat, lng) == coords_map["near_sniezka"]:
             results = [
                 PeakWithDistance(peak=mock_peaks_map["giewont"], distance=150000.0),
                 PeakWithDistance(peak=mock_peaks_map["babia_gora"], distance=250000.0),
                 PeakWithDistance(peak=mock_peaks_map["rysy"], distance=400000.0),
             ]
-        elif (latitude, longitude) == coords_map["warsaw"]:
+        elif (lat, lng) == coords_map["warsaw"]:
             results = [
                 PeakWithDistance(peak=mock_peaks_map["babia_gora"], distance=250000.0),
                 PeakWithDistance(peak=mock_peaks_map["giewont"], distance=300000.0),

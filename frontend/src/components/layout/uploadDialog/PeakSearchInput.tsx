@@ -29,16 +29,16 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 
 interface PeakSearchInputProps {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lng: number;
   onSelect: (peakWithDistance: Peak | null) => void;
   limit?: number;
   disabled?: boolean;
 }
 
 export function PeakSearchInput({
-  latitude,
-  longitude,
+  lat,
+  lng,
   onSelect,
   limit = 8,
   disabled = false,
@@ -54,15 +54,15 @@ export function PeakSearchInput({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["peak-search", latitude, longitude, debouncedQuery, limit],
+    queryKey: ["peak-search", lat, lng, debouncedQuery, limit],
     queryFn: () =>
       PeakClient.findNearbyPeaks(
-        latitude,
-        longitude,
+        lat,
+        lng,
         limit,
         debouncedQuery.trim() || undefined,
       ),
-    enabled: !!latitude && !!longitude,
+    enabled: !!lat && !!lng,
     staleTime: 5 * millisecondsInMinute,
   });
 

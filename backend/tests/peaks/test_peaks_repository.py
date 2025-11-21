@@ -302,11 +302,9 @@ async def test_get_nearest_parametrized(
     test_repository, db_peaks, coords_map, coords_key, params, expected_results
 ):
     """Test finding nearest peaks with various parameters"""
-    latitude, longitude = coords_map[coords_key]
+    lat, lng = coords_map[coords_key]
 
-    results = await test_repository.get_nearest(
-        latitude=latitude, longitude=longitude, **params
-    )
+    results = await test_repository.get_nearest(lat=lat, lng=lng, **params)
 
     assert len(results) == len(expected_results)
 
@@ -315,8 +313,8 @@ async def test_get_nearest_parametrized(
         assert peak.id is not None
         assert peak.name == expected["name"]
         assert peak.elevation is not None
-        assert peak.latitude is not None
-        assert peak.longitude is not None
+        assert peak.lat is not None
+        assert peak.lng is not None
         assert peak.mountain_range_id is not None
         assert isinstance(peak.mountain_range, MountainRange)
 
@@ -330,8 +328,8 @@ async def test_get_nearest_parametrized(
 @pytest.mark.asyncio
 async def test_get_nearest_empty_database(test_repository, coords_map):
     """Test finding nearest peaks when database is empty"""
-    latitude, longitude = coords_map["near_rysy"]
+    lat, lng = coords_map["near_rysy"]
 
-    results = await test_repository.get_nearest(latitude=latitude, longitude=longitude)
+    results = await test_repository.get_nearest(lat=lat, lng=lng)
 
     assert results == []

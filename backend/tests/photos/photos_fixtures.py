@@ -94,7 +94,7 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             uploaded_at=datetime.now(),
             captured_at=datetime(2025, 9, 30, 10, 0, tzinfo=timezone.utc),
             location=f"POINT({coords_map['near_rysy'][1]} {coords_map['near_rysy'][0]})",
-            altitude=2495,
+            alt=2495,
             peak_id=db_peaks[0].id,
         ),
         SummitPhoto(
@@ -103,7 +103,7 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             uploaded_at=datetime.now(),
             captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
             location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
-            altitude=1600,
+            alt=1600,
             peak_id=db_peaks[1].id,
         ),
         SummitPhoto(
@@ -112,7 +112,7 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             uploaded_at=datetime.now(),
             captured_at=datetime(2025, 11, 1, 11, 0, tzinfo=timezone.utc),
             location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
-            altitude=1600,
+            alt=1600,
             peak_id=db_peaks[1].id,
         ),
     ]
@@ -141,9 +141,9 @@ async def e2e_photos(
             {
                 "summit_photo_create": {
                     "captured_at": "2025-09-30T10:00:00Z",
-                    "latitude": coords_map["near_rysy"][0],
-                    "longitude": coords_map["near_rysy"][1],
-                    "altitude": 2495.0,
+                    "lat": coords_map["near_rysy"][0],
+                    "lng": coords_map["near_rysy"][1],
+                    "alt": 2495.0,
                     "peak_id": db_peaks[0].id,
                 },
                 "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
@@ -151,9 +151,9 @@ async def e2e_photos(
             {
                 "summit_photo_create": {
                     "captured_at": "2025-10-01T11:00:00Z",
-                    "latitude": coords_map["near_sniezka"][0],
-                    "longitude": coords_map["near_sniezka"][1],
-                    "altitude": 1602.0,
+                    "lat": coords_map["near_sniezka"][0],
+                    "lng": coords_map["near_sniezka"][1],
+                    "alt": 1602.0,
                 },
                 "file": ("photo2.jpg", b"imagedata2", "image/jpeg"),
             },
@@ -162,9 +162,9 @@ async def e2e_photos(
             {
                 "summit_photo_create": {
                     "captured_at": "2025-11-01T11:00:00Z",
-                    "latitude": coords_map["near_sniezka"][0],
-                    "longitude": coords_map["near_sniezka"][1],
-                    "altitude": 1602.0,
+                    "lat": coords_map["near_sniezka"][0],
+                    "lng": coords_map["near_sniezka"][1],
+                    "alt": 1602.0,
                 },
                 "file": ("photo3.jpg", b"imagedata3", "image/jpeg"),
             },
