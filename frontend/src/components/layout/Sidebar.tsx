@@ -1,4 +1,4 @@
-import { LayoutDashboard, Mountain, User } from "lucide-react";
+import { NotebookPen, User } from "lucide-react";
 
 import { useAuth } from "@/components/auth/AuthContext";
 import {
@@ -15,7 +15,7 @@ import Navigation from "./sidebar/Navigation";
 import Profile from "./sidebar/Profile";
 
 export const items = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Diary", url: "/diary", icon: NotebookPen },
   { title: "Profile", url: "/profile", icon: User },
 ];
 
