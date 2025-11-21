@@ -3,6 +3,8 @@
 import { LatLng } from "leaflet";
 import { Eraser, RotateCcw } from "lucide-react";
 
+import { latLngEqual } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -10,33 +12,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { useValueChange } from "@/hooks/use-value-change";
+
 import { InteractiveMap } from "./InteractiveMap";
 
 interface LocationPickerProps {
-  originalValue?: LatLng;
   value?: LatLng;
   onChange?: (value: LatLng | undefined) => void;
 }
 
-export function LocationPicker({
-  originalValue,
-  value,
-  onChange,
-}: LocationPickerProps) {
-  const hasLocationChanged = () => {
-    if (!value && !originalValue) return false;
-    if (!value || !originalValue) return true;
-
-    return !value.equals(originalValue);
-  };
-
-  const handleResetLocation = () => {
-    onChange?.(originalValue);
-  };
-
-  const handleClearLocation = () => {
-    onChange?.(undefined);
-  };
+export function LocationPicker({ value, onChange }: LocationPickerProps) {
+  const { originalValue, hasValueChanged } = useValueChange<LatLng | undefined>(
+    value,
+    latLngEqual,
+  );
 
   return (
     <div className="space-y-2">
@@ -50,8 +39,8 @@ export function LocationPicker({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={handleResetLocation}
-                disabled={!hasLocationChanged()}
+                onClick={() => onChange?.(originalValue)}
+                disabled={!hasValueChanged()}
                 className="cursor-pointer opacity-75 hover:opacity-100"
               >
                 <RotateCcw className="size-4" />
@@ -64,7 +53,7 @@ export function LocationPicker({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={handleClearLocation}
+                onClick={() => onChange?.(undefined)}
                 disabled={!value}
                 className="cursor-pointer opacity-75 hover:opacity-100"
               >
@@ -78,7 +67,7 @@ export function LocationPicker({
       <div className="rounded-lg">
         <InteractiveMap
           location={value}
-          onLocationSelect={onChange}
+          onLocationSelect={(newLocation) => onChange?.(newLocation)}
           clickable={true}
         />
       </div>
