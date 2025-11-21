@@ -16,7 +16,6 @@ import Profile from "./sidebar/Profile";
 
 export const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Peaks", url: "/peaks", icon: Mountain },
   { title: "Profile", url: "/profile", icon: User },
 ];
 

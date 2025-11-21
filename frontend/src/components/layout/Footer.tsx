@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const socials = [
   {
-    href: "https://github.com/Dawstr8/polish-peaks",
+    href: "https://github.com/Dawstr8/peek-a-peak",
     label: "GitHub",
     icon: Github,
   },
