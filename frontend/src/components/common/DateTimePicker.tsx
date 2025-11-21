@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 
 import { Calendar as CalendarIcon, Eraser, RotateCcw, X } from "lucide-react";
 
-import { cn, dateEqual } from "@/lib/utils";
+import {
+  cn,
+  combineDateAndTime,
+  dateEqual,
+  getTimeFromDate,
+} from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -24,8 +29,6 @@ import {
 
 import { useValueChange } from "@/hooks/use-value-change";
 
-const DEFAULT_TIME = "12:00:00";
-
 interface DateTimePickerProps {
   value?: Date;
   onChange?: (date: Date | undefined) => void;
@@ -38,51 +41,25 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
   );
 
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(value);
-  const [time, setTime] = useState<string>(() => {
-    return value?.toTimeString().slice(0, 8) || DEFAULT_TIME;
-  });
+  const [time, setTime] = useState<string>(getTimeFromDate(value));
 
   useEffect(() => {
-    onChange?.(date && time ? combineDateAndTime(date, time) : undefined);
-  }, [date, time, onChange]);
-
-  const combineDateAndTime = (date: Date, time: string): Date => {
-    const newDate = new Date(date);
-    const [hours, minutes, seconds] = time.split(":").map(Number);
-    newDate.setHours(hours, minutes, seconds || 0);
-
-    return newDate;
-  };
+    setTime(getTimeFromDate(value));
+  }, [value]);
 
   const handleTimeChange = (newTime: string) => {
-    const dateToUse = date || originalValue || new Date();
-    setTime(newTime);
-    setDate(dateToUse);
+    const dateToUse = value || originalValue || new Date();
+    onChange?.(combineDateAndTime(dateToUse, newTime));
   };
 
-  const handleResetDateTime = () => {
-    setDate(originalValue);
-    setTime(
-      originalValue ? originalValue.toTimeString().slice(0, 8) : DEFAULT_TIME,
-    );
-  };
-
-  const unsetDateTime = () => {
-    setDate(undefined);
-    setTime(DEFAULT_TIME);
-  };
-
-  const displayValue = date
-    ? combineDateAndTime(date, time).toLocaleString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
-    : null;
+  const displayValue = value?.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -113,7 +90,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={handleResetDateTime}
+                  onClick={() => onChange?.(originalValue)}
                   disabled={!hasValueChanged()}
                   className="cursor-pointer opacity-75 hover:opacity-100"
                 >
@@ -127,8 +104,8 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={unsetDateTime}
-                  disabled={!date}
+                  onClick={() => onChange?.(undefined)}
+                  disabled={!value}
                   className="cursor-pointer opacity-75 hover:opacity-100"
                 >
                   <Eraser className="size-4" />
@@ -150,10 +127,12 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
         <div className="flex flex-col lg:flex-row">
           <Calendar
             mode="single"
-            disabled={(date) => date > new Date()}
-            selected={date}
             captionLayout="dropdown"
-            onSelect={setDate}
+            disabled={(date) => date > new Date()}
+            selected={value}
+            onSelect={(newDate: Date | undefined) =>
+              newDate && onChange?.(combineDateAndTime(newDate, time))
+            }
           />
           <div className="w-full flex-1 space-y-2 p-3">
             <Label
