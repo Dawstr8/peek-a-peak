@@ -1,7 +1,7 @@
 export interface PhotoMetadata {
-  latitude?: number;
-  longitude?: number;
-  altitude?: number;
+  lat?: number;
+  lng?: number;
+  alt?: number;
   capturedAt?: string; // ISO string
 }
 

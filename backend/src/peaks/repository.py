@@ -54,17 +54,17 @@ class PeaksRepository:
 
     async def get_nearest(
         self,
-        latitude: float,
-        longitude: float,
+        lat: float,
+        lng: float,
         max_distance: Optional[float] = None,
         limit: int = 5,
         name_filter: Optional[str] = None,
     ) -> List[PeakWithDistance]:
-        """Find nearest peaks to a given latitude and longitude.
+        """Find nearest peaks to a given lat and lng.
 
         Args:
-            latitude: Latitude of the reference point
-            longitude: Longitude of the reference point
+            lat: Latitude of the reference point
+            lng: Longitude of the reference point
             max_distance: Maximum distance in meters to consider
             limit: Maximum number of results to return (ignored if 0 or negative)
             name_filter: Optional substring to filter peak names (case-insensitive)
@@ -72,9 +72,7 @@ class PeaksRepository:
         Returns:
             List of PeakWithDistance models sorted by ascending distance.
         """
-        target_point = ST_GeogFromWKB(
-            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
-        )
+        target_point = ST_GeogFromWKB(ST_SetSRID(ST_MakePoint(lng, lat), 4326))
 
         query = (
             select(

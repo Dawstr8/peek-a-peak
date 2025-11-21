@@ -37,7 +37,7 @@ export function ReviewStep({
   const imageUrl = useImageUrl(file);
 
   const [location, setLocation] = useState<LatLng | undefined>(() => {
-    const { latitude: lat, longitude: lng, altitude: alt } = summitPhotoCreate;
+    const { lat, lng, alt } = summitPhotoCreate;
     return lat && lng ? new LatLng(lat, lng, alt) : undefined;
   });
 
@@ -55,9 +55,9 @@ export function ReviewStep({
         ...summitPhotoCreate,
         peak_id: peak?.id,
         captured_at: capturedAt?.toISOString() || undefined,
-        latitude: location?.lat,
-        longitude: location?.lng,
-        altitude: location?.alt,
+        lat: location?.lat,
+        lng: location?.lng,
+        alt: location?.alt,
       },
       peak,
     );
@@ -85,8 +85,8 @@ export function ReviewStep({
               <div>
                 <PeakSearchInput
                   disabled={!location}
-                  latitude={location?.lat ?? 0}
-                  longitude={location?.lng ?? 0}
+                  lat={location?.lat ?? 0}
+                  lng={location?.lng ?? 0}
                   onSelect={setPeak}
                 />
               </div>

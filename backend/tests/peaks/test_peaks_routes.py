@@ -19,8 +19,8 @@ async def test_get_peaks(client_with_db: AsyncClient, db_peaks):
         assert "id" in peak
         assert "name" in peak
         assert "elevation" in peak
-        assert "latitude" in peak
-        assert "longitude" in peak
+        assert "lat" in peak
+        assert "lng" in peak
         assert "mountain_range" in peak
         assert "created_at" in peak
 
@@ -50,11 +50,11 @@ async def test_find_nearest_peaks_parametrized(
     expected_nearest_name: str,
 ):
     """Happy-path nearest peaks search for multiple coordinate sets."""
-    latitude, longitude = coords_map[coords_key]
+    lat, lng = coords_map[coords_key]
 
     response = await client_with_db.get(
         "/api/peaks/find",
-        params={"latitude": latitude, "longitude": longitude},
+        params={"lat": lat, "lng": lng},
     )
 
     assert response.status_code == 200
@@ -90,8 +90,8 @@ async def test_find_nearest_peaks_filters_parametrized(
     expected_nearest_name: str,
 ):
     """Nearest peaks with various filtering combinations (limit, max_distance)."""
-    latitude, longitude = coords_map["near_rysy"]
-    query = {"latitude": latitude, "longitude": longitude, **params}
+    lat, lng = coords_map["near_rysy"]
+    query = {"lat": lat, "lng": lng, **params}
 
     response = await client_with_db.get("/api/peaks/find", params=query)
 
@@ -107,10 +107,10 @@ async def test_find_nearest_peaks_empty_database(
     client_with_db: AsyncClient, coords_map: dict
 ):
     """Nearest peaks returns empty list when DB has no peaks."""
-    latitude, longitude = coords_map["near_rysy"]
+    lat, lng = coords_map["near_rysy"]
 
     response = await client_with_db.get(
-        "/api/peaks/find", params={"latitude": latitude, "longitude": longitude}
+        "/api/peaks/find", params={"lat": lat, "lng": lng}
     )
     assert response.status_code == 200
     assert response.json() == []
@@ -121,10 +121,10 @@ async def test_find_nearest_peaks_empty_database(
     "params",
     [
         {},
-        {"latitude": 49.0},
-        {"longitude": 20.0},
-        {"latitude": "invalid", "longitude": 20.0},
-        {"latitude": 49.0, "longitude": 20.0, "limit": "invalid"},
+        {"lat": 49.0},
+        {"lng": 20.0},
+        {"lat": "invalid", "lng": 20.0},
+        {"lat": 49.0, "lng": 20.0, "limit": "invalid"},
     ],
 )
 async def test_find_nearest_peaks_validation_errors_parametrized(
@@ -148,8 +148,8 @@ async def test_get_peak(client_with_db: AsyncClient, db_peaks):
     assert data["id"] == peak_id
     assert data["name"] == "Rysy"
     assert data["elevation"] == 2499
-    assert data["latitude"] == 49.1795
-    assert data["longitude"] == 20.0881
+    assert data["lat"] == 49.1795
+    assert data["lng"] == 20.0881
     assert data["mountain_range"]["name"] == "Tatry"
     assert "created_at" in data
 

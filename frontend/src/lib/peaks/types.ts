@@ -4,8 +4,8 @@ export interface Peak {
   id: number;
   name: string;
   elevation: number;
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lng: number;
 
   mountain_range: MountainRange;
 }

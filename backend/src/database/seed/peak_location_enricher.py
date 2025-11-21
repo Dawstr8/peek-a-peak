@@ -77,17 +77,17 @@ def _fetch_webpage_content(url: str, headers: Dict[str, str]) -> BeautifulSoup:
 
 
 def _extract_peak_location(soup: BeautifulSoup) -> Optional[str]:
-    latitude_span = soup.select_one("span.geo-nondefault span.geo-dms span.latitude")
-    longitude_span = soup.select_one("span.geo-nondefault span.geo-dms span.longitude")
+    lat_span = soup.select_one("span.geo-nondefault span.geo-dms span.latitude")
+    lng_span = soup.select_one("span.geo-nondefault span.geo-dms span.longitude")
 
-    if not latitude_span or not longitude_span:
+    if not lat_span or not lng_span:
         return None
 
-    latitude = _parse_coordinate(latitude_span.get_text(strip=True))
-    longitude = _parse_coordinate(longitude_span.get_text(strip=True))
+    lat = _parse_coordinate(lat_span.get_text(strip=True))
+    lng = _parse_coordinate(lng_span.get_text(strip=True))
 
-    if latitude is not None and longitude is not None:
-        return f"POINT({longitude} {latitude})"
+    if lat is not None and lng is not None:
+        return f"POINT({lng} {lat})"
 
 
 def _parse_coordinate(coordinate_str: str) -> float:

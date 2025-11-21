@@ -25,7 +25,7 @@ class SummitPhoto(SQLModel, table=True):
     location: Optional[object] = Field(
         sa_column=Column(Geography(geometry_type="POINT", srid=4326))
     )
-    altitude: Optional[float] = None
+    alt: Optional[float] = None
 
     owner_id: int = Field(foreign_key="user.id")
 
@@ -33,7 +33,7 @@ class SummitPhoto(SQLModel, table=True):
     peak: Optional[Peak] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
     @property
-    def latitude(self) -> Optional[float]:
+    def lat(self) -> Optional[float]:
         if not self.location:
             return None
 
@@ -41,7 +41,7 @@ class SummitPhoto(SQLModel, table=True):
         return point.y
 
     @property
-    def longitude(self) -> Optional[float]:
+    def lng(self) -> Optional[float]:
         if not self.location:
             return None
 
@@ -53,9 +53,9 @@ class SummitPhotoCreate(BaseModel):
     """Request model for creating a new photo with metadata"""
 
     captured_at: Optional[datetime] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    altitude: Optional[float] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    alt: Optional[float] = None
 
     peak_id: Optional[int] = None
 
@@ -79,9 +79,9 @@ class SummitPhotoRead(BaseModel):
     file_name: str
     uploaded_at: datetime
     captured_at: Optional[datetime] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    altitude: Optional[float] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    alt: Optional[float] = None
 
     peak_id: Optional[int] = None
     owner_id: int

@@ -3,7 +3,7 @@
 import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
-import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
+import type { PhotoDetailsFormatter } from "@/lib/photos/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
 import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
@@ -26,7 +26,7 @@ import { UPLOADS_BASE_URL } from "@/config/api";
 
 interface SummitPhotoCardProps {
   summitPhoto: SummitPhoto;
-  formatter: PhotoMetadataFormatter;
+  formatter: PhotoDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
@@ -37,6 +37,8 @@ export function SummitPhotoCard({
   className,
   uploadsBaseUrl = UPLOADS_BASE_URL,
 }: SummitPhotoCardProps) {
+  const { lat, lng, alt } = summitPhoto;
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -54,27 +56,26 @@ export function SummitPhotoCard({
           src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
           alt={`Summit photo ${summitPhoto.id}`}
         />
-        {summitPhoto.altitude && (
+        {alt && (
           <Item className="p-0">
             <ItemMedia>
               <ArrowUp />
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatAltitude(summitPhoto.altitude)}
+                {formatter.formatAlt(alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
         )}
-        {summitPhoto.latitude && summitPhoto.longitude && (
+        {lat && lng && (
           <Item className="p-0">
             <ItemMedia>
               <MapPin />
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatLatitude(summitPhoto.latitude)},{" "}
-                {formatter.formatLongitude(summitPhoto.longitude)}
+                {formatter.formatLat(lat)}, {formatter.formatLng(lng)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -90,9 +91,7 @@ export function SummitPhotoCard({
               </ItemTitle>
               <ItemDescription className="flex w-full justify-between">
                 <span>{summitPhoto.peak.mountain_range.name}</span>
-                <span>
-                  {formatter.formatAltitude(summitPhoto.peak.elevation)}
-                </span>
+                <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
               </ItemDescription>
             </ItemContent>
           </Item>

@@ -69,11 +69,11 @@ async def test_find_nearest_peaks_parametrized(
     expected_length: int,
 ):
     """Test passing multiple coordinate sets to find nearest peaks"""
-    latitude, longitude = coords_map["near_rysy"]
+    lat, lng = coords_map["near_rysy"]
 
     results = await mock_peaks_service.find_nearest_peaks(
-        latitude=latitude,
-        longitude=longitude,
+        lat=lat,
+        lng=lng,
         **params,
     )
 

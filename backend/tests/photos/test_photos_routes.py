@@ -281,9 +281,9 @@ async def test_upload_with_metadata(
     """Test upload photo with metadata provided as JSON"""
     summit_photo_create = {
         "captured_at": "2025-10-06T14:30:00Z",
-        "latitude": coords_map["near_rysy"][0],
-        "longitude": coords_map["near_rysy"][1],
-        "altitude": 2450.0,
+        "lat": coords_map["near_rysy"][0],
+        "lng": coords_map["near_rysy"][1],
+        "alt": 2450.0,
         "peak_id": db_peaks[0].id,
     }
 
@@ -298,9 +298,9 @@ async def test_upload_with_metadata(
     assert data["id"] is not None
     assert data["file_name"] is not None
 
-    assert data["latitude"] == summit_photo_create["latitude"]
-    assert data["longitude"] == summit_photo_create["longitude"]
-    assert data["altitude"] == summit_photo_create["altitude"]
+    assert data["lat"] == summit_photo_create["lat"]
+    assert data["lng"] == summit_photo_create["lng"]
+    assert data["alt"] == summit_photo_create["alt"]
 
     assert data["peak_id"] == summit_photo_create["peak_id"]
 
@@ -312,9 +312,9 @@ async def test_upload_without_peak_id(
     """Test upload photo with GPS coordinates but no peak_id"""
     summit_photo_create = {
         "captured_at": "2025-10-06T14:30:00Z",
-        "latitude": coords_map["warsaw"][0],
-        "longitude": coords_map["warsaw"][1],
-        "altitude": 120.0,
+        "lat": coords_map["warsaw"][0],
+        "lng": coords_map["warsaw"][1],
+        "alt": 120.0,
     }
 
     resp = await client_with_db.post(
@@ -328,9 +328,9 @@ async def test_upload_without_peak_id(
     assert data["id"] is not None
     assert data["file_name"] is not None
 
-    assert data["latitude"] == coords_map["warsaw"][0]
-    assert data["longitude"] == coords_map["warsaw"][1]
-    assert data["altitude"] == 120.0
+    assert data["lat"] == coords_map["warsaw"][0]
+    assert data["lng"] == coords_map["warsaw"][1]
+    assert data["alt"] == 120.0
 
     assert data["peak_id"] is None
 
@@ -349,9 +349,9 @@ async def test_upload_without_gps_data(client_with_db, db_peaks, logged_in_user)
     assert data["id"] is not None
     assert data["file_name"] is not None
 
-    assert data["latitude"] is None
-    assert data["longitude"] is None
-    assert data["altitude"] is None
+    assert data["lat"] is None
+    assert data["lng"] is None
+    assert data["alt"] is None
 
     assert data["peak_id"] is None
 

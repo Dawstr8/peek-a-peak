@@ -73,7 +73,7 @@ async def upload_photo(
 
     Args:
         file: The photo file to upload
-        summit_photo_create: Metadata for the photo (captured_at, latitude, longitude, altitude, peak_id)
+        summit_photo_create: Metadata for the photo (captured_at, lat, lng, alt, peak_id)
 
     Returns:
         SummitPhotoRead: The uploaded photo object with peak information
