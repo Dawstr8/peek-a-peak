@@ -23,7 +23,7 @@ export default function LoginPage() {
     toast.success("Logged in successfully!");
 
     const returnTo = searchParams.get("returnTo");
-    router.push(returnTo || "/dashboard");
+    router.push(returnTo || "/diary");
   };
 
   return (

@@ -38,7 +38,7 @@ const features = [
 
 export default async function Home() {
   const isAuthenticated = await checkIfAuthenticated();
-  if (isAuthenticated) redirect("/dashboard");
+  if (isAuthenticated) redirect("/diary");
 
   return (
     <>
