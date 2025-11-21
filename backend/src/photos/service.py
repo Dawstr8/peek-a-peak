@@ -48,10 +48,19 @@ class PhotosService:
             SummitPhoto: The saved photo object with peak information
         """
         path = await self.uploads_service.save_file(file, content_type_prefix="image/")
+        latitude, longitude = (
+            summit_photo_create.latitude,
+            summit_photo_create.longitude,
+        )
 
         photo = SummitPhoto(
             file_name=path.split("/")[-1],
             owner_id=current_user.id,
+            location=(
+                f"POINT({longitude} {latitude})"
+                if latitude is not None and longitude is not None
+                else None
+            ),
             **summit_photo_create.model_dump(),
         )
 

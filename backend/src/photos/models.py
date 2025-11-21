@@ -1,7 +1,10 @@
 from datetime import datetime
 from typing import Optional
 
+from geoalchemy2 import Geography
+from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, field_validator
+from shapely.geometry import Point
 from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -19,14 +22,31 @@ class SummitPhoto(SQLModel, table=True):
         default=None,
         sa_column=Column(DateTime(timezone=True), nullable=True),
     )
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    location: Optional[object] = Field(
+        sa_column=Column(Geography(geometry_type="POINT", srid=4326))
+    )
     altitude: Optional[float] = None
 
     owner_id: int = Field(foreign_key="user.id")
-    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
 
+    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
     peak: Optional[Peak] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
+
+    @property
+    def latitude(self) -> Optional[float]:
+        if not self.location:
+            return None
+
+        point: Point = to_shape(self.location)
+        return point.y
+
+    @property
+    def longitude(self) -> Optional[float]:
+        if not self.location:
+            return None
+
+        point: Point = to_shape(self.location)
+        return point.x
 
 
 class SummitPhotoCreate(BaseModel):
