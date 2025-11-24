@@ -56,7 +56,7 @@ async def read_me(
 async def login_with_session(
     response: Response,
     auth_service: auth_service_dep,
-    email_or_username: str = Form(..., alias="emailOrUsername"),
+    emailOrUsername: str = Form(...),
     password: str = Form(...),
 ):
     """
@@ -75,7 +75,7 @@ async def login_with_session(
         HTTPException: If credentials are invalid
     """
     try:
-        session_id = await auth_service.login_user(email_or_username, password)
+        session_id = await auth_service.login_user(emailOrUsername, password)
 
     except ValueError:
         raise HTTPException(
