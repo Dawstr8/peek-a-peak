@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import pytest
 from sqlmodel import select
 
+from src.models import SortParams
 from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
 
@@ -85,10 +86,10 @@ async def test_get_all(test_photos_repository, db_photos):
 async def test_get_all_with_sorting(test_photos_repository, db_photos):
     """Test retrieving all summit photos with sorting parameters"""
     photos_asc = await test_photos_repository.get_all(
-        sort_by="captured_at", order="asc"
+        sort_params=SortParams(sort_by="captured_at", order="asc")
     )
     photos_desc = await test_photos_repository.get_all(
-        sort_by="captured_at", order="desc"
+        sort_params=SortParams(sort_by="captured_at", order="desc")
     )
 
     assert len(photos_asc) == 3
@@ -119,10 +120,10 @@ async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
 async def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, db_user):
     """Test retrieving all summit photos with sorting parameters"""
     photos_asc = await test_photos_repository.get_by_owner_id(
-        owner_id=db_user.id, sort_by="captured_at", order="asc"
+        owner_id=db_user.id, sort_params=SortParams(sort_by="captured_at", order="asc")
     )
     photos_desc = await test_photos_repository.get_by_owner_id(
-        owner_id=db_user.id, sort_by="captured_at", order="desc"
+        owner_id=db_user.id, sort_params=SortParams(sort_by="captured_at", order="desc")
     )
 
     assert len(photos_asc) == 2
@@ -158,7 +159,7 @@ async def test_apply_sorting_asc(test_photos_repository, db_photos):
     statement = select(SummitPhoto)
 
     sorted_statement = test_photos_repository._apply_sorting(
-        statement, sort_by="captured_at", order="asc"
+        statement, sort_params=SortParams(sort_by="captured_at", order="asc")
     )
 
     photos = (await test_photos_repository.db.exec(sorted_statement)).all()
@@ -172,7 +173,7 @@ async def test_apply_sorting_desc(test_photos_repository, db_photos):
     statement = select(SummitPhoto)
 
     sorted_statement = test_photos_repository._apply_sorting(
-        statement, sort_by="captured_at", order="desc"
+        statement, sort_params=SortParams(sort_by="captured_at", order="desc")
     )
 
     photos = (await test_photos_repository.db.exec(sorted_statement)).all()
@@ -197,7 +198,7 @@ async def test_apply_sorting_invalid_column(test_photos_repository, db_photos):
     statement = select(SummitPhoto)
 
     result_statement = test_photos_repository._apply_sorting(
-        statement, sort_by="invalid_column", order="desc"
+        statement, sort_params=SortParams(sort_by="invalid_column", order="desc")
     )
 
     photos = (await test_photos_repository.db.exec(result_statement)).all()

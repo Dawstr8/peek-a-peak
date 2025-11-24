@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from fastapi import UploadFile
 
+from src.models import SortParams
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
 from src.uploads.service import UploadsService
@@ -79,30 +80,28 @@ class PhotosService:
         return await self.photos_repository.get_by_id(photo_id)
 
     async def get_all_photos(
-        self, sort_by: Optional[str] = None, order: Optional[str] = None
+        self, sort_params: Optional[SortParams] = None
     ) -> List[SummitPhoto]:
         """
         Get all photos from the database, optionally sorted.
 
         Args:
-            sort_by: Field to sort by (optional)
-            order: Sort order 'desc' for descending, otherwise ascending (SQL default)
+            sort_params: Sorting parameters
 
         Returns:
             List[SummitPhoto]: List of all photos with peak information
         """
-        return await self.photos_repository.get_all(sort_by=sort_by, order=order)
+        return await self.photos_repository.get_all(sort_params=sort_params)
 
     async def get_photos_by_user(
-        self, username: str, sort_by: Optional[str] = None, order: Optional[str] = None
+        self, username: str, sort_params: Optional[SortParams] = None
     ) -> List[SummitPhoto]:
         """
         Get all photos uploaded by a specific user.
 
         Args:
             username: Username of the user whose photos to retrieve
-            sort_by: Field to sort by (optional)
-            order: Sort order 'desc' for descending, otherwise ascending (SQL default)
+            sort_params: Sorting parameters
 
         Returns:
             List[SummitPhoto]: List of photos uploaded by the specified user with peak information
@@ -110,7 +109,7 @@ class PhotosService:
         user = await self.users_repository.get_by_username(username)
 
         return await self.photos_repository.get_by_owner_id(
-            user.id, sort_by=sort_by, order=order
+            user.id, sort_params=sort_params
         )
 
     async def delete_photo(self, photo_id: int) -> bool:

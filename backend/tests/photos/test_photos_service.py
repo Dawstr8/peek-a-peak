@@ -171,7 +171,7 @@ async def test_get_all_photos(photos_service, mock_photos_repository, mock_photo
     result = await photos_service.get_all_photos()
 
     assert result == mock_photos
-    mock_photos_repository.get_all.assert_called_once_with(sort_by=None, order=None)
+    mock_photos_repository.get_all.assert_called_once_with(sort_params=None)
 
 
 @pytest.mark.asyncio
@@ -192,7 +192,7 @@ async def test_get_photos_by_user(
     assert result == expected_photos
     mock_users_repository.get_by_username.assert_called_once_with(username)
     mock_photos_repository.get_by_owner_id.assert_called_once_with(
-        user_id, sort_by=None, order=None
+        user_id, sort_params=None
     )
 
 
