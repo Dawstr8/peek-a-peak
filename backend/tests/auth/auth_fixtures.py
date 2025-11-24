@@ -38,7 +38,7 @@ async def logged_in_user(client_with_db, registered_user):
 
     await client_with_db.post(
         "/api/auth/login",
-        data={"email_or_username": email, "password": password},
+        data={"emailOrUsername": email, "password": password},
     )
 
     return {
@@ -67,7 +67,7 @@ async def temporary_login(client: AsyncClient, email_or_username: str, password:
     await client.post(
         "/api/auth/login",
         data={
-            "email_or_username": email_or_username,
+            "emailOrUsername": email_or_username,
             "password": password,
         },
     )

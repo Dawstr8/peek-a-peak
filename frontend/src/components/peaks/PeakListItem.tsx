@@ -39,7 +39,7 @@ export function PeakListItem({
             {peak.elevation}m
           </span>
           <Badge variant="secondary" className="text-xs">
-            {peak.mountain_range.name}
+            {peak.mountainRange.name}
           </Badge>
         </div>
       </div>

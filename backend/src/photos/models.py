@@ -3,11 +3,12 @@ from typing import Optional
 
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
-from pydantic import BaseModel, field_validator
+from pydantic import field_validator
 from shapely.geometry import Point
 from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
+from src.models import CamelModel
 from src.peaks.models import Peak, ReadPeak
 from src.users.models import User
 
@@ -49,7 +50,7 @@ class SummitPhoto(SQLModel, table=True):
         return point.x
 
 
-class SummitPhotoCreate(BaseModel):
+class SummitPhotoCreate(CamelModel):
     """Request model for creating a new photo with metadata"""
 
     captured_at: Optional[datetime] = None
@@ -72,7 +73,7 @@ class SummitPhotoCreate(BaseModel):
         return v
 
 
-class SummitPhotoRead(BaseModel):
+class SummitPhotoRead(CamelModel):
     """Response model for reading a photo with metadata"""
 
     id: int

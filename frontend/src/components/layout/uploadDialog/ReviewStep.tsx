@@ -42,8 +42,8 @@ export function ReviewStep({
   });
 
   const [capturedAt, setCapturedAt] = useState<Date | undefined>(() => {
-    return summitPhotoCreate.captured_at
-      ? new Date(summitPhotoCreate.captured_at)
+    return summitPhotoCreate.capturedAt
+      ? new Date(summitPhotoCreate.capturedAt)
       : undefined;
   });
 
@@ -53,8 +53,8 @@ export function ReviewStep({
     onAccept(
       {
         ...summitPhotoCreate,
-        peak_id: peak?.id,
-        captured_at: capturedAt?.toISOString() || undefined,
+        peakId: peak?.id,
+        capturedAt: capturedAt?.toISOString() || undefined,
         lat: location?.lat,
         lng: location?.lng,
         alt: location?.alt,

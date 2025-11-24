@@ -63,7 +63,7 @@ async def upload_photo(
     photos_service: photos_service_dep,
     current_user: current_user_dep,
     file: UploadFile = File(...),
-    summit_photo_create: str = Form(...),
+    summit_photo_create: str = Form(..., alias="summitPhotoCreate"),
 ):
     """
     Upload a photo file with metadata

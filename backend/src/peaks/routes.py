@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from src.peaks.dependencies import peaks_service_dep
 from src.peaks.models import ReadPeak, ReadPeakWithDistance
@@ -22,8 +22,8 @@ async def find_nearest_peaks(
     service: peaks_service_dep,
     lat: float,
     lng: float,
-    max_distance: float | None = None,
-    name_filter: str | None = None,
+    max_distance: float | None = Query(None, alias="maxDistance"),
+    name_filter: str | None = Query(None, alias="nameFilter"),
     limit: int = 5,
 ):
     """

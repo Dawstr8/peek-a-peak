@@ -139,8 +139,8 @@ async def e2e_photos(
     photos_data = [
         [
             {
-                "summit_photo_create": {
-                    "captured_at": "2025-09-30T10:00:00Z",
+                "summitPhotoCreate": {
+                    "capturedAt": "2025-09-30T10:00:00Z",
                     "lat": coords_map["near_rysy"][0],
                     "lng": coords_map["near_rysy"][1],
                     "alt": 2495.0,
@@ -149,8 +149,8 @@ async def e2e_photos(
                 "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
             },
             {
-                "summit_photo_create": {
-                    "captured_at": "2025-10-01T11:00:00Z",
+                "summitPhotoCreate": {
+                    "capturedAt": "2025-10-01T11:00:00Z",
                     "lat": coords_map["near_sniezka"][0],
                     "lng": coords_map["near_sniezka"][1],
                     "alt": 1602.0,
@@ -160,8 +160,8 @@ async def e2e_photos(
         ],
         [
             {
-                "summit_photo_create": {
-                    "captured_at": "2025-11-01T11:00:00Z",
+                "summitPhotoCreate": {
+                    "capturedAt": "2025-11-01T11:00:00Z",
                     "lat": coords_map["near_sniezka"][0],
                     "lng": coords_map["near_sniezka"][1],
                     "alt": 1602.0,
@@ -180,9 +180,7 @@ async def e2e_photos(
                 response = await client_with_db.post(
                     "/api/photos",
                     files={"file": photo["file"]},
-                    data={
-                        "summit_photo_create": json.dumps(photo["summit_photo_create"])
-                    },
+                    data={"summitPhotoCreate": json.dumps(photo["summitPhotoCreate"])},
                 )
 
                 created_photos.append(response.json())

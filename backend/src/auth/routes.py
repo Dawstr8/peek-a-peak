@@ -56,7 +56,7 @@ async def read_me(
 async def login_with_session(
     response: Response,
     auth_service: auth_service_dep,
-    email_or_username: str = Form(...),
+    email_or_username: str = Form(..., alias="emailOrUsername"),
     password: str = Form(...),
 ):
     """

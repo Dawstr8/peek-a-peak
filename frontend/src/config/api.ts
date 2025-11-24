@@ -40,14 +40,14 @@ export const API_ENDPOINTS = {
   },
   photos: {
     getAll: (
-      sort_by: string | null = null,
+      sortBy: string | null = null,
       order: "asc" | "desc" | null = null,
-    ) => buildUrl(`/photos`, { sort_by, order }),
+    ) => buildUrl(`/photos`, { sortBy, order }),
     getByUser: (
       username: string,
-      sort_by: string | null = null,
+      sortBy: string | null = null,
       order: "asc" | "desc" | null = null,
-    ) => buildUrl(`/photos/user/${username}`, { sort_by, order }),
+    ) => buildUrl(`/photos/user/${username}`, { sortBy, order }),
     post: buildUrl(`/photos`),
   },
   peaks: {
@@ -55,15 +55,15 @@ export const API_ENDPOINTS = {
       lat: number,
       lng: number,
       limit: number = 5,
-      name_filter?: string,
-      max_distance?: number,
+      nameFilter?: string,
+      maxDistance?: number,
     ) =>
       buildUrl(`/peaks/find`, {
         lat,
         lng,
         limit,
-        name_filter,
-        max_distance,
+        nameFilter,
+        maxDistance,
       }),
   },
 } as const;

@@ -3,11 +3,11 @@ from typing import Optional
 
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
-from pydantic import BaseModel
 from shapely.geometry import Point
 from sqlalchemy import Column, UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
+from src.models import CamelModel
 from src.mountain_ranges.models import MountainRange
 
 
@@ -52,7 +52,7 @@ class Peak(SQLModel, table=True):
         return point.x
 
 
-class ReadPeak(BaseModel):
+class ReadPeak(CamelModel):
     """Response model for reading peak information"""
 
     id: int
@@ -65,14 +65,14 @@ class ReadPeak(BaseModel):
     mountain_range: MountainRange
 
 
-class PeakWithDistance(BaseModel):
+class PeakWithDistance(CamelModel):
     """Model representing a peak along with its distance from a reference point"""
 
     peak: Peak
     distance: float
 
 
-class ReadPeakWithDistance(BaseModel):
+class ReadPeakWithDistance(CamelModel):
     """Response model for peak with distance information"""
 
     peak: ReadPeak

@@ -2,8 +2,10 @@ import re
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import EmailStr, Field, field_validator
 from sqlmodel import Field, SQLModel
+
+from src.models import CamelModel
 
 
 class User(SQLModel, table=True):
@@ -16,7 +18,7 @@ class User(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
-class UserCreate(BaseModel):
+class UserCreate(CamelModel):
     """Request model for creating a new user"""
 
     email: EmailStr
@@ -33,7 +35,7 @@ class UserCreate(BaseModel):
         return v
 
 
-class UserRead(BaseModel):
+class UserRead(CamelModel):
     """Response model for user data without sensitive information"""
 
     email: str

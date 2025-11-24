@@ -41,8 +41,8 @@ export function UploadStep({
 
   const summitPhoto = {
     ...summitPhotoCreate,
-    file_name: URL.createObjectURL(file),
-    uploaded_at: new Date().toISOString(),
+    fileName: URL.createObjectURL(file),
+    uploadedAt: new Date().toISOString(),
     id: 999,
     peak: selectedPeak,
   } as unknown as SummitPhoto;
