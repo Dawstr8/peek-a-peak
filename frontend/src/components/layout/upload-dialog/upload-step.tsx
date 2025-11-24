@@ -7,7 +7,7 @@ import { PhotoClient } from "@/lib/photos/client";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import type { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
 
-import { SummitPhotoCard } from "@/components/photos/SummitPhotoCard";
+import { SummitPhotoCard } from "@/components/photos/summit-photo-card";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 

@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { RegisterForm } from "./components/RegisterForm";
+import { RegisterForm } from "./components/register-form";
 
 export default function RegisterPage() {
   const router = useRouter();

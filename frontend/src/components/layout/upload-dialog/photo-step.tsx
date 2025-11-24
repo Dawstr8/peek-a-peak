@@ -9,7 +9,7 @@ import type { PhotoMetadata } from "@/lib/metadata/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
-import { MessageBlock } from "@/components/common/MessageBlock";
+import { MessageBlock } from "@/components/common/message-block";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 

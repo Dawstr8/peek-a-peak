@@ -7,7 +7,7 @@ import { Check, Upload } from "lucide-react";
 import type { Peak } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
-import { MessageBlock } from "@/components/common/MessageBlock";
+import { MessageBlock } from "@/components/common/message-block";
 import {
   Dialog,
   DialogContent,
@@ -17,10 +17,10 @@ import {
 
 import { useStepper } from "@/hooks/use-stepper";
 
-import { useUploadDialog } from "./UploadDialogContext";
-import { PhotoStep } from "./uploadDialog/PhotoStep";
-import { ReviewStep } from "./uploadDialog/ReviewStep";
-import { UploadStep } from "./uploadDialog/UploadStep";
+import { useUploadDialog } from "./upload-dialog-context";
+import { PhotoStep } from "./upload-dialog/photo-step";
+import { ReviewStep } from "./upload-dialog/review-step";
+import { UploadStep } from "./upload-dialog/upload-step";
 
 export default function UploadDialog() {
   const { isOpen, closeDialog } = useUploadDialog();

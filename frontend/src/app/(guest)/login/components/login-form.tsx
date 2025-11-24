@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { AuthClient } from "@/lib/auth/client";
 
-import { useAuth } from "@/components/auth/AuthContext";
+import { useAuth } from "@/components/auth/auth-context";
 import { Button } from "@/components/ui/button";
 import {
   Form,

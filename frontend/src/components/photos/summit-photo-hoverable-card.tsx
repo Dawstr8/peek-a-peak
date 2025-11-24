@@ -1,19 +1,11 @@
 "use client";
 
-import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
 import type { PhotoDetailsFormatter } from "@/lib/photos/types";
 import type { SummitPhoto } from "@/lib/photos/types";
+import { cn } from "@/lib/utils";
 
-import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Item,
   ItemContent,
@@ -24,38 +16,30 @@ import {
 
 import { UPLOADS_BASE_URL } from "@/config/api";
 
-interface SummitPhotoCardProps {
+import { PhotoAspectRatio } from "./photo-aspect-ratio";
+
+interface SummitPhotoHoverableCardProps {
   summitPhoto: SummitPhoto;
   formatter: PhotoDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
 
-export function SummitPhotoCard({
+export function SummitPhotoHoverableCard({
   summitPhoto,
   formatter,
   className,
   uploadsBaseUrl = UPLOADS_BASE_URL,
-}: SummitPhotoCardProps) {
+}: SummitPhotoHoverableCardProps) {
   const { lat, lng, alt } = summitPhoto;
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle>#{summitPhoto.id}</CardTitle>
-        <CardDescription>
-          {summitPhoto.capturedAt &&
-            formatDistance(new Date(summitPhoto.capturedAt), new Date(), {
-              addSuffix: true,
-            })}
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        <PhotoAspectRatio
-          src={`${uploadsBaseUrl}${summitPhoto.fileName}`}
-          alt={`Summit photo ${summitPhoto.id}`}
-        />
+    <PhotoAspectRatio
+      className={cn("group", className)}
+      src={`${uploadsBaseUrl}${summitPhoto.fileName}`}
+      alt={`Summit photo ${summitPhoto.id}`}
+    >
+      <div className="text-background absolute inset-0 hidden flex-col justify-end space-y-4 bg-black/75 p-2 group-hover:flex">
         {alt && (
           <Item className="p-0">
             <ItemMedia>
@@ -89,14 +73,14 @@ export function SummitPhotoCard({
               <ItemTitle className="font-mono text-base">
                 {summitPhoto.peak.name}
               </ItemTitle>
-              <ItemDescription className="flex w-full justify-between">
+              <ItemDescription className="text-background flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
               </ItemDescription>
             </ItemContent>
           </Item>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </PhotoAspectRatio>
   );
 }

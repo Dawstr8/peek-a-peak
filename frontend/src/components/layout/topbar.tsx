@@ -1,8 +1,8 @@
-import LoginButton from "./LoginButton";
-import RegisterButton from "./sidebar/RegisterButton";
-import HamburgerMenu from "./topbar/HamburgerMenu";
-import Logo from "./topbar/Logo";
-import Navigation from "./topbar/Navigation";
+import LoginButton from "./login-button";
+import RegisterButton from "./sidebar/register-button";
+import HamburgerMenu from "./topbar/hamburger-menu";
+import Logo from "./topbar/logo";
+import Navigation from "./topbar/navigation";
 
 export default function Topbar() {
   return (

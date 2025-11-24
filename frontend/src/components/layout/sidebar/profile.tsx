@@ -4,7 +4,7 @@ import { EllipsisVertical } from "lucide-react";
 
 import { User } from "@/lib/users/types";
 
-import LogoutButton from "@/components/layout/LogoutButton";
+import LogoutButton from "@/components/layout/logout-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import UserPreview from "@/components/users/UserPreview";
+import UserPreview from "@/components/users/user-preview";
 
 interface ProfileProps {
   user: User | null;

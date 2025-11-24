@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react";
 import { AuthClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 
-import { useAuth } from "@/components/auth/AuthContext";
+import { useAuth } from "@/components/auth/auth-context";
 
 export interface LogoutButtonProps {
   className?: string;

@@ -1,5 +1,5 @@
-import Footer from "@/components/layout/Footer";
-import Topbar from "@/components/layout/Topbar";
+import Footer from "@/components/layout/footer";
+import Topbar from "@/components/layout/topbar";
 
 export default function GuestLayout({
   children,

@@ -2,11 +2,11 @@
 
 import { redirect, usePathname } from "next/navigation";
 
-import { useAuth } from "@/components/auth/AuthContext";
-import Footer from "@/components/layout/Footer";
-import { Sidebar } from "@/components/layout/Sidebar";
-import UploadDialog from "@/components/layout/UploadDialog";
-import { UploadDialogProvider } from "@/components/layout/UploadDialogContext";
+import { useAuth } from "@/components/auth/auth-context";
+import Footer from "@/components/layout/footer";
+import { Sidebar } from "@/components/layout/sidebar";
+import UploadDialog from "@/components/layout/upload-dialog";
+import { UploadDialogProvider } from "@/components/layout/upload-dialog-context";
 import {
   SidebarInset,
   SidebarProvider,

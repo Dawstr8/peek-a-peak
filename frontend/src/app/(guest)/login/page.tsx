@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { LoginForm } from "./components/LoginForm";
+import { LoginForm } from "./components/login-form";
 
 export default function LoginPage() {
   const router = useRouter();
