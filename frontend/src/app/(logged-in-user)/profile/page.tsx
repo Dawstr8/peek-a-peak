@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { PhotoClient } from "@/lib/photos/client";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
 
-import { useAuth } from "@/components/auth/AuthContext";
-import { SummitPhotosGrid } from "@/components/photos/SummitPhotosGrid";
+import { useAuth } from "@/components/auth/auth-context";
+import { SummitPhotosGrid } from "@/components/photos/summit-photos-grid";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import UserAvatar from "@/components/users/UserAvatar";
+import UserAvatar from "@/components/users/user-avatar";
 
 export default function ProfilePage() {
   const { user, isLoading } = useAuth();

@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 
-import { useUploadDialog } from "@/components/layout/UploadDialogContext";
+import { useUploadDialog } from "@/components/layout/upload-dialog-context";
 import { Button } from "@/components/ui/button";
 import {
   SidebarGroup,

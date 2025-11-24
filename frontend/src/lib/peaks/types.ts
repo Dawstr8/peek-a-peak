@@ -1,4 +1,4 @@
-import { MountainRange } from "@/lib/mountainRanges/types";
+import { MountainRange } from "@/lib/mountain-ranges/types";
 
 export interface Peak {
   id: number;

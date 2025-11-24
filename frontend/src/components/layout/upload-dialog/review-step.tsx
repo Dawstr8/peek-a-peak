@@ -7,9 +7,9 @@ import { LatLng } from "leaflet";
 import { Peak } from "@/lib/peaks/types";
 import type { SummitPhotoCreate } from "@/lib/photos/types";
 
-import { DateTimePicker } from "@/components/common/DateTimePicker";
-import { LocationPicker } from "@/components/common/LocationPicker";
-import { PhotoAspectRatio } from "@/components/photos/PhotoAspectRatio";
+import { DateTimePicker } from "@/components/common/date-time-picker";
+import { LocationPicker } from "@/components/common/location-picker";
+import { PhotoAspectRatio } from "@/components/photos/photo-aspect-ratio";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -19,7 +19,7 @@ import {
 
 import { useImageUrl } from "@/hooks/use-image-url";
 
-import { PeakSearchInput } from "./PeakSearchInput";
+import { PeakSearchInput } from "./peak-search-input";
 
 interface ReviewStepProps {
   file: File;

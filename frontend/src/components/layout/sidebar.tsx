@@ -1,6 +1,6 @@
 import { NotebookPen, User } from "lucide-react";
 
-import { useAuth } from "@/components/auth/AuthContext";
+import { useAuth } from "@/components/auth/auth-context";
 import {
   SidebarContent,
   SidebarFooter,
@@ -9,10 +9,10 @@ import {
   Sidebar as SidebarUI,
 } from "@/components/ui/sidebar";
 
-import CallToAction from "./sidebar/CallToAction";
-import Logo from "./sidebar/Logo";
-import Navigation from "./sidebar/Navigation";
-import Profile from "./sidebar/Profile";
+import CallToAction from "./sidebar/call-to-action";
+import Logo from "./sidebar/logo";
+import Navigation from "./sidebar/navigation";
+import Profile from "./sidebar/profile";
 
 export const items = [
   { title: "Diary", url: "/diary", icon: NotebookPen },

@@ -15,7 +15,7 @@ import {
 
 import { useValueChange } from "@/hooks/use-value-change";
 
-import { InteractiveMap } from "./InteractiveMap";
+import { InteractiveMap } from "./interactive-map";
 
 interface LocationPickerProps {
   value?: LatLng;

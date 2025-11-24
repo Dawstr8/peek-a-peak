@@ -5,12 +5,12 @@ import { Camera, Plus } from "lucide-react";
 import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
-import { MessageBlock } from "@/components/common/MessageBlock";
-import { useUploadDialog } from "@/components/layout/UploadDialogContext";
+import { MessageBlock } from "@/components/common/message-block";
+import { useUploadDialog } from "@/components/layout/upload-dialog-context";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
-import { SummitPhotoHoverableCard } from "./SummitPhotoHoverableCard";
+import { SummitPhotoHoverableCard } from "./summit-photo-hoverable-card";
 
 interface SummitPhotosGridProps {
   summitPhotos: SummitPhoto[] | undefined;
