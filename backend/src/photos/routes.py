@@ -1,8 +1,9 @@
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from src.auth.dependencies import check_access_by_username_dep, current_user_dep
+from src.dependencies import sort_params_dep
 from src.photos.dependencies import photos_service_dep
 from src.photos.models import SummitPhotoCreate, SummitPhotoRead
 
@@ -12,21 +13,19 @@ router = APIRouter(prefix="/api/photos", tags=["photos"])
 @router.get("", response_model=List[SummitPhotoRead], tags=["photos"])
 async def get_all_photos(
     photos_service: photos_service_dep,
-    sort_by: Optional[str] = Query(None, description="Field to sort by"),
-    order: Optional[str] = Query(None, description="Sort order: 'asc' or 'desc'"),
+    sort_params: sort_params_dep,
 ):
     """
     Get all uploaded photos, optionally sorted by a field.
 
     Args:
-        sort_by: Field to sort by (optional).
-        order: Sort order 'desc' for descending, otherwise ascending (SQL default). Only used if sort_by is provided.
+        sort_params: Sorting parameters
 
     Returns:
         List[SummitPhotoRead]: List of all uploaded photos, with peak information, sorted as specified or in default order.
     """
     try:
-        return await photos_service.get_all_photos(sort_by=sort_by, order=order)
+        return await photos_service.get_all_photos(sort_params=sort_params)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to retrieve photos: {str(e)}"
@@ -37,23 +36,21 @@ async def get_all_photos(
 async def get_user_photos(
     photos_service: photos_service_dep,
     username: check_access_by_username_dep,
-    sort_by: Optional[str] = Query(None, description="Field to sort by"),
-    order: Optional[str] = Query(None, description="Sort order: 'asc' or 'desc'"),
+    sort_params: sort_params_dep,
 ):
     """
     Get all photos uploaded by the current user.
 
     Args:
         username: Username of the user whose photos to retrieve
-        sort_by: Field to sort by (optional).
-        order: Sort order 'desc' for descending, otherwise ascending (SQL default). Only used if sort_by is provided.
+        sort_params: Sorting parameters
 
     Returns:
         List[SummitPhotoRead]: List of photos uploaded by the current user, with peak information, sorted as specified or in default order.
     """
     try:
         return await photos_service.get_photos_by_user(
-            username, sort_by=sort_by, order=order
+            username, sort_params=sort_params
         )
     except Exception as e:
         raise HTTPException(

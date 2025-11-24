@@ -63,10 +63,10 @@ def mock_photos_repository(
     async def get_by_id(photo_id):
         return mock_photo if photo_id in [photo.id for photo in mock_photos] else None
 
-    async def get_all(sort_by=None, order=None):
+    async def get_all(sort_params=None):
         return mock_photos
 
-    async def get_by_owner_id(owner_id, sort_by=None, order=None):
+    async def get_by_owner_id(owner_id, sort_params=None):
         return [photo for photo in mock_photos if photo.owner_id == owner_id]
 
     repo.save = AsyncMock(side_effect=save)
