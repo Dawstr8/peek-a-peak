@@ -1,8 +1,4 @@
-interface ApiErrorResponse {
-  message?: string;
-  errors?: Record<string, string[]>;
-  [key: string]: unknown;
-}
+import { ApiError, AuthorizationApiError, ValidationApiError } from "./types";
 
 export class ApiClient {
   protected static async request<T>(
@@ -39,27 +35,50 @@ export class ApiClient {
   }
 
   protected static async handleError(response: Response): Promise<Error> {
-    let errorMessage = `Request failed with status: ${response.status}`;
+    const defaultMessage = `Request failed with status: ${response.status}`;
 
     if (response.status === 401) {
       window.dispatchEvent(new CustomEvent("unauthorized"));
     }
 
+    const contentType = response.headers.get("content-type") ?? "";
+
     try {
-      const errorData = (await response.json()) as ApiErrorResponse;
-
-      if (errorData.message) {
-        errorMessage = errorData.message;
-      } else if (errorData.errors) {
-        const errorMessages = Object.entries(errorData.errors)
-          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
-          .join("; ");
-
-        errorMessage = errorMessages || errorMessage;
+      if (!contentType.includes("application/json")) {
+        const text = await response.text().catch(() => "");
+        return new ApiError(text || defaultMessage, response.status);
       }
-    } catch {}
 
-    return new Error(errorMessage);
+      const errorData = await response.json().catch(() => null);
+      if (errorData && typeof errorData.detail === "string") {
+        return new AuthorizationApiError(errorData.detail, response.status);
+      }
+
+      if (errorData && Array.isArray(errorData.detail)) {
+        return new ValidationApiError(
+          "Validation failed",
+          response.status,
+          errorData.detail.map(
+            (error: { loc: string[]; msg: string; type: string }) => {
+              return {
+                loc: error.loc,
+                msg: error.msg,
+                type:
+                  typeof error.type === "string" ? error.type : "validation",
+              };
+            },
+          ),
+        );
+      }
+
+      const message =
+        (errorData && (errorData.message || errorData.detail)) ||
+        (errorData ? JSON.stringify(errorData) : defaultMessage);
+
+      return new ApiError(String(message), response.status);
+    } catch {
+      return new ApiError(defaultMessage, response.status);
+    }
   }
 
   protected static async get<T>(
