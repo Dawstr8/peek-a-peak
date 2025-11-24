@@ -36,7 +36,7 @@ export function SummitPhotoHoverableCard({
   return (
     <PhotoAspectRatio
       className={cn("group", className)}
-      src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
+      src={`${uploadsBaseUrl}${summitPhoto.fileName}`}
       alt={`Summit photo ${summitPhoto.id}`}
     >
       <div className="text-background absolute inset-0 hidden flex-col justify-end space-y-4 bg-black/75 p-2 group-hover:flex">
@@ -74,7 +74,7 @@ export function SummitPhotoHoverableCard({
                 {summitPhoto.peak.name}
               </ItemTitle>
               <ItemDescription className="text-background flex w-full justify-between">
-                <span>{summitPhoto.peak.mountain_range.name}</span>
+                <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
               </ItemDescription>
             </ItemContent>

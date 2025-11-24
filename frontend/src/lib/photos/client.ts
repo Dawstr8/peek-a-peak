@@ -47,7 +47,7 @@ export class PhotoClient extends ApiClient {
     const formData = new FormData();
     formData.append("file", file);
     formData.append(
-      "summit_photo_create",
+      "summitPhotoCreate",
       summitPhotoCreate ? JSON.stringify(summitPhotoCreate) : "",
     );
 

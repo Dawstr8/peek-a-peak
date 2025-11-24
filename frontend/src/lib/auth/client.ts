@@ -9,7 +9,7 @@ import { API_ENDPOINTS } from "@/config/api";
 export class AuthClient extends ApiClient {
   static async login(emailOrUsername: string, password: string): Promise<User> {
     const formData = new FormData();
-    formData.append("email_or_username", emailOrUsername);
+    formData.append("emailOrUsername", emailOrUsername);
     formData.append("password", password);
 
     await this.post(API_ENDPOINTS.auth.login, formData);

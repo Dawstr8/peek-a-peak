@@ -21,8 +21,8 @@ async def test_get_peaks(client_with_db: AsyncClient, db_peaks):
         assert "elevation" in peak
         assert "lat" in peak
         assert "lng" in peak
-        assert "mountain_range" in peak
-        assert "created_at" in peak
+        assert "mountainRange" in peak
+        assert "createdAt" in peak
 
 
 @pytest.mark.asyncio
@@ -76,9 +76,9 @@ async def test_find_nearest_peaks_parametrized(
     [
         ({}, 3, "Rysy"),
         ({"limit": 2}, 2, "Rysy"),
-        ({"max_distance": 100}, 1, "Rysy"),
-        ({"name_filter": "rysy"}, 1, "Rysy"),
-        ({"limit": 1, "max_distance": 100, "name_filter": "rysy"}, 1, "Rysy"),
+        ({"maxDistance": 100}, 1, "Rysy"),
+        ({"nameFilter": "rysy"}, 1, "Rysy"),
+        ({"limit": 1, "maxDistance": 100, "nameFilter": "rysy"}, 1, "Rysy"),
     ],
 )
 async def test_find_nearest_peaks_filters_parametrized(
@@ -89,7 +89,7 @@ async def test_find_nearest_peaks_filters_parametrized(
     expected_len: int,
     expected_nearest_name: str,
 ):
-    """Nearest peaks with various filtering combinations (limit, max_distance)."""
+    """Nearest peaks with various filtering combinations (limit, maxDistance, nameFilter)."""
     lat, lng = coords_map["near_rysy"]
     query = {"lat": lat, "lng": lng, **params}
 
@@ -150,8 +150,8 @@ async def test_get_peak(client_with_db: AsyncClient, db_peaks):
     assert data["elevation"] == 2499
     assert data["lat"] == 49.1795
     assert data["lng"] == 20.0881
-    assert data["mountain_range"]["name"] == "Tatry"
-    assert "created_at" in data
+    assert data["mountainRange"]["name"] == "Tatry"
+    assert "createdAt" in data
 
 
 @pytest.mark.asyncio

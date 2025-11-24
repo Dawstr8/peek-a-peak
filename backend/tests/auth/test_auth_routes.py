@@ -21,7 +21,7 @@ async def test_register_user_success(client_with_db: AsyncClient):
     assert response.status_code == 201
     data = response.json()
     assert data["email"] == "user1@example.com"
-    assert "created_at" in data
+    assert "createdAt" in data
 
 
 @pytest.mark.asyncio
@@ -100,7 +100,7 @@ async def test_read_me_success(client_with_db: AsyncClient, logged_in_user):
     assert response.status_code == 200
     data = response.json()
     assert data["email"] == logged_in_user["email"]
-    assert "created_at" in data
+    assert "createdAt" in data
 
 
 @pytest.mark.asyncio
@@ -135,7 +135,7 @@ async def test_login_with_session_success_with_email(
     response = await client_with_db.post(
         LOGIN_ENDPOINT,
         data={
-            "email_or_username": registered_user["email"],
+            "emailOrUsername": registered_user["email"],
             "password": registered_user["password"],
         },
     )
@@ -155,7 +155,7 @@ async def test_login_with_session_success_with_username(
     response = await client_with_db.post(
         LOGIN_ENDPOINT,
         data={
-            "email_or_username": registered_user["username"],
+            "emailOrUsername": registered_user["username"],
             "password": registered_user["password"],
         },
     )
@@ -172,7 +172,7 @@ async def test_login_with_session_invalid_credentials(client_with_db: AsyncClien
     """Test login with invalid credentials"""
     response = await client_with_db.post(
         LOGIN_ENDPOINT,
-        data={"email_or_username": "nonexistent@example.com", "password": "wrongpass"},
+        data={"emailOrUsername": "nonexistent@example.com", "password": "wrongpass"},
     )
 
     assert response.status_code == 401

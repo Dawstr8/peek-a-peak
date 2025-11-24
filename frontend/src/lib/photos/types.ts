@@ -2,22 +2,22 @@ import type { Peak } from "@/lib/peaks/types";
 
 export interface SummitPhoto {
   id?: number;
-  file_name: string;
-  uploaded_at: string;
-  captured_at?: string;
+  fileName: string;
+  uploadedAt: string;
+  capturedAt?: string;
   lat?: number;
   lng?: number;
   alt?: number;
-  peak_id?: number;
+  peakId?: number;
   peak?: Peak;
 }
 
 export interface SummitPhotoCreate {
-  captured_at?: string;
+  capturedAt?: string;
   lat?: number;
   lng?: number;
   alt?: number;
-  peak_id?: number;
+  peakId?: number;
 }
 
 export interface PhotoDetailsFormatter {

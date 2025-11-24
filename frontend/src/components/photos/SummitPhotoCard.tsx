@@ -44,8 +44,8 @@ export function SummitPhotoCard({
       <CardHeader>
         <CardTitle>#{summitPhoto.id}</CardTitle>
         <CardDescription>
-          {summitPhoto.captured_at &&
-            formatDistance(new Date(summitPhoto.captured_at), new Date(), {
+          {summitPhoto.capturedAt &&
+            formatDistance(new Date(summitPhoto.capturedAt), new Date(), {
               addSuffix: true,
             })}
         </CardDescription>
@@ -53,7 +53,7 @@ export function SummitPhotoCard({
 
       <CardContent className="space-y-4">
         <PhotoAspectRatio
-          src={`${uploadsBaseUrl}${summitPhoto.file_name}`}
+          src={`${uploadsBaseUrl}${summitPhoto.fileName}`}
           alt={`Summit photo ${summitPhoto.id}`}
         />
         {alt && (
@@ -90,7 +90,7 @@ export function SummitPhotoCard({
                 {summitPhoto.peak.name}
               </ItemTitle>
               <ItemDescription className="flex w-full justify-between">
-                <span>{summitPhoto.peak.mountain_range.name}</span>
+                <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
               </ItemDescription>
             </ItemContent>

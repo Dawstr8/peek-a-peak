@@ -21,15 +21,7 @@ export function PhotoStep({ onAccept }: PhotoStepProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: (file: File) => exifMetadataExtractor.extract(file),
     onSuccess: (metadata: PhotoMetadata, file: File) => {
-      onAccept(
-        {
-          captured_at: metadata.capturedAt,
-          lat: metadata.lat,
-          lng: metadata.lng,
-          alt: metadata.alt,
-        },
-        file,
-      );
+      onAccept({ ...metadata }, file);
     },
   });
 
