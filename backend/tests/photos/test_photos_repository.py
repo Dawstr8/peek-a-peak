@@ -154,52 +154,50 @@ async def test_delete_non_existent(test_photos_repository):
 
 
 @pytest.mark.asyncio
-async def test_apply_sorting_asc(test_photos_repository, db_photos):
-    """Test applying ascending sort to a statement"""
-    statement = select(SummitPhoto)
-
-    sorted_statement = test_photos_repository._apply_sorting(
-        statement, sort_params=SortParams(sort_by="captured_at", order="asc")
-    )
-
-    photos = (await test_photos_repository.db.exec(sorted_statement)).all()
-    captured_times = [p.captured_at for p in photos if p.captured_at is not None]
-    assert captured_times == sorted(captured_times)
-
-
-@pytest.mark.asyncio
-async def test_apply_sorting_desc(test_photos_repository, db_photos):
-    """Test applying descending sort to a statement"""
-    statement = select(SummitPhoto)
-
-    sorted_statement = test_photos_repository._apply_sorting(
-        statement, sort_params=SortParams(sort_by="captured_at", order="desc")
-    )
-
-    photos = (await test_photos_repository.db.exec(sorted_statement)).all()
-    captured_times = [p.captured_at for p in photos if p.captured_at is not None]
-    assert captured_times == sorted(captured_times, reverse=True)
-
-
-@pytest.mark.asyncio
-async def test_apply_sorting_no_sort(test_photos_repository, db_photos):
-    """Test that no sorting is applied when sort_by is None"""
-    statement = select(SummitPhoto)
-
-    result_statement = test_photos_repository._apply_sorting(statement)
-
-    photos = (await test_photos_repository.db.exec(result_statement)).all()
-    assert len(photos) == 3
-
-
-@pytest.mark.asyncio
-async def test_apply_sorting_invalid_column(test_photos_repository, db_photos):
-    """Test that invalid column names are ignored"""
+@pytest.mark.parametrize(
+    "sort_params",
+    [
+        (None),
+        (SortParams(sort_by="invalid_column", order="asc")),
+    ],
+)
+async def test_apply_sorting_with_invalid_or_missing_params(
+    test_photos_repository, db_photos, sort_params: SortParams
+):
     statement = select(SummitPhoto)
 
     result_statement = test_photos_repository._apply_sorting(
-        statement, sort_params=SortParams(sort_by="invalid_column", order="desc")
+        statement, sort_params=sort_params
     )
 
     photos = (await test_photos_repository.db.exec(result_statement)).all()
     assert len(photos) == 3
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "sort_params, expected_reversed",
+    [
+        (SortParams(sort_by="captured_at", order=None), False),
+        (SortParams(sort_by="captured_at", order="asc"), False),
+        (SortParams(sort_by="captured_at", order="desc"), True),
+        (SortParams(sort_by="uploaded_at", order=None), False),
+    ],
+)
+async def test_apply_sorting_with_valid_params(
+    test_photos_repository, db_photos, sort_params: SortParams, expected_reversed: bool
+):
+    statement = select(SummitPhoto)
+
+    result_statement = test_photos_repository._apply_sorting(
+        statement, sort_params=sort_params
+    )
+
+    photos = (await test_photos_repository.db.exec(result_statement)).all()
+    fields = [
+        getattr(p, sort_params.sort_by)
+        for p in photos
+        if getattr(p, sort_params.sort_by) is not None
+    ]
+
+    assert fields == sorted(fields, reverse=expected_reversed)

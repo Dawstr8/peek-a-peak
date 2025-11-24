@@ -6,9 +6,11 @@ from pathlib import Path
 import pytest
 
 from main import app
+from src.models import SortParams
 from src.photos import dependencies
 from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
+from src.users.models import User
 
 
 @pytest.fixture(autouse=True)
@@ -70,48 +72,53 @@ async def test_get_all_photos_with_peaks(client_with_db, db_peaks, e2e_photos):
 
 
 @pytest.mark.asyncio
-async def test_get_all_photos_sorted_by_captured_at_asc(client_with_db, e2e_photos):
-    """Test getting all photos sorted by captured_at ascending"""
-    resp = await client_with_db.get("/api/photos?sortBy=capturedAt&order=asc")
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 3
-
-    captured_times = [photo["capturedAt"] for photo in photos if photo["capturedAt"]]
-    assert captured_times == sorted(captured_times)
-
-
-@pytest.mark.asyncio
-async def test_get_all_photos_sorted_by_captured_at_desc(client_with_db, e2e_photos):
-    """Test getting all photos sorted by captured_at descending"""
-    resp = await client_with_db.get("/api/photos?sortBy=capturedAt&order=desc")
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 3
-
-    captured_times = [photo["capturedAt"] for photo in photos if photo["capturedAt"]]
-    assert captured_times == sorted(captured_times, reverse=True)
-
-
-@pytest.mark.asyncio
-async def test_get_all_photos_sorted_by_captured_at_default_order(
-    client_with_db, e2e_photos
+@pytest.mark.parametrize(
+    "sort_params,expected_reversed",
+    [
+        (SortParams(sort_by="capturedAt", order=None), False),
+        (SortParams(sort_by="capturedAt", order="asc"), False),
+        (SortParams(sort_by="capturedAt", order="desc"), True),
+        (SortParams(sort_by="uploadedAt", order=None), False),
+    ],
+)
+async def test_get_all_photos_with_sorting_parameters(
+    client_with_db, e2e_photos, sort_params: SortParams, expected_reversed: bool
 ):
-    """Test getting all photos sorted by captured_at with default ascending order"""
-    resp = await client_with_db.get("/api/photos?sortBy=capturedAt")
+    """Test getting all photos sorted by various parameters"""
+    sort_by, order = sort_params.sort_by, sort_params.order
+
+    resp = await client_with_db.get(f"/api/photos?sortBy={sort_by}&order={order}")
 
     assert resp.status_code == 200
     photos = resp.json()
     assert len(photos) == 3
 
-    captured_times = [photo["capturedAt"] for photo in photos if photo["capturedAt"]]
-    assert captured_times == sorted(captured_times)
+    received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
+    assert received_fields == sorted(received_fields, reverse=expected_reversed)
 
 
 @pytest.mark.asyncio
-async def test_get_user_photos(client_with_db, e2e_photos, logged_in_user):
+async def test_get_user_photos_requires_auth(client_with_db):
+    """Test that getting user photos requires authentication"""
+    resp = await client_with_db.get("/api/photos/user/1")
+
+    assert resp.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_get_user_photos_forbidden_for_other_user(
+    client_with_db, e2e_photos, logged_in_user
+):
+    """Test that users cannot view other users' photos"""
+    other_username = logged_in_user["username"] + "other"
+    resp = await client_with_db.get(f"/api/photos/user/{other_username}")
+
+    assert resp.status_code == 403
+    assert resp.json()["detail"] == "Not authorized to access this resource"
+
+
+@pytest.mark.asyncio
+async def test_get_user_photos_for_user(client_with_db, e2e_photos, logged_in_user):
     """Test getting photos for a specific user"""
     username = logged_in_user["username"]
 
@@ -154,95 +161,36 @@ async def test_get_user_photos_with_peaks(
 
 
 @pytest.mark.asyncio
-async def test_get_user_photos_sorted_by_captured_at_asc(
-    client_with_db, e2e_photos, logged_in_user
+@pytest.mark.parametrize(
+    "sort_params,expected_reversed",
+    [
+        (SortParams(sort_by="capturedAt", order=None), False),
+        (SortParams(sort_by="capturedAt", order="asc"), False),
+        (SortParams(sort_by="capturedAt", order="desc"), True),
+        (SortParams(sort_by="uploadedAt", order=None), False),
+    ],
+)
+async def test_get_user_photos_with_sorting_parameters(
+    client_with_db,
+    e2e_photos,
+    logged_in_user: User,
+    sort_params: SortParams,
+    expected_reversed: bool,
 ):
-    """Test getting user photos sorted by captured_at ascending"""
+    """Test getting user photos sorted by various parameters"""
     username = logged_in_user["username"]
+    sort_by, order = sort_params.sort_by, sort_params.order
 
     resp = await client_with_db.get(
-        f"/api/photos/user/{username}?sortBy=capturedAt&order=asc"
+        f"/api/photos/user/{username}?sortBy={sort_by}&order={order}"
     )
 
     assert resp.status_code == 200
     photos = resp.json()
     assert len(photos) == 2
 
-    captured_times = [photo["capturedAt"] for photo in photos if photo["capturedAt"]]
-    assert captured_times == sorted(captured_times)
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_sorted_by_captured_at_desc(
-    client_with_db, e2e_photos, logged_in_user
-):
-    """Test getting user photos sorted by captured_at descending"""
-    username = logged_in_user["username"]
-
-    resp = await client_with_db.get(
-        f"/api/photos/user/{username}?sortBy=capturedAt&order=desc"
-    )
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 2
-
-    captured_times = [photo["capturedAt"] for photo in photos if photo["capturedAt"]]
-    assert captured_times == sorted(captured_times, reverse=True)
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_sorted_by_captured_at_default_order(
-    client_with_db, e2e_photos, logged_in_user
-):
-    """Test getting user photos sorted by captured_at with default ascending order"""
-    username = logged_in_user["username"]
-
-    resp = await client_with_db.get(f"/api/photos/user/{username}?sortBy=capturedAt")
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 2
-
-    captured_times = [photo["capturedAt"] for photo in photos if photo["capturedAt"]]
-    assert captured_times == sorted(captured_times)
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_requires_auth(client_with_db):
-    """Test that getting user photos requires authentication"""
-    resp = await client_with_db.get("/api/photos/user/1")
-
-    assert resp.status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_forbidden_for_other_user(
-    client_with_db, e2e_photos, logged_in_user
-):
-    """Test that users cannot view other users' photos"""
-    other_username = logged_in_user["username"] + "other"
-    resp = await client_with_db.get(f"/api/photos/user/{other_username}")
-
-    assert resp.status_code == 403
-    assert resp.json()["detail"] == "Not authorized to access this resource"
-
-
-@pytest.mark.asyncio
-async def test_upload_photo_success(client_with_db, logged_in_user):
-    """Test successful photo upload"""
-
-    resp = await client_with_db.post(
-        "/api/photos",
-        files={"file": ("summit.jpg", b"binaryimagedata", "image/jpeg")},
-        data={"summitPhotoCreate": "{}"},
-    )
-
-    assert resp.status_code == 200, resp.text
-    data = resp.json()
-    assert data["id"] is not None
-    assert re.search(r".+\.jpg$", data["fileName"])
-    assert Path(f"test_uploads/{data['fileName']}").exists()
+    received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
+    assert received_fields == sorted(received_fields, reverse=expected_reversed)
 
 
 @pytest.mark.asyncio
@@ -258,27 +206,40 @@ async def test_upload_photo_requires_auth(client_with_db):
 
 
 @pytest.mark.asyncio
-async def test_upload_invalid_file_type(client_with_db, logged_in_user):
-    """Test upload with invalid file type"""
+@pytest.mark.parametrize(
+    "file,expected_status,expected_detail",
+    [
+        (
+            ("notes.txt", b"not an image", "text/plain"),
+            400,
+            "File must be of type image/",
+        )
+    ],
+)
+async def test_upload_photo_validation_errors_parametrized(
+    client_with_db,
+    logged_in_user,
+    file: tuple,
+    expected_status: int,
+    expected_detail: str,
+):
+    """Test upload photo validation errors with various invalid inputs"""
 
     resp = await client_with_db.post(
         "/api/photos",
-        files={"file": ("notes.txt", b"not an image", "text/plain")},
+        files={"file": file},
         data={"summitPhotoCreate": "{}"},
     )
 
-    assert resp.status_code == 400
-    assert resp.json()["detail"] == "File must be of type image/"
+    assert resp.status_code == expected_status
+    assert resp.json()["detail"] == expected_detail
 
 
 @pytest.mark.asyncio
-async def test_upload_with_metadata(
-    client_with_db,
-    db_peaks,
-    coords_map,
-    logged_in_user,
+async def test_upload_photo_success(
+    client_with_db, db_peaks, coords_map, logged_in_user
 ):
-    """Test upload photo with metadata provided as JSON"""
+    """Test successful photo upload"""
     summit_photo_create = {
         "capturedAt": "2025-10-06T14:30:00Z",
         "lat": coords_map["near_rysy"][0],
@@ -289,7 +250,7 @@ async def test_upload_with_metadata(
 
     resp = await client_with_db.post(
         "/api/photos",
-        files={"file": ("mountain_photo.jpg", b"binaryimagedata", "image/jpeg")},
+        files={"file": ("summit.jpg", b"binaryimagedata", "image/jpeg")},
         data={"summitPhotoCreate": json.dumps(summit_photo_create)},
     )
 
@@ -297,63 +258,16 @@ async def test_upload_with_metadata(
     data = resp.json()
     assert data["id"] is not None
     assert data["fileName"] is not None
-
+    assert data["capturedAt"] == summit_photo_create["capturedAt"]
     assert data["lat"] == summit_photo_create["lat"]
     assert data["lng"] == summit_photo_create["lng"]
     assert data["alt"] == summit_photo_create["alt"]
 
     assert data["peakId"] == summit_photo_create["peakId"]
+    assert data["ownerId"] is not None
 
-
-@pytest.mark.asyncio
-async def test_upload_without_peakId(
-    client_with_db, db_peaks, coords_map, logged_in_user
-):
-    """Test upload photo with GPS coordinates but no peak_id"""
-    summit_photo_create = {
-        "capturedAt": "2025-10-06T14:30:00Z",
-        "lat": coords_map["warsaw"][0],
-        "lng": coords_map["warsaw"][1],
-        "alt": 120.0,
-    }
-
-    resp = await client_with_db.post(
-        "/api/photos",
-        files={"file": ("city_photo.jpg", b"binaryimagedata", "image/jpeg")},
-        data={"summitPhotoCreate": json.dumps(summit_photo_create)},
-    )
-
-    assert resp.status_code == 200, resp.text
-    data = resp.json()
-    assert data["id"] is not None
-    assert data["fileName"] is not None
-
-    assert data["lat"] == coords_map["warsaw"][0]
-    assert data["lng"] == coords_map["warsaw"][1]
-    assert data["alt"] == 120.0
-
-    assert data["peakId"] is None
-
-
-@pytest.mark.asyncio
-async def test_upload_without_gps_data(client_with_db, db_peaks, logged_in_user):
-    """Test upload photo without GPS coordinates"""
-    resp = await client_with_db.post(
-        "/api/photos",
-        files={"file": ("indoor_photo.jpg", b"binaryimagedata", "image/jpeg")},
-        data={"summitPhotoCreate": "{}"},
-    )
-
-    assert resp.status_code == 200, resp.text
-    data = resp.json()
-    assert data["id"] is not None
-    assert data["fileName"] is not None
-
-    assert data["lat"] is None
-    assert data["lng"] is None
-    assert data["alt"] is None
-
-    assert data["peakId"] is None
+    assert re.search(r".+\.jpg$", data["fileName"])
+    assert Path(f"test_uploads/{data['fileName']}").exists()
 
 
 @pytest.mark.asyncio
