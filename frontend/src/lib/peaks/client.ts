@@ -11,6 +11,14 @@ import type { PeakWithDistance } from "./types";
  * PeakClient class for handling peak-related API requests
  */
 export class PeakClient extends ApiClient {
+  static async getCount(): Promise<number> {
+    return this.get<number>(API_ENDPOINTS.peaks.getCount);
+  }
+
+  static async getSummitedByUserCount(): Promise<number> {
+    return this.get<number>(API_ENDPOINTS.peaks.getSummitedByUserCount);
+  }
+
   /**
    * Find nearby peaks based on latitude and longitude
    * @param lat The latitude of the location

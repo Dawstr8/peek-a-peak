@@ -51,6 +51,8 @@ export const API_ENDPOINTS = {
     post: buildUrl(`/photos`),
   },
   peaks: {
+    getCount: buildUrl(`/peaks/count`),
+    getSummitedByUserCount: buildUrl(`/peaks/me/count`),
     find: (
       lat: number,
       lng: number,
