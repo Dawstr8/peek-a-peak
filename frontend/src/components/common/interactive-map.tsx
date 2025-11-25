@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
-import { LatLng, LatLngBounds } from "leaflet";
+import { LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
   MapContainer,
@@ -10,7 +10,6 @@ import {
   Polyline,
   Popup,
   TileLayer,
-  useMap,
   useMapEvents,
 } from "react-leaflet";
 
@@ -23,7 +22,10 @@ import { Peak } from "@/lib/peaks/types";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import { cn } from "@/lib/utils";
 
-const KRAKOW: LatLng = new LatLng(50.06143, 19.93658);
+import { FitToLocations } from "./fit-to-locations";
+
+const { DEFAULT_CENTER, DEFAULT_ZOOM, DEFAULT_WIDE_ZOOM, DEFAULT_HEIGHT } =
+  MAP_CONFIG;
 
 function LocationClickHandler({
   onLocationSelect,
@@ -33,52 +35,6 @@ function LocationClickHandler({
   useMapEvents({
     click: (e) => onLocationSelect?.(e.latlng),
   });
-
-  return null;
-}
-
-function FitToLocationsUpdater({
-  location,
-  targetLocation,
-}: {
-  location?: LatLng;
-  targetLocation?: LatLng;
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    try {
-      if (location && targetLocation) {
-        const avgLat = (location.lat + targetLocation.lat) / 2;
-        const avgLng = (location.lng + targetLocation.lng) / 2;
-        const center = new LatLng(avgLat, avgLng);
-
-        const bounds = new LatLngBounds([
-          new LatLng(location.lat, location.lng),
-          new LatLng(targetLocation.lat, targetLocation.lng),
-        ]);
-
-        const rawZoom = map.getBoundsZoom(bounds, false);
-        const maxZoom = 18;
-        const zoom = Math.min(rawZoom, maxZoom);
-
-        map.setView(center, zoom);
-        return;
-      }
-
-      if (location) {
-        map.setView(location, MAP_CONFIG.DEFAULT_ZOOM);
-        return;
-      }
-
-      if (targetLocation) {
-        map.setView(targetLocation, MAP_CONFIG.DEFAULT_ZOOM);
-        return;
-      }
-
-      map.setView(KRAKOW, MAP_CONFIG.DEFAULT_WIDE_ZOOM);
-    } catch {}
-  }, [map, location, targetLocation]);
 
   return null;
 }
@@ -99,12 +55,20 @@ export function InteractiveMap({
   onLocationSelect,
   targetLocation,
   peaks = [],
-  zoom = location ? MAP_CONFIG.DEFAULT_ZOOM : MAP_CONFIG.DEFAULT_WIDE_ZOOM,
-  height = MAP_CONFIG.DEFAULT_HEIGHT,
+  zoom = location ? DEFAULT_ZOOM : DEFAULT_WIDE_ZOOM,
+  height = DEFAULT_HEIGHT,
   className = "",
   clickable = false,
 }: InteractiveMapProps) {
-  const mapCenter = location || KRAKOW;
+  const mapCenter = location || DEFAULT_CENTER;
+
+  const locations = useMemo(() => {
+    const locs = [];
+    if (location) locs.push(location);
+    if (targetLocation) locs.push(targetLocation);
+
+    return locs;
+  }, [location, targetLocation]);
 
   useEffect(() => {
     initializeLeafletIcons();
@@ -128,10 +92,7 @@ export function InteractiveMap({
           url={MAP_CONFIG.TILE_LAYER_URL}
         />
 
-        <FitToLocationsUpdater
-          location={location}
-          targetLocation={targetLocation}
-        />
+        <FitToLocations locations={locations} />
 
         {clickable && (
           <LocationClickHandler onLocationSelect={onLocationSelect} />
