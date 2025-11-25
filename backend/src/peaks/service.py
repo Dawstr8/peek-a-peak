@@ -32,12 +32,6 @@ class PeaksService:
         """
         return await self.peaks_repository.get_all()
 
-    async def get_count(self) -> int:
-        return await self.peaks_repository.get_count()
-
-    async def get_summited_by_user_count(self, user_id: int) -> int:
-        return await self.peaks_repository.get_summited_by_user_count(user_id)
-
     async def get_by_id(self, peak_id: int) -> Optional[Peak]:
         """
         Get a specific peak by ID.

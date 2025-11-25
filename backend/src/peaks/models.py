@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import Optional
 
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
@@ -9,9 +9,6 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from src.models import CamelModel
 from src.mountain_ranges.models import MountainRange
-
-if TYPE_CHECKING:
-    from src.photos.models import SummitPhoto
 
 
 class Peak(SQLModel, table=True):
@@ -36,10 +33,6 @@ class Peak(SQLModel, table=True):
     mountain_range_id: int = Field(foreign_key="mountainrange.id")
     mountain_range: MountainRange = Relationship(
         sa_relationship_kwargs={"lazy": "selectin"}
-    )
-
-    summit_photos: List["SummitPhoto"] = Relationship(
-        back_populates="peak", sa_relationship_kwargs={"lazy": "selectin"}
     )
 
     @property

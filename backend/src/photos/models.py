@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
@@ -9,11 +9,8 @@ from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.models import CamelModel
-from src.peaks.models import ReadPeak
+from src.peaks.models import Peak, ReadPeak
 from src.users.models import User
-
-if TYPE_CHECKING:
-    from src.peaks.models import Peak
 
 
 class SummitPhoto(SQLModel, table=True):
@@ -34,7 +31,7 @@ class SummitPhoto(SQLModel, table=True):
     owner_id: int = Field(foreign_key="user.id")
 
     peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
-    peak: Optional["Peak"] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
+    peak: Optional[Peak] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
     @property
     def lat(self) -> Optional[float]:

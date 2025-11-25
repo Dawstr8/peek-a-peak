@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
 
-from src.auth.dependencies import current_user_dep
 from src.peaks.dependencies import peaks_service_dep
 from src.peaks.models import ReadPeak, ReadPeakWithDistance
 
@@ -16,25 +15,6 @@ async def get_peaks(service: peaks_service_dep):
     Retrieve all peaks.
     """
     return await service.get_all()
-
-
-@router.get("/count", response_model=int, tags=["peaks"])
-async def get_peaks_count(service: peaks_service_dep):
-    """
-    Retrieve the total count of peaks.
-    """
-    return await service.get_count()
-
-
-@router.get("/me/count", response_model=int, tags=["peaks"])
-async def get_summited_by_user_count(
-    service: peaks_service_dep,
-    current_user: current_user_dep,
-):
-    """
-    Retrieve the count of peaks summited by the current user.
-    """
-    return await service.get_summited_by_user_count(current_user.id)
 
 
 @router.get("/find", response_model=list[ReadPeakWithDistance], tags=["peaks"])

@@ -27,24 +27,6 @@ async def test_get_all(mock_peaks_service, mock_peaks_repository):
 
 
 @pytest.mark.asyncio
-async def test_get_count(mock_peaks_service, mock_peaks_repository):
-    count = await mock_peaks_service.get_count()
-
-    assert count == 3
-
-    mock_peaks_repository.get_count.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_get_summited_by_user_count(mock_peaks_service, mock_peaks_repository):
-    count = await mock_peaks_service.get_summited_by_user_count(1)
-
-    assert count == 2
-
-    mock_peaks_repository.get_summited_by_user_count.assert_called_once_with(1)
-
-
-@pytest.mark.asyncio
 async def test_get_by_id(mock_peaks_map, mock_peaks_service, mock_peaks_repository):
     """Test getting a specific peak by ID through the service"""
     peak = await mock_peaks_service.get_by_id(mock_peaks_map["rysy"].id)

@@ -113,8 +113,6 @@ def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
         return results_within_distance[:limit]
 
     repo.get_all = AsyncMock(side_effect=get_all)
-    repo.get_count = AsyncMock(return_value=3)
-    repo.get_summited_by_user_count = AsyncMock(return_value=2)
     repo.get_by_id = AsyncMock(side_effect=get_by_id)
     repo.get_nearest = AsyncMock(side_effect=get_nearest)
 

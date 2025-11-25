@@ -7,11 +7,10 @@ from geoalchemy2.functions import (
     ST_MakePoint,
     ST_SetSRID,
 )
-from sqlmodel import func, select
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.peaks.models import Peak, PeakWithDistance
-from src.photos.models import SummitPhoto
 
 
 class PeaksRepository:
@@ -38,21 +37,6 @@ class PeaksRepository:
         query = select(Peak).where(Peak.location.is_(None))
         result = await self.db.exec(query)
         return result.all()
-
-    async def get_count(self) -> int:
-        query = select(func.count()).select_from(Peak)
-        result = await self.db.exec(query)
-        return result.one()
-
-    async def get_summited_by_user_count(self, user_id: int) -> int:
-        query = (
-            select(func.count(func.distinct(Peak.id)))
-            .select_from(Peak)
-            .join(SummitPhoto, SummitPhoto.peak_id == Peak.id)
-            .where(SummitPhoto.owner_id == user_id)
-        )
-        result = await self.db.exec(query)
-        return result.one()
 
     async def get_by_id(self, peak_id: int) -> Optional[Peak]:
         return await self.db.get(Peak, peak_id)
