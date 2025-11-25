@@ -154,6 +154,43 @@ async def test_get_all_without_location(test_repository, db_peaks):
 
 
 @pytest.mark.asyncio
+async def test_get_count_no_peaks(test_repository):
+    count = await test_repository.get_count()
+
+    assert count == 0
+
+
+@pytest.mark.asyncio
+async def test_get_count(test_repository, db_peaks):
+    count = await test_repository.get_count()
+
+    assert count == 3
+
+
+@pytest.mark.asyncio
+async def test_get_summited_by_user_count_no_peaks(test_repository, db_user):
+    count = await test_repository.get_summited_by_user_count(db_user.id)
+
+    assert count == 0
+
+
+@pytest.mark.asyncio
+async def test_get_summited_by_user_count_no_photos(test_repository, db_user, db_peaks):
+    count = await test_repository.get_summited_by_user_count(db_user.id)
+
+    assert count == 0
+
+
+@pytest.mark.asyncio
+async def test_get_summited_by_user_count(
+    test_repository, db_user, db_peaks, db_photos
+):
+    count = await test_repository.get_summited_by_user_count(db_user.id)
+
+    assert count == 2
+
+
+@pytest.mark.asyncio
 async def test_get_by_id(test_repository, db_peaks):
     """Test retrieving a peak by ID"""
     peak_id = db_peaks[0].id
