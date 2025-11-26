@@ -22,6 +22,7 @@ def mock_user() -> User:
         id=1,
         email="test@example.com",
         username="user",
+        username_display="User",
         hashed_password="hashed_correct_password",
     )
 
@@ -76,6 +77,7 @@ async def db_users(test_db) -> list[User]:
         User(
             email=f"user{i}@example.com",
             username=f"user{i}",
+            username_display=f"User{i}",
             hashed_password=f"hashed_password{i}",
         )
         for i in range(1, 3)

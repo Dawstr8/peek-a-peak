@@ -7,4 +7,5 @@ export interface UserCreate {
 export interface User {
   email: string;
   username: string;
+  usernameDisplay: string;
 }

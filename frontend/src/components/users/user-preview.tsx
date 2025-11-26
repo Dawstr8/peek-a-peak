@@ -26,7 +26,7 @@ export default function UserPreview({
       </>
     );
 
-  const avatarInitial = user.username.charAt(0).toUpperCase();
+  const avatarInitial = user.usernameDisplay.charAt(0);
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function UserPreview({
         <AvatarFallback className="rounded-lg">{avatarInitial}</AvatarFallback>
       </Avatar>
       <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate font-medium">{user.username}</span>
+        <span className="truncate font-medium">{user.usernameDisplay}</span>
         {children}
       </div>
     </>

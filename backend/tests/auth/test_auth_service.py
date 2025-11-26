@@ -42,27 +42,11 @@ def service(
 
 
 @pytest.mark.asyncio
-async def test_authenticate_user_success_with_email(
-    service, mock_user, mock_users_repository
-):
-    """Test successful user authentication using email."""
-    result = await service.authenticate_user(mock_user.email, "correct_password")
+async def test_authenticate_user_not_found(service):
+    """Test authentication when user is not found."""
+    result = await service.authenticate_user("nonexistent@example.com", "password")
 
-    assert result == mock_user
-    mock_users_repository.get_by_email.assert_called_once_with(mock_user.email)
-    mock_users_repository.get_by_username.assert_not_called()
-
-
-@pytest.mark.asyncio
-async def test_authenticate_user_success_with_username(
-    service, mock_user, mock_users_repository
-):
-    """Test successful user authentication using username."""
-    result = await service.authenticate_user(mock_user.username, "correct_password")
-
-    assert result == mock_user
-    mock_users_repository.get_by_email.assert_not_called()
-    mock_users_repository.get_by_username.assert_called_once_with(mock_user.username)
+    assert result is None
 
 
 @pytest.mark.asyncio
@@ -74,18 +58,40 @@ async def test_authenticate_user_wrong_password(service, mock_user):
 
 
 @pytest.mark.asyncio
-async def test_authenticate_user_not_found(service):
-    """Test authentication when user is not found."""
-    result = await service.authenticate_user("nonexistent@example.com", "password")
+@pytest.mark.parametrize(
+    "email_or_username_fn,called_mock,not_called_mock",
+    [
+        (lambda u: u.email, "get_by_email", "get_by_username"),
+        (lambda u: u.email.upper(), "get_by_email", "get_by_username"),
+        (lambda u: u.username, "get_by_username", "get_by_email"),
+        (lambda u: u.username.upper(), "get_by_username", "get_by_email"),
+    ],
+)
+async def test_authenticate_user_success(
+    service,
+    mock_user,
+    mock_users_repository,
+    email_or_username_fn,
+    called_mock,
+    not_called_mock,
+):
+    """Test successful user authentication."""
+    email_or_username = email_or_username_fn(mock_user)
 
-    assert result is None
+    result = await service.authenticate_user(email_or_username, "correct_password")
+
+    assert result == mock_user
+    getattr(mock_users_repository, called_mock).assert_called_with(
+        email_or_username.lower()
+    )
+    getattr(mock_users_repository, not_called_mock).assert_not_called()
 
 
 @pytest.mark.asyncio
 async def test_register_user(service):
     """Test registering a new user through the service"""
     user_create = UserCreate(
-        email="test@example.com", username="user", password="password123"
+        email="Test@example.com", username="User", password="password123"
     )
 
     user = await service.register_user(user_create)
@@ -93,6 +99,7 @@ async def test_register_user(service):
     assert user.id == 1
     assert user.email == "test@example.com"
     assert user.username == "user"
+    assert user.username_display == "User"
     assert hasattr(user, "hashed_password")
     assert user.hashed_password != "password123"
 

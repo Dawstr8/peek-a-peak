@@ -42,9 +42,18 @@ async def test_endpoints_forbidden_for_other_user(
 
 
 @pytest.mark.asyncio
-async def test_get_user_photos_for_user(client_with_db, e2e_photos, logged_in_user):
+@pytest.mark.parametrize(
+    "username_fn",
+    [
+        (lambda username: username),
+        (lambda username: username.upper()),
+    ],
+)
+async def test_get_user_photos_for_user(
+    client_with_db, e2e_photos, logged_in_user, username_fn
+):
     """Test getting photos for a specific user"""
-    username = logged_in_user["username"]
+    username = username_fn(logged_in_user["username"])
 
     resp = await client_with_db.get(f"{BASE_URL}/{username}/photos")
 
@@ -118,11 +127,18 @@ async def test_get_user_photos_with_sorting_parameters(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "username_fn",
+    [
+        (lambda username: username),
+        (lambda username: username.upper()),
+    ],
+)
 async def test_get_summited_peaks_count_for_user(
-    client_with_db, db_peaks, e2e_photos, logged_in_user
+    client_with_db, db_peaks, e2e_photos, logged_in_user, username_fn
 ):
     """Test getting summited peaks count for a specific user"""
-    username = logged_in_user["username"]
+    username = username_fn(logged_in_user["username"])
 
     resp = await client_with_db.get(f"{BASE_URL}/{username}/peaks/count")
 

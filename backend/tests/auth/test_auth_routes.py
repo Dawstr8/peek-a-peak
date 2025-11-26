@@ -13,51 +13,66 @@ LOGOUT_ENDPOINT = f"{BASE_URL}/logout"
 @pytest.mark.asyncio
 async def test_register_user_success(client_with_db: AsyncClient):
     """Test registering a new user successfully"""
+    email = "User1@example.com"
+    username = "User1"
+
     response = await client_with_db.post(
         REGISTER_ENDPOINT,
-        json={"email": "user1@example.com", "username": "user1", "password": "pass123"},
+        json={"email": email, "username": username, "password": "pass123"},
     )
 
     assert response.status_code == 201
     data = response.json()
-    assert data["email"] == "user1@example.com"
+    assert data["email"] == email.lower()
+    assert data["username"] == username.lower()
+    assert data["usernameDisplay"] == username
     assert "createdAt" in data
 
 
 @pytest.mark.asyncio
-async def test_register_user_duplicate_email(
-    client_with_db: AsyncClient, registered_user
+@pytest.mark.parametrize(
+    "email_fn,username_fn,expected_error",
+    [
+        (
+            lambda u: u["email"],
+            lambda u: "user2_new",
+            "Email is already in use",
+        ),
+        (
+            lambda u: u["email"].upper(),
+            lambda u: "user2_new",
+            "Email is already in use",
+        ),
+        (
+            lambda u: "other@example.com",
+            lambda u: u["username"],
+            "Username is already taken",
+        ),
+        (
+            lambda u: "other@example.com",
+            lambda u: u["username"].upper(),
+            "Username is already taken",
+        ),
+    ],
+)
+async def test_register_user_duplicates(
+    client_with_db: AsyncClient, registered_user, email_fn, username_fn, expected_error
 ):
-    """Test registering a user with a duplicate email"""
+    """Test registering a user with duplicate email or username"""
+    email = email_fn(registered_user)
+    username = username_fn(registered_user)
+
     response = await client_with_db.post(
         REGISTER_ENDPOINT,
         json={
-            "email": registered_user["email"],
-            "username": "user2_new",
+            "email": email,
+            "username": username,
             "password": "pass456",
         },
     )
 
     assert response.status_code == 400
-    assert "already in use" in response.json()["detail"]
-
-
-@pytest.mark.asyncio
-async def test_register_user_duplicate_username(
-    client_with_db: AsyncClient, registered_user
-):
-    """Test registering a user with a duplicate username"""
-    response = await client_with_db.post(
-        REGISTER_ENDPOINT,
-        json={
-            "email": "other@example.com",
-            "username": registered_user["username"],
-            "password": "pass456",
-        },
-    )
-
-    assert response.status_code == 400
-    assert "Username is already taken" in response.json()["detail"]
+    assert expected_error in response.json()["detail"]
 
 
 @pytest.mark.asyncio

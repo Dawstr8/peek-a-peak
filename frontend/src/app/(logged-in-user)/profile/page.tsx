@@ -37,7 +37,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-12">
             <UserAvatar user={user} className="size-32" />
             <div className="text-left text-sm leading-tight">
-              <h2 className="text-2xl font-bold">{user.username}</h2>
+              <h2 className="text-2xl font-bold">{user.usernameDisplay}</h2>
               <p className="truncate text-xs">{user.email}</p>
             </div>
           </div>
