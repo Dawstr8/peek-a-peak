@@ -19,7 +19,6 @@ class PhotosService:
         self,
         uploads_service: UploadsService,
         photos_repository: PhotosRepository,
-        users_repository: UsersRepository,
     ):
         """
         Initialize the PhotosService
@@ -30,7 +29,6 @@ class PhotosService:
         """
         self.uploads_service = uploads_service
         self.photos_repository = photos_repository
-        self.users_repository = users_repository
 
     async def upload_photo(
         self,
@@ -92,25 +90,6 @@ class PhotosService:
             List[SummitPhoto]: List of all photos with peak information
         """
         return await self.photos_repository.get_all(sort_params=sort_params)
-
-    async def get_photos_by_user(
-        self, username: str, sort_params: Optional[SortParams] = None
-    ) -> List[SummitPhoto]:
-        """
-        Get all photos uploaded by a specific user.
-
-        Args:
-            username: Username of the user whose photos to retrieve
-            sort_params: Sorting parameters
-
-        Returns:
-            List[SummitPhoto]: List of photos uploaded by the specified user with peak information
-        """
-        user = await self.users_repository.get_by_username(username)
-
-        return await self.photos_repository.get_by_owner_id(
-            user.id, sort_params=sort_params
-        )
 
     async def delete_photo(self, photo_id: int) -> bool:
         """
