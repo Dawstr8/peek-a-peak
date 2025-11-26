@@ -37,7 +37,7 @@ export default function SummitProgress() {
       </CardHeader>
       <CardContent>
         {isPeaksCountLoading || isSummitedByUserCountLoading ? (
-          <Skeleton className="mx-auto size-48" />
+          <Skeleton className="mx-auto size-32" />
         ) : (
           <CircularProgress value={progress} title={progressTitle} />
         )}

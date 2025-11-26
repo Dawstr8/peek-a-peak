@@ -29,13 +29,13 @@ export default function CircularProgress({
     <div className="relative">
       <ChartContainer
         config={chartConfig}
-        className="aspect-square h-48 w-full"
+        className="aspect-square h-32 w-full"
       >
         <RadialBarChart
           accessibilityLayer
           data={chartData}
           innerRadius="70%"
-          outerRadius="110%"
+          outerRadius="130%"
         >
           <RadialBar dataKey="total" maxBarSize={0} />
           <RadialBar
@@ -47,7 +47,7 @@ export default function CircularProgress({
         </RadialBarChart>
       </ChartContainer>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-foreground text-2xl font-semibold">
+        <span className="text-foreground text-lg font-semibold">
           {title || `${value || 0}%`}
         </span>
       </div>

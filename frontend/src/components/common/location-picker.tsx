@@ -82,8 +82,7 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
         </div>
       </div>
       <div className="rounded-lg">
-        <InteractiveMap location={value}>
-          <FitToLocations locations={locations} />
+        <InteractiveMap locations={locations} hideLocationMarkers>
           <MapLocationPicker onLocationSelect={onChange} />
 
           {value && (
