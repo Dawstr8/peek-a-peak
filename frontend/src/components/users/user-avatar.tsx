@@ -9,7 +9,7 @@ interface UserAvatarProps {
 }
 
 export default function UserAvatar({ user, className }: UserAvatarProps) {
-  const avatarInitial = user.username.charAt(0).toUpperCase();
+  const avatarInitial = user.usernameDisplay.charAt(0);
 
   return (
     <Avatar className={cn(className, "rounded-lg")}>

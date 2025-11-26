@@ -15,7 +15,12 @@ async def test_users_repository(test_db: AsyncSession) -> UsersRepository:
 @pytest.mark.asyncio
 async def test_save_user_success(test_users_repository):
     """Test saving a new user successfully."""
-    user = User(email="test@example.com", username="user", hashed_password="hash")
+    user = User(
+        email="test@example.com",
+        username="user",
+        username_display="User",
+        hashed_password="hash",
+    )
 
     saved_user = await test_users_repository.save(user)
 
@@ -26,7 +31,14 @@ async def test_save_user_success(test_users_repository):
 @pytest.mark.asyncio
 async def test_save_user_duplicate_email(test_users_repository, db_user):
     """Test saving a user with a duplicate email raises ValueError."""
-    new_user = User(email=db_user.email, username="other_user", hashed_password="hash2")
+    username = "other_user"
+
+    new_user = User(
+        email=db_user.email,
+        username=username,
+        username_display=username,
+        hashed_password="hash2",
+    )
 
     with pytest.raises(ValueError) as exc:
         await test_users_repository.save(new_user)
@@ -40,6 +52,7 @@ async def test_save_user_duplicate_username(test_users_repository, db_user):
     new_user = User(
         email="other@example.com",
         username=db_user.username,
+        username_display=db_user.username_display,
         hashed_password="hash2",
     )
 

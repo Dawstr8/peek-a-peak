@@ -42,6 +42,7 @@ class AuthService:
         Returns:
             User if authentication is successful, else None
         """
+        email_or_username = email_or_username.lower()
 
         user = (
             await self.users_repository.get_by_email(email_or_username)
@@ -68,7 +69,14 @@ class AuthService:
             The created User object
         """
         hashed_password = self.password_service.get_hash(user_create.password)
-        user = User(hashed_password=hashed_password, **user_create.model_dump())
+
+        user = User(
+            hashed_password=hashed_password,
+            **user_create.model_dump(exclude={"email", "username"}),
+            email=user_create.email.lower(),
+            username=user_create.username.lower(),
+            username_display=user_create.username
+        )
 
         return await self.users_repository.save(user)
 

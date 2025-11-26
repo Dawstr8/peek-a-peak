@@ -68,7 +68,17 @@ current_user_dep = Annotated[User, Depends(get_current_user)]
 async def check_access_by_username(
     current_user: current_user_dep, username: str = Path(...)
 ) -> str:
-    """Ensures the current user is allowed to access the resources based on the given username."""
+    """
+    Ensures the current user is allowed to access the resources based on the given username.
+
+    Args:
+        current_user: The current authenticated user
+        username: The non-normalized username to check access for
+
+    Returns:
+        The validated, normalized username
+    """
+    username = username.lower()
     if username != current_user.username:
         raise HTTPException(
             status_code=403, detail="Not authorized to access this resource"

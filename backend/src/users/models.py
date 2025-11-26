@@ -14,6 +14,7 @@ class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(index=True, nullable=False, unique=True)
     username: str = Field(index=True, nullable=False, unique=True)
+    username_display: str
     hashed_password: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -40,4 +41,5 @@ class UserRead(CamelModel):
 
     email: str
     username: str
+    username_display: str
     created_at: datetime
