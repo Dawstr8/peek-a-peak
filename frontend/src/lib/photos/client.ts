@@ -24,16 +24,6 @@ export class PhotoClient extends ApiClient {
     return this.get<SummitPhoto[]>(API_ENDPOINTS.photos.getAll(sortBy, order));
   }
 
-  static async getPhotosByUser(
-    username: string,
-    sortBy: string | null = null,
-    order: "asc" | "desc" | null = null,
-  ): Promise<SummitPhoto[]> {
-    return this.get<SummitPhoto[]>(
-      API_ENDPOINTS.photos.getByUser(username, sortBy, order),
-    );
-  }
-
   /**
    * Upload a photo file to the backend
    * @param file The file to upload

@@ -22,7 +22,7 @@ import {
 import UserPreview from "@/components/users/user-preview";
 
 interface ProfileProps {
-  user: User | null;
+  user?: User;
 }
 
 export default function Profile({ user }: ProfileProps) {

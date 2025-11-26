@@ -5,22 +5,24 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LatLng } from "leaflet";
 
-import { PhotoClient } from "@/lib/photos/client";
+import { UsersClient } from "@/lib/users/client";
+import { User } from "@/lib/users/types";
 
-import { useAuth } from "@/components/auth/auth-context";
 import { InteractiveMap } from "@/components/common/interactive-map";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SummitPhotosMapProps {
+  user?: User;
   className?: string;
 }
 
-export default function SummitPhotosMap({ className }: SummitPhotosMapProps) {
-  const { user } = useAuth();
-
+export default function SummitPhotosMap({
+  user,
+  className,
+}: SummitPhotosMapProps) {
   const { data: summitPhotos } = useQuery({
-    queryKey: ["photos", "user", user?.username],
-    queryFn: () => PhotoClient.getPhotosByUser(user!.username),
+    queryKey: ["users", user?.username, "photos"],
+    queryFn: () => UsersClient.getPhotosByUser(user!.username),
     enabled: !!user,
   });
 

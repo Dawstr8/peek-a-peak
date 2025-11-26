@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 
 interface UserPreviewProps {
-  user: User | null;
+  user?: User;
   className?: string;
   children?: React.ReactNode;
 }

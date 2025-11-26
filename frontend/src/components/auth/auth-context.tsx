@@ -6,7 +6,7 @@ import { AuthClient } from "@/lib/auth/client";
 import type { User } from "@/lib/users/types";
 
 interface AuthContextType {
-  user: User | null;
+  user: User | undefined;
   isLoading: boolean;
   login: (user: User) => void;
   logout: () => void;
@@ -15,7 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handleUnauthorized = () => {
-      setUser(null);
+      setUser(undefined);
     };
 
     window.addEventListener("unauthorized", handleUnauthorized);
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const user = await AuthClient.me();
       setUser(user);
     } catch {
-      setUser(null);
+      setUser(undefined);
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    setUser(null);
+    setUser(undefined);
   };
 
   return (

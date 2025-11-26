@@ -44,17 +44,6 @@ async def test_get_peaks_count(client_with_db: AsyncClient, db_peaks):
 
 
 @pytest.mark.asyncio
-async def test_get_summited_by_user_count(
-    client_with_db: AsyncClient, db_peaks, e2e_photos, logged_in_user
-):
-    response = await client_with_db.get("/api/peaks/me/count")
-
-    assert response.status_code == 200
-    data = response.json()
-    assert data == 1
-
-
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "coords_key,expected_nearest_name",
     [

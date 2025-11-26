@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { PhotoClient } from "@/lib/photos/client";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
+import { UsersClient } from "@/lib/users/client";
 
 import { useAuth } from "@/components/auth/auth-context";
 import { SummitPhotosGrid } from "@/components/photos/summit-photos-grid";
@@ -15,9 +15,9 @@ export default function ProfilePage() {
   const { user, isLoading } = useAuth();
 
   const summitPhotosQuery = useQuery({
-    queryKey: ["photos", "user", user?.username],
+    queryKey: ["users", user?.username, "photos", "capturedAt", "desc"],
     queryFn: () =>
-      PhotoClient.getPhotosByUser(user!.username, "capturedAt", "desc"),
+      UsersClient.getPhotosByUser(user!.username, "capturedAt", "desc"),
     enabled: !!user,
   });
 

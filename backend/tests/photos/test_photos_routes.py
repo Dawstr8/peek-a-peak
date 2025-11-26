@@ -10,7 +10,6 @@ from src.models import SortParams
 from src.photos import dependencies
 from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
-from src.users.models import User
 
 
 @pytest.fixture(autouse=True)
@@ -92,102 +91,6 @@ async def test_get_all_photos_with_sorting_parameters(
     assert resp.status_code == 200
     photos = resp.json()
     assert len(photos) == 3
-
-    received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
-    assert received_fields == sorted(received_fields, reverse=expected_reversed)
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_requires_auth(client_with_db):
-    """Test that getting user photos requires authentication"""
-    resp = await client_with_db.get("/api/photos/user/1")
-
-    assert resp.status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_forbidden_for_other_user(
-    client_with_db, e2e_photos, logged_in_user
-):
-    """Test that users cannot view other users' photos"""
-    other_username = logged_in_user["username"] + "other"
-    resp = await client_with_db.get(f"/api/photos/user/{other_username}")
-
-    assert resp.status_code == 403
-    assert resp.json()["detail"] == "Not authorized to access this resource"
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_for_user(client_with_db, e2e_photos, logged_in_user):
-    """Test getting photos for a specific user"""
-    username = logged_in_user["username"]
-
-    resp = await client_with_db.get(f"/api/photos/user/{username}")
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 2
-
-    for photo in photos:
-        assert "id" in photo
-        assert "fileName" in photo
-
-    assert photos[0]["ownerId"] == photos[1]["ownerId"]
-
-
-@pytest.mark.asyncio
-async def test_get_user_photos_with_peaks(
-    client_with_db, db_peaks, e2e_photos, logged_in_user
-):
-    """Test getting user photos includes peak information when assigned"""
-    username = logged_in_user["username"]
-
-    resp = await client_with_db.get(f"/api/photos/user/{username}")
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 2
-
-    photo_without_peak = next((p for p in photos if p["peakId"] is None), None)
-    photo_with_peak = next((p for p in photos if p["peakId"] is not None), None)
-
-    assert photo_without_peak is not None
-    assert photo_without_peak["peak"] is None
-
-    assert photo_with_peak is not None
-    assert photo_with_peak["peak"] is not None
-    assert photo_with_peak["peak"]["id"] == db_peaks[0].id
-    assert photo_with_peak["peak"]["name"] == db_peaks[0].name
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "sort_params,expected_reversed",
-    [
-        (SortParams(sort_by="capturedAt", order=None), False),
-        (SortParams(sort_by="capturedAt", order="asc"), False),
-        (SortParams(sort_by="capturedAt", order="desc"), True),
-        (SortParams(sort_by="uploadedAt", order=None), False),
-    ],
-)
-async def test_get_user_photos_with_sorting_parameters(
-    client_with_db,
-    e2e_photos,
-    logged_in_user: User,
-    sort_params: SortParams,
-    expected_reversed: bool,
-):
-    """Test getting user photos sorted by various parameters"""
-    username = logged_in_user["username"]
-    sort_by, order = sort_params.sort_by, sort_params.order
-
-    resp = await client_with_db.get(
-        f"/api/photos/user/{username}?sortBy={sort_by}&order={order}"
-    )
-
-    assert resp.status_code == 200
-    photos = resp.json()
-    assert len(photos) == 2
 
     received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
     assert received_fields == sorted(received_fields, reverse=expected_reversed)

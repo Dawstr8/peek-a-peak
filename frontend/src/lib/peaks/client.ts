@@ -15,10 +15,6 @@ export class PeakClient extends ApiClient {
     return this.get<number>(API_ENDPOINTS.peaks.getCount);
   }
 
-  static async getSummitedByUserCount(): Promise<number> {
-    return this.get<number>(API_ENDPOINTS.peaks.getSummitedByUserCount);
-  }
-
   /**
    * Find nearby peaks based on latitude and longitude
    * @param lat The latitude of the location
