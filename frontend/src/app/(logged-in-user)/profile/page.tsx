@@ -14,9 +14,9 @@ export default function ProfilePage() {
   const { user, isLoading } = useAuth();
 
   const summitPhotosQuery = useQuery({
-    queryKey: ["users", user?.username, "photos", "capturedAt", "desc"],
+    queryKey: ["users", user?.username, "photos", "uploadedAt", "desc"],
     queryFn: () =>
-      UsersClient.getPhotosByUser(user!.username, "capturedAt", "desc"),
+      UsersClient.getPhotosByUser(user!.username, "uploadedAt", "desc"),
     enabled: !!user,
   });
 
