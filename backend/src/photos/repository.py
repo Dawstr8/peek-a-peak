@@ -5,6 +5,8 @@ from sqlmodel import desc, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.models import SortParams
+from src.pagination.models import PaginatedResponse, PaginationParams
+from src.pagination.paginator import Paginator
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 
 
@@ -21,6 +23,7 @@ class PhotosRepository:
             db: Database session
         """
         self.db = db
+        self.paginator = Paginator(db)
 
     async def save(self, photo: SummitPhoto) -> SummitPhoto:
         """
@@ -67,22 +70,14 @@ class PhotosRepository:
         return result.all()
 
     async def get_by_owner_id(
-        self, owner_id: int, sort_params: SortParams
-    ) -> List[SummitPhoto]:
-        """
-        Get all photos uploaded by a specific user.
-
-        Args:
-            user_id: ID of the user whose photos to retrieve
-            sort_params: Sorting parameters
-
-        Returns:
-            List of SummitPhoto objects uploaded by the specified user
-        """
+        self,
+        owner_id: int,
+        sort_params: SortParams,
+        pagination_params: PaginationParams,
+    ) -> PaginatedResponse[SummitPhoto]:
         statement = select(SummitPhoto).where(SummitPhoto.owner_id == owner_id)
         statement = self._apply_sorting(statement, sort_params)
-        result = await self.db.exec(statement)
-        return result.all()
+        return await self.paginator.paginate(statement, pagination_params)
 
     async def get_locations_by_owner_id(
         self, owner_id: int
@@ -130,7 +125,7 @@ class PhotosRepository:
         column = getattr(SummitPhoto, sort_params.sort_by)
 
         return (
-            statement.order_by(desc(column))
+            statement.order_by(desc(column), desc(SummitPhoto.id))
             if sort_params.order == "desc"
-            else statement.order_by(column)
+            else statement.order_by(column, SummitPhoto.id)
         )

@@ -7,15 +7,27 @@ import type {
 
 import { API_ENDPOINTS } from "@/config/api";
 
+import { PaginatedResponse } from "../pagination/types";
+
 export class UsersClient extends ApiClient {
   static async getPhotosByUser(
     username: string,
     sortBy: string | null = null,
     order: "asc" | "desc" | null = null,
-  ): Promise<SummitPhoto[]> {
-    return this.get<SummitPhoto[]>(
-      API_ENDPOINTS.users.getPhotosByUser(username, sortBy, order),
+    page: number | null = null,
+    perPage: number | null = null,
+  ): Promise<PaginatedResponse<SummitPhoto>> {
+    const data = await this.get<PaginatedResponse<SummitPhoto>>(
+      API_ENDPOINTS.users.getPhotosByUser(
+        username,
+        sortBy,
+        order,
+        page,
+        perPage,
+      ),
     );
+
+    return new PaginatedResponse<SummitPhoto>(data);
   }
   static async getPhotosLocationsByUser(
     username: string,

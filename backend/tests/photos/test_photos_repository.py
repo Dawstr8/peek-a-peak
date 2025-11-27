@@ -8,6 +8,7 @@ import pytest
 from sqlmodel import select
 
 from src.models import SortParams
+from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
 
@@ -102,11 +103,17 @@ async def test_get_all_with_sorting(test_photos_repository, db_photos):
 @pytest.mark.asyncio
 async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
     """Test retrieving all summit photos"""
-    photos = await test_photos_repository.get_by_owner_id(
-        db_user.id, sort_params=SortParams(sort_by=None, order=None)
+    photos_paginated = await test_photos_repository.get_by_owner_id(
+        db_user.id,
+        sort_params=SortParams(sort_by=None, order=None),
+        pagination_params=PaginationParams(page=1, per_page=10),
     )
 
-    assert photos is not None
+    assert photos_paginated.total == 3
+    assert photos_paginated.page == 1
+    assert photos_paginated.per_page == 10
+
+    photos = photos_paginated.items
     assert len(photos) == 3
 
     photo_ids = [photo.id for photo in photos]
@@ -122,13 +129,22 @@ async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
 
 @pytest.mark.asyncio
 async def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, db_user):
+    owner_id = db_user.id
+    pagination_params = PaginationParams(page=1, per_page=10)
+
+    sort_params1 = SortParams(sort_by="captured_at", order="asc")
+    sort_params2 = SortParams(sort_by="captured_at", order="desc")
+
     """Test retrieving all summit photos with sorting parameters"""
-    photos_asc = await test_photos_repository.get_by_owner_id(
-        owner_id=db_user.id, sort_params=SortParams(sort_by="captured_at", order="asc")
+    photos_asc_paginated = await test_photos_repository.get_by_owner_id(
+        owner_id=owner_id, sort_params=sort_params1, pagination_params=pagination_params
     )
-    photos_desc = await test_photos_repository.get_by_owner_id(
-        owner_id=db_user.id, sort_params=SortParams(sort_by="captured_at", order="desc")
+    photos_desc_paginated = await test_photos_repository.get_by_owner_id(
+        owner_id=owner_id, sort_params=sort_params2, pagination_params=pagination_params
     )
+
+    photos_asc = photos_asc_paginated.items
+    photos_desc = photos_desc_paginated.items
 
     assert len(photos_asc) == 3
     assert len(photos_desc) == 3
@@ -208,16 +224,16 @@ async def test_apply_sorting_with_invalid_or_missing_params(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "sort_params, expected_reversed",
+    "sort_params,expected_ids",
     [
-        (SortParams(sort_by="captured_at", order=None), False),
-        (SortParams(sort_by="captured_at", order="asc"), False),
-        (SortParams(sort_by="captured_at", order="desc"), True),
-        (SortParams(sort_by="uploaded_at", order=None), False),
+        (SortParams(sort_by="captured_at", order=None), [0, 1, 3, 2]),
+        (SortParams(sort_by="captured_at", order="asc"), [0, 1, 3, 2]),
+        (SortParams(sort_by="captured_at", order="desc"), [2, 3, 1, 0]),
+        (SortParams(sort_by="uploaded_at", order=None), [0, 1, 2, 3]),
     ],
 )
 async def test_apply_sorting_with_valid_params(
-    test_photos_repository, db_photos, sort_params: SortParams, expected_reversed: bool
+    test_photos_repository, db_photos, sort_params: SortParams, expected_ids: list[int]
 ):
     statement = select(SummitPhoto)
 
@@ -226,10 +242,4 @@ async def test_apply_sorting_with_valid_params(
     )
 
     photos = (await test_photos_repository.db.exec(result_statement)).all()
-    fields = [
-        getattr(p, sort_params.sort_by)
-        for p in photos
-        if getattr(p, sort_params.sort_by) is not None
-    ]
-
-    assert fields == sorted(fields, reverse=expected_reversed)
+    assert photos == [db_photos[i] for i in expected_ids]

@@ -4,21 +4,28 @@ from fastapi import APIRouter, HTTPException
 
 from src.auth.dependencies import get_access_owner_id_dep
 from src.dependencies import sort_params_dep
+from src.pagination.dependencies import pagination_params_dep
+from src.pagination.models import PaginatedResponse
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation, SummitPhotoRead
 from src.users.dependencies import users_service_dep
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
-@router.get("/{username}/photos", response_model=List[SummitPhotoRead])
+@router.get("/{username}/photos", response_model=PaginatedResponse[SummitPhotoRead])
 async def get_photos_by_user(
     service: users_service_dep,
     owner_id: get_access_owner_id_dep,
     sort_params: sort_params_dep,
+    pagination_params: pagination_params_dep,
 ):
-    """Get all photos uploaded by a specific user, optionally sorted by a field."""
+    """Get paginated photos uploaded by a specific user."""
     try:
-        return await service.get_photos_by_user(owner_id, sort_params=sort_params)
+        return await service.get_photos_by_user(
+            owner_id,
+            sort_params=sort_params,
+            pagination_params=pagination_params,
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to retrieve user photos: {str(e)}"

@@ -1,6 +1,7 @@
 import pytest
 
 from src.models import SortParams
+from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation
 from src.users.service import UsersService
 
@@ -19,13 +20,20 @@ async def test_get_photos_by_user(
 ):
     user_id = mock_user.id
     sort_params = SortParams(field="captured_at", direction="desc")
+    pagination_params = PaginationParams(page=1, per_page=10)
 
-    result = await users_service.get_photos_by_user(user_id, sort_params=sort_params)
+    result = await users_service.get_photos_by_user(
+        user_id,
+        sort_params=sort_params,
+        pagination_params=pagination_params,
+    )
 
     expected_photos = [photo for photo in mock_photos if photo.owner_id == user_id]
     assert result == expected_photos
     mock_photos_repository.get_by_owner_id.assert_called_once_with(
-        user_id, sort_params=sort_params
+        user_id,
+        sort_params=sort_params,
+        pagination_params=pagination_params,
     )
 
 
