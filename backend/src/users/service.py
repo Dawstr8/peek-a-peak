@@ -1,6 +1,7 @@
 from typing import List
 
 from src.models import SortParams
+from src.pagination.models import PaginatedResponse, PaginationParams
 from src.peaks.repository import PeaksRepository
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
@@ -17,10 +18,15 @@ class UsersService:
         self.peaks_repository = peaks_repository
 
     async def get_photos_by_user(
-        self, owner_id: int, sort_params: SortParams
-    ) -> List[SummitPhoto]:
+        self,
+        owner_id: int,
+        sort_params: SortParams,
+        pagination_params: PaginationParams,
+    ) -> PaginatedResponse[SummitPhoto]:
         return await self.photos_repository.get_by_owner_id(
-            owner_id, sort_params=sort_params
+            owner_id,
+            sort_params=sort_params,
+            pagination_params=pagination_params,
         )
 
     async def get_photos_locations_by_user(

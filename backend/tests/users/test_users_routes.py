@@ -59,10 +59,16 @@ async def test_get_user_photos_for_user(
     """Test getting photos for a specific user"""
     username = username_fn(logged_in_user["username"])
 
-    resp = await client_with_db.get(f"{BASE_URL}/{username}/photos")
+    paginated_resp = await client_with_db.get(f"{BASE_URL}/{username}/photos")
 
-    assert resp.status_code == 200
-    photos = resp.json()
+    assert paginated_resp.status_code == 200
+    paginated_photos = paginated_resp.json()
+
+    assert paginated_photos["total"] == 3
+    assert paginated_photos["page"] == 1
+    assert paginated_photos["perPage"] == 10
+
+    photos = paginated_photos["items"]
     assert len(photos) == 3
 
     for photo in photos:
@@ -82,7 +88,13 @@ async def test_get_user_photos_with_peaks(
     resp = await client_with_db.get(f"{BASE_URL}/{username}/photos")
 
     assert resp.status_code == 200
-    photos = resp.json()
+    paginated_photos = resp.json()
+
+    assert paginated_photos["total"] == 3
+    assert paginated_photos["page"] == 1
+    assert paginated_photos["perPage"] == 10
+
+    photos = paginated_photos["items"]
     assert len(photos) == 3
 
     photo_without_peak = next((p for p in photos if p["peakId"] is None), None)
@@ -123,11 +135,55 @@ async def test_get_user_photos_with_sorting_parameters(
     )
 
     assert resp.status_code == 200
-    photos = resp.json()
+    paginated_photos = resp.json()
+
+    assert paginated_photos["total"] == 3
+    assert paginated_photos["page"] == 1
+    assert paginated_photos["perPage"] == 10
+
+    photos = paginated_photos["items"]
     assert len(photos) == 3
 
     received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
     assert received_fields == sorted(received_fields, reverse=expected_reversed)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "pagination_params,expected_ids",
+    [
+        ({"page": 1, "perPage": 2}, [2, 1]),
+        ({"page": 2, "perPage": 2}, [0]),
+        ({"page": 1, "perPage": 5}, [2, 1, 0]),
+    ],
+)
+async def test_get_user_photos_with_pagination_parameters(
+    client_with_db,
+    e2e_photos,
+    logged_in_user: User,
+    pagination_params: dict,
+    expected_ids: list,
+):
+    """Test getting user photos with pagination parameters"""
+    username = logged_in_user["username"]
+    sort_by = "capturedAt"
+    order = "desc"
+    page = pagination_params["page"]
+    per_page = pagination_params["perPage"]
+
+    resp = await client_with_db.get(
+        f"{BASE_URL}/{username}/photos?page={page}&perPage={per_page}&sortBy={sort_by}&order={order}"
+    )
+
+    assert resp.status_code == 200
+    paginated_photos = resp.json()
+
+    assert paginated_photos["total"] == 3
+    assert paginated_photos["page"] == page
+    assert paginated_photos["perPage"] == per_page
+
+    photos = paginated_photos["items"]
+    assert photos == [e2e_photos[i] for i in expected_ids]
 
 
 @pytest.mark.asyncio

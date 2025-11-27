@@ -67,7 +67,10 @@ export const API_ENDPOINTS = {
       username: string,
       sortBy: string | null = null,
       order: "asc" | "desc" | null = null,
-    ) => buildUrl(`/users/${username}/photos`, { sortBy, order }),
+      page: number | null = null,
+      perPage: number | null = null,
+    ) =>
+      buildUrl(`/users/${username}/photos`, { sortBy, order, page, perPage }),
     getPhotosLocationsByUser: (username: string) =>
       buildUrl(`/users/${username}/photos/locations`),
     getPhotosDatesByUser: (username: string) =>

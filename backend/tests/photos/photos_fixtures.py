@@ -9,6 +9,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
+from src.models import SortParams
+from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
 from tests.auth.auth_fixtures import temporary_login
@@ -66,7 +68,11 @@ def mock_photos_repository(
     async def get_all(sort_params=None):
         return mock_photos
 
-    async def get_by_owner_id(owner_id, sort_params=None):
+    async def get_by_owner_id(
+        owner_id,
+        sort_params=SortParams(),
+        pagination_params=PaginationParams(),
+    ):
         return [photo for photo in mock_photos if photo.owner_id == owner_id]
 
     async def get_locations_by_owner_id(owner_id, sort_params=None):
