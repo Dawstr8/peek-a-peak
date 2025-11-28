@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
-from src.photos.models import SummitPhoto
+from src.photos.models import SummitPhoto, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
 from tests.auth.auth_fixtures import temporary_login
 
@@ -69,9 +69,19 @@ def mock_photos_repository(
     async def get_by_owner_id(owner_id, sort_params=None):
         return [photo for photo in mock_photos if photo.owner_id == owner_id]
 
+    async def get_locations_by_owner_id(owner_id, sort_params=None):
+        return [
+            SummitPhotoLocation(
+                id=photo.id, lat=photo.lat, lng=photo.lng, alt=photo.alt
+            )
+            for photo in mock_photos
+            if photo.owner_id == owner_id and photo.location is not None
+        ]
+
     repo.save = AsyncMock(side_effect=save)
     repo.get_by_id = AsyncMock(side_effect=get_by_id)
     repo.get_by_owner_id = AsyncMock(side_effect=get_by_owner_id)
+    repo.get_locations_by_owner_id = AsyncMock(side_effect=get_locations_by_owner_id)
     repo.get_all = AsyncMock(side_effect=get_all)
     repo.delete = AsyncMock(return_value=True)
 
@@ -115,6 +125,15 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
             alt=1600,
             peak_id=db_peaks[1].id,
         ),
+        SummitPhoto(
+            owner_id=db_users[0].id,
+            file_name="test4.jpg",
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
+            location=None,
+            alt=None,
+            peak_id=None,
+        ),
     ]
 
     saved_photos = []
@@ -156,6 +175,10 @@ async def e2e_photos(
                     "alt": 1602.0,
                 },
                 "file": ("photo2.jpg", b"imagedata2", "image/jpeg"),
+            },
+            {
+                "summitPhotoCreate": {"capturedAt": "2025-10-01T11:00:00Z"},
+                "file": ("photo4.jpg", b"imagedata4", "image/jpeg"),
             },
         ],
         [

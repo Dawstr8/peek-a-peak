@@ -40,7 +40,7 @@ async def test_get_all_photos(client_with_db, e2e_photos):
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) == 3
+    assert len(photos) == len(e2e_photos)
 
     for photo in photos:
         assert "id" in photo
@@ -54,7 +54,7 @@ async def test_get_all_photos_with_peaks(client_with_db, db_peaks, e2e_photos):
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) == 3
+    assert len(photos) == len(e2e_photos)
 
     photos_without_peak = [p for p in photos if p["peakId"] is None]
     photos_with_peak = [p for p in photos if p["peakId"] is not None]
@@ -90,7 +90,7 @@ async def test_get_all_photos_with_sorting_parameters(
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) == 3
+    assert len(photos) == len(e2e_photos)
 
     received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
     assert received_fields == sorted(received_fields, reverse=expected_reversed)

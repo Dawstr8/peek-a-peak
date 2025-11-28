@@ -1,10 +1,11 @@
 from typing import List, Optional
 
+from sqlalchemy.orm import load_only
 from sqlmodel import desc, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.models import SortParams
-from src.photos.models import SummitPhoto
+from src.photos.models import SummitPhoto, SummitPhotoLocation
 
 
 class PhotosRepository:
@@ -80,6 +81,18 @@ class PhotosRepository:
         """
         statement = select(SummitPhoto).where(SummitPhoto.owner_id == owner_id)
         statement = self._apply_sorting(statement, sort_params)
+        result = await self.db.exec(statement)
+        return result.all()
+
+    async def get_locations_by_owner_id(
+        self, owner_id: int
+    ) -> List[SummitPhotoLocation]:
+        statement = (
+            select(SummitPhoto)
+            .where(SummitPhoto.owner_id == owner_id)
+            .where(SummitPhoto.location != None)
+            .options(load_only(SummitPhoto.id, SummitPhoto.location, SummitPhoto.alt))
+        )
         result = await self.db.exec(statement)
         return result.all()
 

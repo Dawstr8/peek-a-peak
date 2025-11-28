@@ -1,5 +1,5 @@
 import { ApiClient } from "@/lib/common/api-client";
-import type { SummitPhoto } from "@/lib/photos/types";
+import type { SummitPhoto, SummitPhotoLocation } from "@/lib/photos/types";
 
 import { API_ENDPOINTS } from "@/config/api";
 
@@ -11,6 +11,13 @@ export class UsersClient extends ApiClient {
   ): Promise<SummitPhoto[]> {
     return this.get<SummitPhoto[]>(
       API_ENDPOINTS.users.getPhotosByUser(username, sortBy, order),
+    );
+  }
+  static async getPhotosLocationsByUser(
+    username: string,
+  ): Promise<SummitPhotoLocation[]> {
+    return this.get<SummitPhotoLocation[]>(
+      API_ENDPOINTS.users.getPhotosLocationsByUser(username),
     );
   }
 

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from src.models import SortParams
 from src.peaks.repository import PeaksRepository
-from src.photos.models import SummitPhoto
+from src.photos.models import SummitPhoto, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
 from src.users.repository import UsersRepository
 
@@ -26,6 +26,12 @@ class UsersService:
         return await self.photos_repository.get_by_owner_id(
             user.id, sort_params=sort_params
         )
+
+    async def get_photos_locations_by_user(
+        self, username: str
+    ) -> List[SummitPhotoLocation]:
+        user = await self.users_repository.get_by_username(username)
+        return await self.photos_repository.get_locations_by_owner_id(user.id)
 
     async def get_summited_peaks_count_by_user(self, username: str) -> int:
         user = await self.users_repository.get_by_username(username)
