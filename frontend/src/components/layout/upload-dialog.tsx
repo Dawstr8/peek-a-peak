@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Upload } from "lucide-react";
+import { FormProvider, useForm } from "react-hook-form";
+import z from "zod";
 
 import type { Peak } from "@/lib/peaks/types";
-import type { SummitPhotoCreate } from "@/lib/photos/types";
 
 import { MessageBlock } from "@/components/common/message-block";
 import {
@@ -22,85 +24,46 @@ import { PhotoStep } from "./upload-dialog/photo-step";
 import { ReviewStep } from "./upload-dialog/review-step";
 import { UploadStep } from "./upload-dialog/upload-step";
 
+const uploadPhotoSchema = z.object({
+  file: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Photo file is required",
+  }),
+  capturedAt: z.string().optional(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+  alt: z.number().optional(),
+  peakId: z.number().optional(),
+});
+
+export type UploadPhotoFormData = z.infer<typeof uploadPhotoSchema>;
+
 export default function UploadDialog() {
   const { isOpen, closeDialog } = useUploadDialog();
 
-  const [file, setFile] = useState<File | null>(null);
-  const [summitPhotoCreate, setSummitPhotoCreate] =
-    useState<SummitPhotoCreate | null>(null);
-  const [selectedPeak, setSelectedPeak] = useState<Peak | null>(null);
+  const form = useForm<UploadPhotoFormData>({
+    resolver: zodResolver(uploadPhotoSchema),
+    defaultValues: {
+      file: undefined,
+      capturedAt: undefined,
+      lat: undefined,
+      lng: undefined,
+      alt: undefined,
+      peakId: undefined,
+    },
+  });
+
+  const [peakToDisplay, setPeakToDisplay] = useState<Peak | null>(null);
   const { step, next, back, reset } = useStepper(5);
 
   const resetDialogState = () => {
-    setFile(null);
-    setSummitPhotoCreate(null);
-    setSelectedPeak(null);
+    form.reset();
+    setPeakToDisplay(null);
     reset();
   };
 
   const handleOpenChange = () => {
     closeDialog();
     resetDialogState();
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 0:
-        return (
-          <PhotoStep
-            onAccept={(summitPhotoCreate: SummitPhotoCreate, file: File) => {
-              setSummitPhotoCreate(summitPhotoCreate);
-              setFile(file);
-              next();
-            }}
-          />
-        );
-      case 1:
-        return (
-          <>
-            {file && (
-              <ReviewStep
-                file={file}
-                summitPhotoCreate={summitPhotoCreate!}
-                onAccept={(
-                  summitPhotoCreate: SummitPhotoCreate,
-                  peak: Peak | null,
-                ) => {
-                  setSummitPhotoCreate(summitPhotoCreate);
-                  setSelectedPeak(peak);
-                  next();
-                }}
-                back={back}
-              />
-            )}
-          </>
-        );
-      case 2:
-        return (
-          <>
-            {file && summitPhotoCreate && (
-              <UploadStep
-                file={file}
-                summitPhotoCreate={summitPhotoCreate}
-                selectedPeak={selectedPeak}
-                back={back}
-                next={next}
-              />
-            )}
-          </>
-        );
-      case 3:
-        return (
-          <MessageBlock
-            iconComponent={Check}
-            title="Upload Successful!"
-            description="Your photo has been uploaded successfully."
-            className="my-8"
-          />
-        );
-      default:
-        return null;
-    }
   };
 
   return (
@@ -113,7 +76,31 @@ export default function UploadDialog() {
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[calc(90vh-80px)] overflow-auto px-6">
-          {renderStep()}
+          <FormProvider {...form}>
+            {step === 0 && <PhotoStep next={next} />}
+            {step === 1 && (
+              <ReviewStep
+                setPeakToDisplay={setPeakToDisplay}
+                back={back}
+                next={next}
+              />
+            )}
+            {step === 2 && (
+              <UploadStep
+                peakToDisplay={peakToDisplay}
+                back={back}
+                next={next}
+              />
+            )}
+            {step === 3 && (
+              <MessageBlock
+                iconComponent={Check}
+                title="Upload Successful!"
+                description="Your photo has been uploaded successfully."
+                className="my-8"
+              />
+            )}
+          </FormProvider>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { useFormContext } from "react-hook-form";
 
 import type { Peak } from "@/lib/peaks/types";
 import { PhotoClient } from "@/lib/photos/client";
@@ -11,41 +12,40 @@ import { SummitPhotoCard } from "@/components/photos/summit-photo-card";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
+import type { UploadPhotoFormData } from "../upload-dialog";
+
 interface UploadStepProps {
-  file: File;
-  summitPhotoCreate: SummitPhotoCreate;
-  selectedPeak: Peak | null;
+  peakToDisplay: Peak | null;
   back: () => void;
   next: () => void;
 }
 
-export function UploadStep({
-  file,
-  summitPhotoCreate,
-  selectedPeak,
-  back,
-  next,
-}: UploadStepProps) {
-  const { isPending, isError, error, mutate } = useMutation({
-    mutationFn: ({
-      file,
-      summitPhotoCreate,
-    }: {
-      file: File;
-      summitPhotoCreate: SummitPhotoCreate | null;
-    }) => PhotoClient.uploadPhoto(file, summitPhotoCreate),
-    onSuccess: () => {
-      next();
-    },
-  });
+export function UploadStep({ peakToDisplay, back, next }: UploadStepProps) {
+  const { getValues } = useFormContext<UploadPhotoFormData>();
+
+  const { file, capturedAt, lat, lng, alt, peakId } = getValues();
+  const summitPhotoCreate = {
+    capturedAt,
+    lat,
+    lng,
+    alt,
+    peakId,
+  } as SummitPhotoCreate;
 
   const summitPhoto = {
     ...summitPhotoCreate,
     fileName: URL.createObjectURL(file),
     uploadedAt: new Date().toISOString(),
     id: 999,
-    peak: selectedPeak,
-  } as unknown as SummitPhoto;
+    peak: peakToDisplay,
+  } as SummitPhoto;
+
+  const { isPending, isError, error, mutate } = useMutation({
+    mutationFn: () => PhotoClient.uploadPhoto(file, summitPhotoCreate),
+    onSuccess: () => {
+      next();
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -65,10 +65,7 @@ export function UploadStep({
         <Button variant="outline" onClick={back}>
           Back
         </Button>
-        <Button
-          onClick={() => file && mutate({ file, summitPhotoCreate })}
-          disabled={isPending}
-        >
+        <Button onClick={() => mutate()} disabled={isPending}>
           {isPending && <Spinner />}
           {isPending ? "Uploading..." : "Upload Photo"}
         </Button>
