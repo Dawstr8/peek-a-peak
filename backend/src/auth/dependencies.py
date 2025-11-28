@@ -65,18 +65,21 @@ async def get_current_user(
 current_user_dep = Annotated[User, Depends(get_current_user)]
 
 
-async def check_access_by_username(
-    current_user: current_user_dep, username: str = Path(...)
+async def get_access_owner_id(
+    current_user: current_user_dep,
+    username: str = Path(...),
+    users_repository: UsersRepository = Depends(get_users_repository),
 ) -> str:
     """
-    Ensures the current user is allowed to access the resources based on the given username.
+    Ensures the current user has access to the resource owned by the user with given username.
 
     Args:
         current_user: The current authenticated user
         username: The non-normalized username to check access for
+        users_repository: The UsersRepository instance
 
     Returns:
-        The validated, normalized username
+        The user ID of the resource owner if access is granted.
     """
     username = username.lower()
     if username != current_user.username:
@@ -84,7 +87,11 @@ async def check_access_by_username(
             status_code=403, detail="Not authorized to access this resource"
         )
 
-    return username
+    resource_owner = await users_repository.get_by_username(username)
+    if not resource_owner:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return resource_owner.id
 
 
-check_access_by_username_dep = Annotated[str, Depends(check_access_by_username)]
+get_access_owner_id_dep = Annotated[int, Depends(get_access_owner_id)]
