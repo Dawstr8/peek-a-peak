@@ -19,6 +19,11 @@ export interface SummitPhotoLocation {
   alt?: number;
 }
 
+export interface SummitPhotoDate {
+  id: number;
+  capturedAt: string;
+}
+
 export interface SummitPhotoCreate {
   capturedAt: string;
   lat?: number;

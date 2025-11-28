@@ -70,6 +70,8 @@ export const API_ENDPOINTS = {
     ) => buildUrl(`/users/${username}/photos`, { sortBy, order }),
     getPhotosLocationsByUser: (username: string) =>
       buildUrl(`/users/${username}/photos/locations`),
+    getPhotosDatesByUser: (username: string) =>
+      buildUrl(`/users/${username}/photos/dates`),
     getSummitedPeaksCountByUser: (username: string) =>
       buildUrl(`/users/${username}/peaks/count`),
   },

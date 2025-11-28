@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
-from src.photos.models import SummitPhoto, SummitPhotoLocation
+from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
 from tests.auth.auth_fixtures import temporary_login
 
@@ -78,10 +78,18 @@ def mock_photos_repository(
             if photo.owner_id == owner_id and photo.location is not None
         ]
 
+    async def get_dates_by_owner_id(owner_id, sort_params=None):
+        return [
+            SummitPhotoDate(id=photo.id, captured_at=photo.captured_at)
+            for photo in mock_photos
+            if photo.owner_id == owner_id
+        ]
+
     repo.save = AsyncMock(side_effect=save)
     repo.get_by_id = AsyncMock(side_effect=get_by_id)
     repo.get_by_owner_id = AsyncMock(side_effect=get_by_owner_id)
     repo.get_locations_by_owner_id = AsyncMock(side_effect=get_locations_by_owner_id)
+    repo.get_dates_by_owner_id = AsyncMock(side_effect=get_dates_by_owner_id)
     repo.get_all = AsyncMock(side_effect=get_all)
     repo.delete = AsyncMock(return_value=True)
 
