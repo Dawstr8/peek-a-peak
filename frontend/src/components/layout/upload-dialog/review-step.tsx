@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 import { LatLng } from "leaflet";
+import { useFormContext } from "react-hook-form";
 
 import { Peak } from "@/lib/peaks/types";
-import type { SummitPhotoCreate } from "@/lib/photos/types";
 
 import { DateTimePicker } from "@/components/common/date-time-picker";
 import { LocationPicker } from "@/components/common/location-picker";
@@ -19,48 +19,43 @@ import {
 
 import { useImageUrl } from "@/hooks/use-image-url";
 
+import type { UploadPhotoFormData } from "../upload-dialog";
 import { PeakSearchInput } from "./peak-search-input";
 
 interface ReviewStepProps {
-  file: File;
-  summitPhotoCreate: SummitPhotoCreate;
-  onAccept: (summitPhotoCreate: SummitPhotoCreate, peak: Peak | null) => void;
+  setPeakToDisplay: (peak: Peak | null) => void;
   back: () => void;
+  next: () => void;
 }
 
-export function ReviewStep({
-  file,
-  summitPhotoCreate,
-  onAccept,
-  back,
-}: ReviewStepProps) {
+export function ReviewStep({ setPeakToDisplay, back, next }: ReviewStepProps) {
+  const { setValue, getValues } = useFormContext<UploadPhotoFormData>();
+  const { file, capturedAt, lat, lng, alt } = getValues();
+
   const imageUrl = useImageUrl(file);
 
   const [location, setLocation] = useState<LatLng | undefined>(() => {
-    const { lat, lng, alt } = summitPhotoCreate;
     return lat && lng ? new LatLng(lat, lng, alt) : undefined;
   });
 
-  const [capturedAt, setCapturedAt] = useState<Date | undefined>(() => {
-    return summitPhotoCreate.capturedAt
-      ? new Date(summitPhotoCreate.capturedAt)
-      : undefined;
+  const [capturedAtDate, setCapturedAtDate] = useState<Date | undefined>(() => {
+    return capturedAt ? new Date(capturedAt) : undefined;
   });
 
   const [peak, setPeak] = useState<Peak | null>(null);
 
   const handleAccept = () => {
-    onAccept(
-      {
-        ...summitPhotoCreate,
-        peakId: peak?.id,
-        capturedAt: capturedAt?.toISOString() || undefined,
-        lat: location?.lat,
-        lng: location?.lng,
-        alt: location?.alt,
-      },
-      peak,
-    );
+    if (capturedAtDate) setValue("capturedAt", capturedAtDate.toISOString());
+    if (location) {
+      setValue("lat", location.lat);
+      setValue("lng", location.lng);
+      setValue("alt", location.alt);
+    }
+    if (peak) setValue("peakId", peak.id);
+
+    setPeakToDisplay(peak);
+
+    next();
   };
 
   if (!imageUrl) {
@@ -79,7 +74,7 @@ export function ReviewStep({
 
         <div className="flex-1 space-y-6">
           <LocationPicker value={location} onChange={setLocation} peak={peak} />
-          <DateTimePicker value={capturedAt} onChange={setCapturedAt} />
+          <DateTimePicker value={capturedAtDate} onChange={setCapturedAtDate} />
           <Tooltip>
             <TooltipTrigger asChild>
               <div>

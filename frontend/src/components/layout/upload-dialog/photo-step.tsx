@@ -3,25 +3,35 @@
 import { useMutation } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
 import { useDropzone } from "react-dropzone";
+import { useFormContext } from "react-hook-form";
 
 import { exifMetadataExtractor } from "@/lib/metadata/extractor";
 import type { PhotoMetadata } from "@/lib/metadata/types";
-import type { SummitPhotoCreate } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
 import { MessageBlock } from "@/components/common/message-block";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
+import type { UploadPhotoFormData } from "../upload-dialog";
+
 interface PhotoStepProps {
-  onAccept: (summitPhotoCreate: SummitPhotoCreate, file: File) => void;
+  next: () => void;
 }
 
-export function PhotoStep({ onAccept }: PhotoStepProps) {
-  const { mutate, isPending } = useMutation({
+export function PhotoStep({ next }: PhotoStepProps) {
+  const { setValue } = useFormContext<UploadPhotoFormData>();
+
+  const { mutate, isPending } = useMutation<PhotoMetadata, unknown, File>({
     mutationFn: (file: File) => exifMetadataExtractor.extract(file),
     onSuccess: (metadata: PhotoMetadata, file: File) => {
-      onAccept({ ...metadata }, file);
+      setValue("file", file);
+      if (metadata.capturedAt) setValue("capturedAt", metadata.capturedAt);
+      if (metadata.lat) setValue("lat", metadata.lat);
+      if (metadata.lng) setValue("lng", metadata.lng);
+      if (metadata.alt) setValue("alt", metadata.alt);
+
+      next();
     },
   });
 
