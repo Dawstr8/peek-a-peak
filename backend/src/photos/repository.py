@@ -5,7 +5,7 @@ from sqlmodel import desc, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.models import SortParams
-from src.photos.models import SummitPhoto, SummitPhotoLocation
+from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 
 
 class PhotosRepository:
@@ -92,6 +92,15 @@ class PhotosRepository:
             .where(SummitPhoto.owner_id == owner_id)
             .where(SummitPhoto.location != None)
             .options(load_only(SummitPhoto.id, SummitPhoto.location, SummitPhoto.alt))
+        )
+        result = await self.db.exec(statement)
+        return result.all()
+
+    async def get_dates_by_owner_id(self, owner_id: int) -> List[SummitPhotoDate]:
+        statement = (
+            select(SummitPhoto)
+            .where(SummitPhoto.owner_id == owner_id)
+            .options(load_only(SummitPhoto.id, SummitPhoto.captured_at))
         )
         result = await self.db.exec(statement)
         return result.all()

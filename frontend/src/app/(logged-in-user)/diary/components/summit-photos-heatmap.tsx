@@ -20,20 +20,20 @@ export default function SummitPhotosHeatmap({
   user,
   className,
 }: SummitPhotosHeatmapProps) {
-  const { data: summitPhotos } = useQuery({
-    queryKey: ["users", user?.username, "photos"],
-    queryFn: () => UsersClient.getPhotosByUser(user!.username),
+  const { data: summitPhotosDates } = useQuery({
+    queryKey: ["users", user?.username, "photos", "dates"],
+    queryFn: () => UsersClient.getPhotosDatesByUser(user!.username),
     enabled: !!user,
   });
 
   const values = useMemo(() => {
-    if (!summitPhotos) return [];
+    if (!summitPhotosDates) return [];
 
     const dateCountMap: Record<string, number> = {};
-    summitPhotos.forEach((photo) => {
-      if (!photo.capturedAt) return;
+    summitPhotosDates.forEach((summitPhotoDate) => {
+      if (!summitPhotoDate.capturedAt) return;
 
-      const date = format(new Date(photo.capturedAt), "yyyy-MM-dd");
+      const date = format(new Date(summitPhotoDate.capturedAt), "yyyy-MM-dd");
       dateCountMap[date] = (dateCountMap[date] || 0) + 1;
     });
 
@@ -41,14 +41,14 @@ export default function SummitPhotosHeatmap({
       date,
       count,
     }));
-  }, [summitPhotos]);
+  }, [summitPhotosDates]);
 
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle>
-          {summitPhotos
-            ? `${summitPhotos.length} photo${summitPhotos.length !== 1 ? "s" : ""} taken`
+          {summitPhotosDates
+            ? `${summitPhotosDates.length} photo${summitPhotosDates.length !== 1 ? "s" : ""} taken`
             : "Loading photos..."}
         </CardTitle>
       </CardHeader>

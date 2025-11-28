@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from src.auth.dependencies import check_access_by_username_dep
 from src.dependencies import sort_params_dep
-from src.photos.models import SummitPhotoLocation, SummitPhotoRead
+from src.photos.models import SummitPhotoDate, SummitPhotoLocation, SummitPhotoRead
 from src.users.dependencies import users_service_dep
 
 router = APIRouter(prefix="/api/users", tags=["users"])
@@ -36,6 +36,20 @@ async def get_photo_locations_by_user(
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to retrieve user photo locations: {str(e)}"
+        )
+
+
+@router.get("/{username}/photos/dates", response_model=List[SummitPhotoDate])
+async def get_photo_dates_by_user(
+    service: users_service_dep,
+    username: check_access_by_username_dep,
+):
+    """Get all photo captured dates uploaded by a specific user."""
+    try:
+        return await service.get_photos_dates_by_user(username)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve user photo dates: {str(e)}"
         )
 
 

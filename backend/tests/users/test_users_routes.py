@@ -12,6 +12,7 @@ BASE_URL = "/api/users"
     [
         ("get", f"{BASE_URL}/username/photos"),
         ("get", f"{BASE_URL}/username/photos/locations"),
+        ("get", f"{BASE_URL}/username/photos/dates"),
         ("get", f"{BASE_URL}/username/peaks/count"),
     ],
 )
@@ -28,6 +29,7 @@ async def test_endpoints_require_auth(client_with_db, method, url):
     [
         ("get", f"{BASE_URL}/username/photos"),
         ("get", f"{BASE_URL}/username/photos/locations"),
+        ("get", f"{BASE_URL}/username/photos/dates"),
         ("get", f"{BASE_URL}/username/peaks/count"),
     ],
 )
@@ -165,3 +167,19 @@ async def test_get_user_photo_locations(client_with_db, e2e_photos, logged_in_us
         assert location["lat"] is not None
         assert location["lng"] is not None
         assert location["alt"] is not None
+
+
+@pytest.mark.asyncio
+async def test_get_user_photo_dates(client_with_db, e2e_photos, logged_in_user):
+    """Test getting photo dates for a specific user"""
+    username = logged_in_user["username"]
+
+    resp = await client_with_db.get(f"{BASE_URL}/{username}/photos/dates")
+
+    assert resp.status_code == 200
+    dates = resp.json()
+    assert len(dates) == 3
+
+    for date in dates:
+        assert date["id"] is not None
+        assert date["capturedAt"] is not None

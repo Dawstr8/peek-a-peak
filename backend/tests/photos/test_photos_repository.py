@@ -148,6 +148,18 @@ async def test_get_locations_by_owner_id(test_photos_repository, db_photos, db_u
 
 
 @pytest.mark.asyncio
+async def test_get_dates_by_owner_id(test_photos_repository, db_photos, db_user):
+    """Test retrieving summit photo dates by owner ID"""
+    photos_dates = await test_photos_repository.get_dates_by_owner_id(db_user.id)
+
+    assert len(photos_dates) == 3
+
+    for date in photos_dates:
+        assert date.id is not None
+        assert date.captured_at is not None
+
+
+@pytest.mark.asyncio
 async def test_delete(test_photos_repository, db_photos):
     """Test deleting a summit photo"""
     photo_id = db_photos[0].id

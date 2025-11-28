@@ -99,3 +99,10 @@ class SummitPhotoLocation(CamelModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
     alt: Optional[float] = None
+
+
+class SummitPhotoDate(CamelModel):
+    """Model representing the captured dates of summit photos"""
+
+    id: int
+    captured_at: datetime
