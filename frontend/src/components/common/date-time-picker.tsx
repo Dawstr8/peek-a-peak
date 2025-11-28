@@ -70,7 +70,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
           className="w-full cursor-pointer justify-between"
         >
           <span className={cn(!displayValue && "text-muted-foreground")}>
-            {displayValue || "When was this taken?"}
+            {displayValue || "When was this taken? *"}
           </span>
           <CalendarIcon className="size-4 shrink-0 opacity-50" />
         </Button>
