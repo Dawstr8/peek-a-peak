@@ -73,7 +73,7 @@ async def test_upload_photo_with_metadata(
 
 
 @pytest.mark.asyncio
-async def test_upload_photo_without_metadata(
+async def test_upload_photo_without_location(
     photos_service,
     mock_file,
     mock_uploads_service,
@@ -81,39 +81,8 @@ async def test_upload_photo_without_metadata(
     mock_user,
 ):
     """Test uploading a photo without any metadata"""
-    summit_photo_create = SummitPhotoCreate()
-
-    result = await photos_service.upload_photo(
-        mock_file, summit_photo_create, mock_user
-    )
-
-    assert result.id == 1
-    assert result.owner_id == mock_user.id
-    assert result.file_name == mock_file.filename
-    assert result.peak_id is None
-    assert result.captured_at is None
-    assert result.alt is None
-    assert result.lat is None
-    assert result.lng is None
-
-    mock_uploads_service.save_file.assert_called_once_with(
-        mock_file, content_type_prefix="image/"
-    )
-    mock_photos_repository.save.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_upload_photo_with_partial_metadata(
-    photos_service,
-    mock_file,
-    mock_uploads_service,
-    mock_photos_repository,
-    mock_user,
-):
-    """Test uploading a photo with only some metadata fields"""
     summit_photo_create = SummitPhotoCreate(
-        captured_at=datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc),
-        alt=1500.0,
+        captured_at=datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc),
     )
 
     result = await photos_service.upload_photo(
@@ -124,8 +93,8 @@ async def test_upload_photo_with_partial_metadata(
     assert result.owner_id == mock_user.id
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
-    assert result.captured_at == datetime(2025, 10, 6, 16, 45, 20, tzinfo=timezone.utc)
-    assert result.alt == 1500.0
+    assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)
+    assert result.alt is None
     assert result.lat is None
     assert result.lng is None
 

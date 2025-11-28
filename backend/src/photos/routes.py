@@ -1,6 +1,8 @@
 from typing import List
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi.exceptions import RequestValidationError
+from pydantic import ValidationError
 
 from src.auth.dependencies import current_user_dep
 from src.dependencies import sort_params_dep
@@ -49,12 +51,15 @@ async def upload_photo(
     Returns:
         SummitPhotoRead: The uploaded photo object with peak information
     """
-    summit_photo_create = SummitPhotoCreate.model_validate_json(summit_photo_create)
 
     try:
+        summit_photo_create = SummitPhotoCreate.model_validate_json(summit_photo_create)
+
         return await photos_service.upload_photo(
             file, summit_photo_create, current_user
         )
+    except ValidationError as e:
+        raise RequestValidationError(e.errors())
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

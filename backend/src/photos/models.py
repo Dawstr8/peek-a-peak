@@ -22,9 +22,8 @@ class SummitPhoto(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     file_name: str
     uploaded_at: datetime = Field(default_factory=datetime.utcnow)
-    captured_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True), nullable=True),
+    captured_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False)
     )
     location: Optional[object] = Field(
         sa_column=Column(Geography(geometry_type="POINT", srid=4326))
@@ -56,7 +55,7 @@ class SummitPhoto(SQLModel, table=True):
 class SummitPhotoCreate(CamelModel):
     """Request model for creating a new photo with metadata"""
 
-    captured_at: Optional[datetime] = None
+    captured_at: datetime
     lat: Optional[float] = None
     lng: Optional[float] = None
     alt: Optional[float] = None
@@ -82,7 +81,7 @@ class SummitPhotoRead(CamelModel):
     id: int
     file_name: str
     uploaded_at: datetime
-    captured_at: Optional[datetime] = None
+    captured_at: datetime
     lat: Optional[float] = None
     lng: Optional[float] = None
     alt: Optional[float] = None

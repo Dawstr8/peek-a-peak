@@ -28,7 +28,7 @@ const uploadPhotoSchema = z.object({
   file: z.instanceof(File).refine((file) => file.size > 0, {
     message: "Photo file is required",
   }),
-  capturedAt: z.string().optional(),
+  capturedAt: z.iso.datetime("Captured date and time is required"),
   lat: z.number().optional(),
   lng: z.number().optional(),
   alt: z.number().optional(),

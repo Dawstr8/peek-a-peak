@@ -4,7 +4,7 @@ export interface SummitPhoto {
   id?: number;
   fileName: string;
   uploadedAt: string;
-  capturedAt?: string;
+  capturedAt: string;
   lat?: number;
   lng?: number;
   alt?: number;
@@ -13,7 +13,7 @@ export interface SummitPhoto {
 }
 
 export interface SummitPhotoCreate {
-  capturedAt?: string;
+  capturedAt: string;
   lat?: number;
   lng?: number;
   alt?: number;
@@ -24,5 +24,5 @@ export interface PhotoDetailsFormatter {
   formatLat(lat?: number): string;
   formatLng(lng?: number): string;
   formatAlt(alt?: number): string;
-  formatCapturedAt(capturedAt?: string): string;
+  formatCapturedAt(capturedAt: string): string;
 }

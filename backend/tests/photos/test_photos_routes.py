@@ -110,32 +110,52 @@ async def test_upload_photo_requires_auth(client_with_db):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "file,expected_status,expected_detail",
+    "captured_at,file,expected_status,expected_msg",
     [
         (
+            None,
+            ("summit.jpg", b"binaryimagedata", "image/jpeg"),
+            422,
+            "Field required",
+        ),
+        (
+            "2025-10-06T14:30:00",
+            ("summit.jpg", b"binaryimagedata", "image/jpeg"),
+            422,
+            "Value error, captured_at must be timezone-aware (include offset or tzinfo).",
+        ),
+        (
+            "2025-10-06T14:30:00Z",
             ("notes.txt", b"not an image", "text/plain"),
             400,
             "File must be of type image/",
-        )
+        ),
     ],
 )
 async def test_upload_photo_validation_errors_parametrized(
     client_with_db,
     logged_in_user,
+    captured_at: str,
     file: tuple,
     expected_status: int,
-    expected_detail: str,
+    expected_msg: str,
 ):
     """Test upload photo validation errors with various invalid inputs"""
+    summit_photo_create = {"capturedAt": captured_at} if captured_at else {}
 
     resp = await client_with_db.post(
         "/api/photos",
         files={"file": file},
-        data={"summitPhotoCreate": "{}"},
+        data={"summitPhotoCreate": json.dumps(summit_photo_create)},
     )
 
     assert resp.status_code == expected_status
-    assert resp.json()["detail"] == expected_detail
+    detail = resp.json()["detail"]
+
+    if expected_status == 422:
+        assert detail[0]["msg"] == expected_msg
+    else:
+        assert detail == expected_msg
 
 
 @pytest.mark.asyncio
