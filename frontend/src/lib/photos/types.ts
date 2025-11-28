@@ -12,6 +12,13 @@ export interface SummitPhoto {
   peak?: Peak;
 }
 
+export interface SummitPhotoLocation {
+  id: number;
+  lat?: number;
+  lng?: number;
+  alt?: number;
+}
+
 export interface SummitPhotoCreate {
   capturedAt: string;
   lat?: number;

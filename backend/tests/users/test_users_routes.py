@@ -11,6 +11,7 @@ BASE_URL = "/api/users"
     "method,url",
     [
         ("get", f"{BASE_URL}/username/photos"),
+        ("get", f"{BASE_URL}/username/photos/locations"),
         ("get", f"{BASE_URL}/username/peaks/count"),
     ],
 )
@@ -26,6 +27,7 @@ async def test_endpoints_require_auth(client_with_db, method, url):
     "method,url",
     [
         ("get", f"{BASE_URL}/username/photos"),
+        ("get", f"{BASE_URL}/username/photos/locations"),
         ("get", f"{BASE_URL}/username/peaks/count"),
     ],
 )
@@ -59,7 +61,7 @@ async def test_get_user_photos_for_user(
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) == 2
+    assert len(photos) == 3
 
     for photo in photos:
         assert "id" in photo
@@ -79,7 +81,7 @@ async def test_get_user_photos_with_peaks(
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) == 2
+    assert len(photos) == 3
 
     photo_without_peak = next((p for p in photos if p["peakId"] is None), None)
     photo_with_peak = next((p for p in photos if p["peakId"] is not None), None)
@@ -120,7 +122,7 @@ async def test_get_user_photos_with_sorting_parameters(
 
     assert resp.status_code == 200
     photos = resp.json()
-    assert len(photos) == 2
+    assert len(photos) == 3
 
     received_fields = [photo[sort_by] for photo in photos if photo[sort_by]]
     assert received_fields == sorted(received_fields, reverse=expected_reversed)
@@ -145,3 +147,21 @@ async def test_get_summited_peaks_count_for_user(
     assert resp.status_code == 200
     count = resp.json()
     assert count == 1
+
+
+@pytest.mark.asyncio
+async def test_get_user_photo_locations(client_with_db, e2e_photos, logged_in_user):
+    """Test getting photo locations for a specific user"""
+    username = logged_in_user["username"]
+
+    resp = await client_with_db.get(f"{BASE_URL}/{username}/photos/locations")
+
+    assert resp.status_code == 200
+    locations = resp.json()
+    assert len(locations) == 2
+
+    for location in locations:
+        assert location["id"] is not None
+        assert location["lat"] is not None
+        assert location["lng"] is not None
+        assert location["alt"] is not None

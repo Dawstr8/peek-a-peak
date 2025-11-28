@@ -20,24 +20,24 @@ export default function SummitPhotosMap({
   user,
   className,
 }: SummitPhotosMapProps) {
-  const { data: summitPhotos } = useQuery({
-    queryKey: ["users", user?.username, "photos"],
-    queryFn: () => UsersClient.getPhotosByUser(user!.username),
+  const { data: summitPhotosLocations } = useQuery({
+    queryKey: ["users", user?.username, "photos", "locations"],
+    queryFn: () => UsersClient.getPhotosLocationsByUser(user!.username),
     enabled: !!user,
   });
 
   const locations: LatLng[] = useMemo(() => {
     const locs: LatLng[] = [];
-    if (!summitPhotos) return locs;
+    if (!summitPhotosLocations) return locs;
 
-    summitPhotos.forEach((photo) => {
-      if (!photo.lat || !photo.lng) return;
+    summitPhotosLocations.forEach((location) => {
+      if (!location.lat || !location.lng) return;
 
-      locs.push(new LatLng(photo.lat, photo.lng));
+      locs.push(new LatLng(location.lat, location.lng));
     });
 
     return locs;
-  }, [summitPhotos]);
+  }, [summitPhotosLocations]);
 
   return (
     <Card className={className}>

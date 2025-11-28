@@ -68,7 +68,7 @@ async def test_get_all(test_photos_repository, db_photos):
     photos = await test_photos_repository.get_all()
 
     assert photos is not None
-    assert len(photos) == 3
+    assert len(photos) == len(db_photos)
 
     photo_ids = [photo.id for photo in photos]
     assert db_photos[0].id in photo_ids
@@ -92,8 +92,8 @@ async def test_get_all_with_sorting(test_photos_repository, db_photos):
         sort_params=SortParams(sort_by="captured_at", order="desc")
     )
 
-    assert len(photos_asc) == 3
-    assert len(photos_desc) == 3
+    assert len(photos_asc) == len(db_photos)
+    assert len(photos_desc) == len(db_photos)
     assert photos_asc[0].id != photos_desc[0].id
 
 
@@ -103,7 +103,7 @@ async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
     photos = await test_photos_repository.get_by_owner_id(db_user.id)
 
     assert photos is not None
-    assert len(photos) == 2
+    assert len(photos) == 3
 
     photo_ids = [photo.id for photo in photos]
     assert db_photos[0].id in photo_ids
@@ -126,9 +126,25 @@ async def test_get_by_owner_id_with_sorting(test_photos_repository, db_photos, d
         owner_id=db_user.id, sort_params=SortParams(sort_by="captured_at", order="desc")
     )
 
-    assert len(photos_asc) == 2
-    assert len(photos_desc) == 2
+    assert len(photos_asc) == 3
+    assert len(photos_desc) == 3
     assert photos_asc[0].id != photos_desc[0].id
+
+
+@pytest.mark.asyncio
+async def test_get_locations_by_owner_id(test_photos_repository, db_photos, db_user):
+    """Test retrieving summit photo locations by owner ID"""
+    photos_locations = await test_photos_repository.get_locations_by_owner_id(
+        db_user.id
+    )
+
+    assert len(photos_locations) == 2
+
+    for location in photos_locations:
+        assert location.id is not None
+        assert location.lat is not None
+        assert location.lng is not None
+        assert location.alt is not None
 
 
 @pytest.mark.asyncio
@@ -171,7 +187,7 @@ async def test_apply_sorting_with_invalid_or_missing_params(
     )
 
     photos = (await test_photos_repository.db.exec(result_statement)).all()
-    assert len(photos) == 3
+    assert len(photos) == len(db_photos)
 
 
 @pytest.mark.asyncio

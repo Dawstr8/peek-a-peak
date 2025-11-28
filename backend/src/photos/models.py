@@ -90,3 +90,12 @@ class SummitPhotoRead(CamelModel):
     owner_id: int
 
     peak: Optional[ReadPeak] = None
+
+
+class SummitPhotoLocation(CamelModel):
+    """Model representing the location of a summit photo"""
+
+    id: int
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    alt: Optional[float] = None
