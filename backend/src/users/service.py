@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from src.models import SortParams
 from src.peaks.repository import PeaksRepository
@@ -17,7 +17,7 @@ class UsersService:
         self.peaks_repository = peaks_repository
 
     async def get_photos_by_user(
-        self, owner_id: int, sort_params: Optional[SortParams] = None
+        self, owner_id: int, sort_params: SortParams
     ) -> List[SummitPhoto]:
         return await self.photos_repository.get_by_owner_id(
             owner_id, sort_params=sort_params

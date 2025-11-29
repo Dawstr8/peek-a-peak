@@ -1,5 +1,6 @@
 import pytest
 
+from src.models import SortParams
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation
 from src.users.service import UsersService
 
@@ -17,13 +18,14 @@ async def test_get_photos_by_user(
     mock_user,
 ):
     user_id = mock_user.id
+    sort_params = SortParams(field="captured_at", direction="desc")
 
-    result = await users_service.get_photos_by_user(user_id)
+    result = await users_service.get_photos_by_user(user_id, sort_params=sort_params)
 
     expected_photos = [photo for photo in mock_photos if photo.owner_id == user_id]
     assert result == expected_photos
     mock_photos_repository.get_by_owner_id.assert_called_once_with(
-        user_id, sort_params=None
+        user_id, sort_params=sort_params
     )
 
 

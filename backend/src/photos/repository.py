@@ -67,7 +67,7 @@ class PhotosRepository:
         return result.all()
 
     async def get_by_owner_id(
-        self, owner_id: int, sort_params: Optional[SortParams] = None
+        self, owner_id: int, sort_params: SortParams
     ) -> List[SummitPhoto]:
         """
         Get all photos uploaded by a specific user.
@@ -123,27 +123,14 @@ class PhotosRepository:
         await self.db.commit()
         return True
 
-    def _apply_sorting(self, statement, sort_params: Optional[SortParams] = None):
-        """
-        Apply sorting to a query statement.
+    def _apply_sorting(self, statement, sort_params: SortParams):
+        if not sort_params.sort_by or not hasattr(SummitPhoto, sort_params.sort_by):
+            return statement
 
-        Args:
-            statement: The SQLModel select statement
-            sort_params: Sorting parameters
+        column = getattr(SummitPhoto, sort_params.sort_by)
 
-        Returns:
-            Modified statement with sorting applied
-        """
-        if (
-            sort_params
-            and sort_params.sort_by
-            and hasattr(SummitPhoto, sort_params.sort_by)
-        ):
-            column = getattr(SummitPhoto, sort_params.sort_by)
-            statement = (
-                statement.order_by(desc(column))
-                if sort_params.order == "desc"
-                else statement.order_by(column)
-            )
-
-        return statement
+        return (
+            statement.order_by(desc(column))
+            if sort_params.order == "desc"
+            else statement.order_by(column)
+        )
