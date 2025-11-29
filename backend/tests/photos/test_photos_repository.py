@@ -65,7 +65,9 @@ async def test_get_by_id_non_existent(test_photos_repository):
 @pytest.mark.asyncio
 async def test_get_all(test_photos_repository, db_photos):
     """Test retrieving all summit photos"""
-    photos = await test_photos_repository.get_all()
+    photos = await test_photos_repository.get_all(
+        sort_params=SortParams(sort_by=None, order=None)
+    )
 
     assert photos is not None
     assert len(photos) == len(db_photos)
@@ -100,7 +102,9 @@ async def test_get_all_with_sorting(test_photos_repository, db_photos):
 @pytest.mark.asyncio
 async def test_get_by_owner_id(test_photos_repository, db_photos, db_user):
     """Test retrieving all summit photos"""
-    photos = await test_photos_repository.get_by_owner_id(db_user.id)
+    photos = await test_photos_repository.get_by_owner_id(
+        db_user.id, sort_params=SortParams(sort_by=None, order=None)
+    )
 
     assert photos is not None
     assert len(photos) == 3
@@ -185,7 +189,7 @@ async def test_delete_non_existent(test_photos_repository):
 @pytest.mark.parametrize(
     "sort_params",
     [
-        (None),
+        (SortParams(sort_by=None, order=None)),
         (SortParams(sort_by="invalid_column", order="asc")),
     ],
 )
