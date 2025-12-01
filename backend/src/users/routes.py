@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from src.auth.dependencies import get_access_owner_id_dep
+from src.authorization.dependencies import get_access_owner_id_dep
 from src.dependencies import sort_params_dep
 from src.exceptions import NotFoundException
 from src.pagination.dependencies import pagination_params_dep

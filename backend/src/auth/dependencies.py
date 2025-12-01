@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Cookie, Depends, HTTPException, Path, status
+from fastapi import Cookie, Depends, HTTPException, status
 
 from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
@@ -55,32 +55,4 @@ async def get_current_user(
 current_user_dep = Annotated[User, Depends(get_current_user)]
 
 
-async def get_access_owner_id(
-    current_user: current_user_dep,
-    users_service: users_service_dep,
-    username: str = Path(...),
-) -> str:
-    """
-    Ensures the current user has access to the resource owned by the user with given username.
-
-    Args:
-        current_user: The current authenticated user
-        username: The non-normalized username to check access for
-        users_service: The UsersService instance
-
-    Returns:
-        The user ID of the resource owner if access is granted.
-    """
-    username = username.lower()
-    if username != current_user.username:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to access this resource"
-        )
-
-    resource_owner = await users_service.get_user_by_username(username)
-    return resource_owner.id
-
-
-get_access_owner_id_dep = Annotated[int, Depends(get_access_owner_id)]
-
-__all__ = ["auth_service_dep", "current_user_dep", "get_access_owner_id_dep"]
+__all__ = ["auth_service_dep", "current_user_dep"]
