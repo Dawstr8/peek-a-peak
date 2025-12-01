@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Cookie, Form, HTTPException, Response, status
 
-from src.auth.dependencies import auth_service_dep, current_user_dep
+from src.auth.dependencies import auth_service_dep, authenticated_user_dep
 from src.users.models import UserCreate, UserRead
 
 router = APIRouter(
@@ -38,7 +38,7 @@ async def register_user(
 
 @router.get("/me", response_model=UserRead)
 async def read_me(
-    current_user: current_user_dep,
+    current_user: authenticated_user_dep,
 ):
     """
     Get current user info.

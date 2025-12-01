@@ -4,7 +4,7 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 
-from src.auth.dependencies import current_user_dep
+from src.auth.dependencies import authenticated_user_dep
 from src.dependencies import sort_params_dep
 from src.exceptions import NotFoundException
 from src.photos.dependencies import photos_service_dep
@@ -38,7 +38,7 @@ async def get_all_photos(
 @router.post("", response_model=SummitPhotoRead, tags=["photos"])
 async def upload_photo(
     photos_service: photos_service_dep,
-    current_user: current_user_dep,
+    current_user: authenticated_user_dep,
     file: UploadFile = File(...),
     summit_photo_create: str = Form(..., alias="summitPhotoCreate"),
 ):

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Path
 
-from src.auth.dependencies import current_user_dep
+from src.auth.dependencies import authenticated_user_dep
 from src.authorization.exceptions import NotAuthorizedException
 from src.authorization.service import AuthorizationService
 from src.exceptions import NotFoundException
@@ -14,7 +14,7 @@ def get_authorization_service() -> AuthorizationService:
 
 
 async def get_access_owner_id(
-    current_user: current_user_dep,
+    current_user: authenticated_user_dep,
     users_service: users_service_dep,
     username: str = Path(...),
     authorization_service: AuthorizationService = Depends(get_authorization_service),
