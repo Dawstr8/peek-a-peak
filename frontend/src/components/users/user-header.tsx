@@ -12,6 +12,7 @@ type UserHeaderProps = {
   isLoading?: boolean;
   showEmail?: boolean;
   avatarClassName?: string;
+  children?: React.ReactNode;
 };
 
 export function UserHeader({
@@ -19,6 +20,7 @@ export function UserHeader({
   isLoading,
   showEmail = false,
   avatarClassName = "size-32",
+  children,
 }: UserHeaderProps) {
   const loading = isLoading || !user;
 
@@ -33,13 +35,16 @@ export function UserHeader({
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-12">
-          <UserAvatar user={user} className={avatarClassName} />
-          <div className="text-left text-sm leading-tight">
-            <h2 className="text-2xl font-bold">{user.usernameDisplay}</h2>
-            {showEmail && <p className="truncate text-xs">{user.email}</p>}
+        <>
+          <div className="flex items-center gap-12">
+            <UserAvatar user={user} className={avatarClassName} />
+            <div className="text-left text-sm leading-tight">
+              <h2 className="text-2xl font-bold">{user.usernameDisplay}</h2>
+              {showEmail && <p className="truncate text-xs">{user.email}</p>}
+            </div>
           </div>
-        </div>
+          {children}
+        </>
       )}
     </div>
   );
