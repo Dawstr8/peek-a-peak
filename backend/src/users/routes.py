@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from src.auth.dependencies import get_access_owner_id_dep
 from src.dependencies import sort_params_dep
+from src.exceptions import NotFoundException
 from src.pagination.dependencies import pagination_params_dep
 from src.pagination.models import PaginatedResponse
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation, SummitPhotoRead
@@ -20,8 +21,8 @@ async def get_user(
 ):
     try:
         return await service.get_user(owner_id)
-    except ValueError as ve:
-        raise HTTPException(status_code=404, detail=str(ve))
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to retrieve user: {str(e)}"

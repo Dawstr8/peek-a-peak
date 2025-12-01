@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from fastapi import UploadFile
 
+from src.exceptions import NotFoundException
 from src.models import SortParams
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
@@ -65,7 +66,7 @@ class PhotosService:
 
         return saved_photo
 
-    async def get_photo_by_id(self, photo_id: int) -> Optional[SummitPhoto]:
+    async def get_photo_by_id(self, photo_id: int) -> SummitPhoto:
         """
         Get a photo by its ID.
 
@@ -74,8 +75,15 @@ class PhotosService:
 
         Returns:
             SummitPhoto with peak information if found, None otherwise
+
+        Raises:
+            NotFoundException: If no photo with the given ID exists
         """
-        return await self.photos_repository.get_by_id(photo_id)
+        photo = await self.photos_repository.get_by_id(photo_id)
+        if photo is None:
+            raise NotFoundException(f"Photo with ID {photo_id} not found")
+
+        return photo
 
     async def get_all_photos(
         self, sort_params: Optional[SortParams] = None
@@ -101,10 +109,7 @@ class PhotosService:
         Returns:
             bool: True if deletion was successful
         """
-        photo = await self.photos_repository.get_by_id(photo_id)
-        if not photo:
-            return False
-
+        photo = await self.get_photo_by_id(photo_id)
         file_deleted = await self.uploads_service.delete_file(photo.file_name)
 
         if file_deleted:

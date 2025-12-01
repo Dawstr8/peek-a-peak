@@ -23,6 +23,13 @@ class UsersService:
     async def get_user(self, owner_id: int) -> User:
         return await self.users_repository.get_by_id(owner_id)
 
+    async def get_user_by_username(self, username: str) -> User:
+        user = await self.users_repository.get_by_username(username)
+        if not user:
+            raise ValueError(f"User {username} not found.")
+
+        return user
+
     async def update_user(self, owner_id: int, user_update: UserUpdate) -> User:
         return await self.users_repository.update(owner_id, user_update)
 

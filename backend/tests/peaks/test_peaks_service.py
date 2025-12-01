@@ -4,6 +4,7 @@ Tests for the PeaksService
 
 import pytest
 
+from src.exceptions import NotFoundException
 from src.peaks.service import PeaksService
 
 
@@ -50,11 +51,12 @@ async def test_get_by_id(mock_peaks_map, mock_peaks_service, mock_peaks_reposito
 @pytest.mark.asyncio
 async def test_get_by_id_not_found(mock_peaks_service, mock_peaks_repository):
     """Test getting a peak by ID when it doesn't exist"""
-    peak = await mock_peaks_service.get_by_id(999)
+    id = 999
 
-    assert peak is None
+    with pytest.raises(NotFoundException):
+        await mock_peaks_service.get_by_id(id)
 
-    mock_peaks_repository.get_by_id.assert_called_once_with(999)
+    mock_peaks_repository.get_by_id.assert_called_once_with(id)
 
 
 @pytest.mark.asyncio
