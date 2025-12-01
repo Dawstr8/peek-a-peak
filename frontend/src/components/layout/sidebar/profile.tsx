@@ -1,6 +1,8 @@
 "use client";
 
-import { EllipsisVertical } from "lucide-react";
+import Link from "next/link";
+
+import { EllipsisVertical, Settings } from "lucide-react";
 
 import { User } from "@/lib/users/types";
 
@@ -54,6 +56,13 @@ export default function Profile({ user }: ProfileProps) {
                 </UserPreview>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/settings">
+                <Settings />
+                <span>Settings</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogoutButton />

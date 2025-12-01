@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 
+import Link from "next/link";
+
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Settings } from "lucide-react";
 
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import { UsersClient } from "@/lib/users/client";
@@ -46,7 +49,14 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto max-w-5xl space-y-8 py-8">
-      <UserHeader user={user} isLoading={isLoading} showEmail />
+      <UserHeader user={user} isLoading={isLoading} showEmail>
+        <Link
+          href="/settings"
+          className="cursor-pointer opacity-75 hover:opacity-100"
+        >
+          <Settings className="size-8" />
+        </Link>
+      </UserHeader>
       <Separator />
       <InfiniteScroller
         loadMore={fetchNextPage}
