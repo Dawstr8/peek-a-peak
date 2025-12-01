@@ -166,7 +166,9 @@ async def test_get_peak(client_with_db: AsyncClient, db_peaks):
 @pytest.mark.asyncio
 async def test_get_peak_not_found(client_with_db: AsyncClient):
     """Test getting a non-existent peak"""
-    response = await client_with_db.get("/api/peaks/999")
+    id = 999
+
+    response = await client_with_db.get(f"/api/peaks/{id}")
 
     assert response.status_code == 404
-    assert response.json() == {"detail": "Peak not found"}
+    assert response.json() == {"detail": f"Peak with ID {id} not found"}

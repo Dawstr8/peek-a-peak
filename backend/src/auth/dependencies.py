@@ -7,7 +7,7 @@ from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
 from src.database.core import db_dep
 from src.sessions.repository import SessionsRepository
-from src.users.dependencies import users_repository_dep
+from src.users.dependencies import users_repository_dep, users_service_dep
 from src.users.models import User
 
 
@@ -57,7 +57,7 @@ current_user_dep = Annotated[User, Depends(get_current_user)]
 
 async def get_access_owner_id(
     current_user: current_user_dep,
-    users_repository: users_repository_dep,
+    users_service: users_service_dep,
     username: str = Path(...),
 ) -> str:
     """
@@ -66,7 +66,7 @@ async def get_access_owner_id(
     Args:
         current_user: The current authenticated user
         username: The non-normalized username to check access for
-        users_repository: The UsersRepository instance
+        users_service: The UsersService instance
 
     Returns:
         The user ID of the resource owner if access is granted.
@@ -77,10 +77,7 @@ async def get_access_owner_id(
             status_code=403, detail="Not authorized to access this resource"
         )
 
-    resource_owner = await users_repository.get_by_username(username)
-    if not resource_owner:
-        raise HTTPException(status_code=404, detail="User not found")
-
+    resource_owner = await users_service.get_user_by_username(username)
     return resource_owner.id
 
 

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 
+from src.exceptions import NotFoundException
 from src.peaks.dependencies import peaks_service_dep
 from src.peaks.models import ReadPeak, ReadPeakWithDistance
 
@@ -61,8 +62,7 @@ async def get_peak(peak_id: int, service: peaks_service_dep):
     """
     Get a specific peak by ID.
     """
-    peak = await service.get_by_id(peak_id)
-    if not peak:
-        raise HTTPException(status_code=404, detail="Peak not found")
-
-    return peak
+    try:
+        return await service.get_by_id(peak_id)
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))

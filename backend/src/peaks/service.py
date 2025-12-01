@@ -2,8 +2,9 @@
 Service for matching geographical coordinates to peaks
 """
 
-from typing import List, Optional
+from typing import List
 
+from src.exceptions import NotFoundException
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
 
@@ -35,7 +36,7 @@ class PeaksService:
     async def get_count(self) -> int:
         return await self.peaks_repository.get_count()
 
-    async def get_by_id(self, peak_id: int) -> Optional[Peak]:
+    async def get_by_id(self, peak_id: int) -> Peak:
         """
         Get a specific peak by ID.
 
@@ -43,9 +44,16 @@ class PeaksService:
             peak_id: ID of the peak to retrieve
 
         Returns:
-            Peak if found, None otherwise
+            Peak if found
+
+        Raises:
+            NotFoundException: If no peak with the given ID exists
         """
-        return await self.peaks_repository.get_by_id(peak_id)
+        peak = await self.peaks_repository.get_by_id(peak_id)
+        if peak is None:
+            raise NotFoundException(f"Peak with ID {peak_id} not found")
+
+        return peak
 
     async def find_nearest_peaks(
         self,

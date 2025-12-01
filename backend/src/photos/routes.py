@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from src.auth.dependencies import current_user_dep
 from src.dependencies import sort_params_dep
+from src.exceptions import NotFoundException
 from src.photos.dependencies import photos_service_dep
 from src.photos.models import SummitPhotoCreate, SummitPhotoRead
 
@@ -80,11 +81,10 @@ async def get_photo_by_id(
     Returns:
         SummitPhotoRead: The requested photo object with peak information
     """
-    photo = await photos_service.get_photo_by_id(photo_id)
-    if not photo:
-        raise HTTPException(status_code=404, detail="Photo not found")
-
-    return photo
+    try:
+        return await photos_service.get_photo_by_id(photo_id)
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.delete("/{photo_id}", response_model=dict, tags=["photos"])
@@ -101,9 +101,8 @@ async def delete_photo(
     Returns:
         dict: Success status of the operation
     """
-    success = await photos_service.delete_photo(photo_id)
-
-    if not success:
-        raise HTTPException(status_code=404, detail="Photo not found")
-
-    return {"success": True}
+    try:
+        success = await photos_service.delete_photo(photo_id)
+        return {"success": success}
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))

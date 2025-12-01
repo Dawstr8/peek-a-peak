@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock
 import pytest
 from fastapi import UploadFile
 
+from src.exceptions import NotFoundException
 from src.photos.models import SummitPhotoCreate
 from src.photos.service import PhotosService
 from src.uploads.service import UploadsService
@@ -120,9 +121,9 @@ async def test_get_photo_by_id_not_found(photos_service, mock_photos_repository)
     """Test getting a photo by ID when it doesn't exist"""
     photo_id = 999
 
-    result = await photos_service.get_photo_by_id(photo_id)
+    with pytest.raises(NotFoundException):
+        await photos_service.get_photo_by_id(photo_id)
 
-    assert result is None
     mock_photos_repository.get_by_id.assert_called_once_with(photo_id)
 
 
@@ -170,8 +171,7 @@ async def test_delete_photo_failure_not_found(photos_service, mock_photos_reposi
     """Test deleting a photo that doesn't exist"""
     photo_id = 999
 
-    result = await photos_service.delete_photo(photo_id)
+    with pytest.raises(NotFoundException):
+        await photos_service.delete_photo(photo_id)
 
-    assert result is False
-    mock_photos_repository.get_by_id.assert_called_once_with(photo_id)
     mock_photos_repository.delete.assert_not_called()
