@@ -1,5 +1,3 @@
-from typing import Any
-
 from src.authorization.exceptions import NotAuthorizedException
 from src.users.models import User
 

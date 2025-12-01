@@ -1,5 +1,6 @@
 from typing import List
 
+from src.exceptions import NotFoundException
 from src.models import SortParams
 from src.pagination.models import PaginatedResponse, PaginationParams
 from src.peaks.repository import PeaksRepository
@@ -26,7 +27,7 @@ class UsersService:
     async def get_user_by_username(self, username: str) -> User:
         user = await self.users_repository.get_by_username(username)
         if not user:
-            raise ValueError(f"User {username} not found.")
+            raise NotFoundException(f"User {username} not found.")
 
         return user
 

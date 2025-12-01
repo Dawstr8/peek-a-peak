@@ -2,7 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from src.authorization.dependencies import get_access_owner_id_dep
+from src.authorization.dependencies import (
+    authorize_owner_access_dep,
+    authorize_read_access_dep,
+)
 from src.dependencies import sort_params_dep
 from src.exceptions import NotFoundException
 from src.pagination.dependencies import pagination_params_dep
@@ -17,7 +20,7 @@ router = APIRouter(prefix="/api/users", tags=["users"])
 @router.get("/{username}", response_model=UserRead)
 async def get_user(
     service: users_service_dep,
-    owner_id: get_access_owner_id_dep,
+    owner_id: authorize_read_access_dep,
 ):
     try:
         return await service.get_user(owner_id)
@@ -29,10 +32,24 @@ async def get_user(
         )
 
 
+@router.patch("/{username}", response_model=UserRead)
+async def update_user(
+    service: users_service_dep,
+    owner_id: authorize_owner_access_dep,
+    user_update: UserUpdate,
+):
+    try:
+        return await service.update_user(owner_id, user_update)
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
+
+
 @router.get("/{username}/photos", response_model=PaginatedResponse[SummitPhotoRead])
 async def get_photos_by_user(
     service: users_service_dep,
-    owner_id: get_access_owner_id_dep,
+    owner_id: authorize_read_access_dep,
     sort_params: sort_params_dep,
     pagination_params: pagination_params_dep,
 ):
@@ -52,7 +69,7 @@ async def get_photos_by_user(
 @router.get("/{username}/photos/locations", response_model=List[SummitPhotoLocation])
 async def get_photo_locations_by_user(
     service: users_service_dep,
-    owner_id: get_access_owner_id_dep,
+    owner_id: authorize_read_access_dep,
 ):
     """Get all photo locations uploaded by a specific user."""
     try:
@@ -66,7 +83,7 @@ async def get_photo_locations_by_user(
 @router.get("/{username}/photos/dates", response_model=List[SummitPhotoDate])
 async def get_photo_dates_by_user(
     service: users_service_dep,
-    owner_id: get_access_owner_id_dep,
+    owner_id: authorize_read_access_dep,
 ):
     """Get all photo captured dates uploaded by a specific user."""
     try:
@@ -80,21 +97,7 @@ async def get_photo_dates_by_user(
 @router.get("/{username}/peaks/count", response_model=int)
 async def get_summited_peaks_count_by_user(
     service: users_service_dep,
-    owner_id: get_access_owner_id_dep,
+    owner_id: authorize_read_access_dep,
 ):
     """Get the count of photos uploaded by a specific user."""
     return await service.get_summited_peaks_count_by_user(owner_id)
-
-
-@router.patch("/{username}", response_model=UserRead)
-async def update_user(
-    service: users_service_dep,
-    owner_id: get_access_owner_id_dep,
-    user_update: UserUpdate,
-):
-    try:
-        return await service.update_user(owner_id, user_update)
-    except ValueError as ve:
-        raise HTTPException(status_code=404, detail=str(ve))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
