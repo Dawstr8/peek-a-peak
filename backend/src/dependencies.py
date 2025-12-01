@@ -18,3 +18,5 @@ def get_sort_params(
 
 
 sort_params_dep = Annotated[SortParams, Depends(get_sort_params)]
+
+__all__ = ["sort_params_dep"]

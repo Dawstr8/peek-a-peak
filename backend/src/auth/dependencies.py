@@ -1,5 +1,3 @@
-"""Dependency injection functions and annotations for the auth module."""
-
 from typing import Annotated
 from uuid import UUID
 
@@ -9,31 +7,23 @@ from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
 from src.database.core import db_dep
 from src.sessions.repository import SessionsRepository
+from src.users.dependencies import users_repository_dep
 from src.users.models import User
-from src.users.repository import UsersRepository
-
-
-def get_users_repository(db: db_dep) -> UsersRepository:
-    """Provides a UsersRepository."""
-    return UsersRepository(db)
 
 
 def get_sessions_repository(db: db_dep) -> SessionsRepository:
-    """Provides a SessionsRepository."""
     return SessionsRepository(db)
 
 
 def get_password_service():
-    """Provides a PasswordService instance."""
     return PasswordService()
 
 
 def get_service(
-    users_repository: UsersRepository = Depends(get_users_repository),
+    users_repository: users_repository_dep,
     sessions_repository: SessionsRepository = Depends(get_sessions_repository),
     password_service: PasswordService = Depends(get_password_service),
 ) -> AuthService:
-    """Provides a AuthService with all required dependencies."""
     return AuthService(users_repository, sessions_repository, password_service)
 
 
@@ -67,8 +57,8 @@ current_user_dep = Annotated[User, Depends(get_current_user)]
 
 async def get_access_owner_id(
     current_user: current_user_dep,
+    users_repository: users_repository_dep,
     username: str = Path(...),
-    users_repository: UsersRepository = Depends(get_users_repository),
 ) -> str:
     """
     Ensures the current user has access to the resource owned by the user with given username.
@@ -95,3 +85,5 @@ async def get_access_owner_id(
 
 
 get_access_owner_id_dep = Annotated[int, Depends(get_access_owner_id)]
+
+__all__ = ["auth_service_dep", "current_user_dep", "get_access_owner_id_dep"]
