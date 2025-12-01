@@ -63,6 +63,7 @@ export const API_ENDPOINTS = {
       }),
   },
   users: {
+    updateUser: (username: string) => buildUrl(`/users/${username}`),
     getPhotosByUser: (
       username: string,
       sortBy: string | null = null,

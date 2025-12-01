@@ -1,8 +1,10 @@
+import copy
+
 import pytest
 import pytest_asyncio
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.users.models import User
+from src.users.models import User, UserUpdate
 from src.users.repository import UsersRepository
 
 
@@ -60,6 +62,24 @@ async def test_save_user_duplicate_username(test_users_repository, db_user):
         await test_users_repository.save(new_user)
 
     assert "Username is already taken" in str(exc.value)
+
+
+@pytest.mark.asyncio
+async def test_update_success(test_users_repository, db_user):
+    """Test updating an existing user successfully and not overriding other fields."""
+    original_user = copy.deepcopy(db_user)
+
+    updated_user = await test_users_repository.update(
+        db_user.id, UserUpdate(is_private=True)
+    )
+
+    assert updated_user.id == original_user.id
+    assert updated_user.email == original_user.email
+    assert updated_user.username == original_user.username
+    assert updated_user.username_display == original_user.username_display
+
+    assert original_user.is_private is False
+    assert updated_user.is_private is True
 
 
 @pytest.mark.asyncio

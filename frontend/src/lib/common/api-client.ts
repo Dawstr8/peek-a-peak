@@ -96,12 +96,12 @@ export class ApiClient {
     return this.request<T>("POST", url, data, options);
   }
 
-  protected static async put<T>(
+  protected static async patch<T>(
     url: string,
     data: unknown,
     options?: RequestInit,
   ): Promise<T> {
-    return this.request<T>("PUT", url, data, options);
+    return this.request<T>("PATCH", url, data, options);
   }
 
   protected static async delete<T = void>(

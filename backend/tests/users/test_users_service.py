@@ -3,12 +3,32 @@ import pytest
 from src.models import SortParams
 from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation
+from src.users.models import UserUpdate
 from src.users.service import UsersService
 
 
 @pytest.fixture
-def users_service(mock_photos_repository, mock_peaks_repository) -> UsersService:
-    return UsersService(mock_photos_repository, mock_peaks_repository)
+def users_service(
+    mock_users_repository, mock_photos_repository, mock_peaks_repository
+) -> UsersService:
+    return UsersService(
+        mock_users_repository, mock_photos_repository, mock_peaks_repository
+    )
+
+
+@pytest.mark.asyncio
+async def test_update_user(
+    users_service,
+    mock_users_repository,
+    mock_user,
+):
+    user_id = mock_user.id
+    update_data = UserUpdate(is_private=True)
+
+    updated_user = await users_service.update_user(user_id, update_data)
+
+    assert updated_user.is_private is True
+    mock_users_repository.update.assert_called_once_with(user_id, update_data)
 
 
 @pytest.mark.asyncio
