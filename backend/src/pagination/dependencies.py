@@ -15,3 +15,5 @@ def get_pagination_params(
 
 
 pagination_params_dep = Annotated[PaginationParams, Depends(get_pagination_params)]
+
+__all__ = ["pagination_params_dep"]
