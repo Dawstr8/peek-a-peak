@@ -10,6 +10,7 @@ BASE_URL = "/api/users"
 @pytest.mark.parametrize(
     "method,url",
     [
+        ("get", f"{BASE_URL}/username"),
         ("get", f"{BASE_URL}/username/photos"),
         ("get", f"{BASE_URL}/username/photos/locations"),
         ("get", f"{BASE_URL}/username/photos/dates"),
@@ -28,6 +29,7 @@ async def test_endpoints_require_auth(client_with_db, method, url):
 @pytest.mark.parametrize(
     "method,url",
     [
+        ("get", f"{BASE_URL}/username"),
         ("get", f"{BASE_URL}/username/photos"),
         ("get", f"{BASE_URL}/username/photos/locations"),
         ("get", f"{BASE_URL}/username/photos/dates"),
@@ -45,6 +47,19 @@ async def test_endpoints_forbidden_for_other_user(
 
     assert resp.status_code == 403
     assert resp.json()["detail"] == "Not authorized to access this resource"
+
+
+@pytest.mark.asyncio
+async def test_get_user_success(client_with_db, logged_in_user):
+    """Test getting user information successfully"""
+    username = logged_in_user["username"]
+
+    resp = await client_with_db.get(f"{BASE_URL}/{username}")
+
+    assert resp.status_code == 200
+    user_data = resp.json()
+    assert user_data["username"] == logged_in_user["username"]
+    assert user_data["email"] == logged_in_user["email"]
 
 
 @pytest.mark.asyncio

@@ -10,7 +10,6 @@ from src.users.repository import UsersRepository
 
 
 class UsersService:
-
     def __init__(
         self,
         users_repository: UsersRepository,
@@ -20,6 +19,9 @@ class UsersService:
         self.users_repository = users_repository
         self.photos_repository = photos_repository
         self.peaks_repository = peaks_repository
+
+    async def get_user(self, owner_id: int) -> User:
+        return await self.users_repository.get_by_id(owner_id)
 
     async def update_user(self, owner_id: int, user_update: UserUpdate) -> User:
         return await self.users_repository.update(owner_id, user_update)
