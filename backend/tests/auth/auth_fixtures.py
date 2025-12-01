@@ -12,7 +12,7 @@ async def registered_users(client_with_db):
         {
             "email": f"user{i}@example.com",
             "username": f"user{i}",
-            "password": f"password{i} ",
+            "password": f"password{i}",
         }
         for i in range(1, 3)
     ]

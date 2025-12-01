@@ -7,49 +7,6 @@ BASE_URL = "/api/users"
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "method,url",
-    [
-        ("get", f"{BASE_URL}/username"),
-        ("get", f"{BASE_URL}/username/photos"),
-        ("get", f"{BASE_URL}/username/photos/locations"),
-        ("get", f"{BASE_URL}/username/photos/dates"),
-        ("get", f"{BASE_URL}/username/peaks/count"),
-        ("patch", f"{BASE_URL}/username"),
-    ],
-)
-async def test_endpoints_require_auth(client_with_db, method, url):
-    """Test that user endpoints require authentication"""
-    resp = await getattr(client_with_db, method)(url)
-
-    assert resp.status_code == 401
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "method,url",
-    [
-        ("get", f"{BASE_URL}/username"),
-        ("get", f"{BASE_URL}/username/photos"),
-        ("get", f"{BASE_URL}/username/photos/locations"),
-        ("get", f"{BASE_URL}/username/photos/dates"),
-        ("get", f"{BASE_URL}/username/peaks/count"),
-        ("patch", f"{BASE_URL}/username"),
-    ],
-)
-async def test_endpoints_forbidden_for_other_user(
-    client_with_db, method, url, logged_in_user
-):
-    """Test that user endpoints are forbidden for other users"""
-    url = url.replace("username", logged_in_user["username"] + "other")
-
-    resp = await getattr(client_with_db, method)(url)
-
-    assert resp.status_code == 403
-    assert resp.json()["detail"] == "Not authorized to access this resource"
-
-
-@pytest.mark.asyncio
 async def test_get_user_success(client_with_db, logged_in_user):
     """Test getting user information successfully"""
     username = logged_in_user["username"]

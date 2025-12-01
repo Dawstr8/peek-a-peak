@@ -7,7 +7,7 @@ from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
 from src.database.core import db_dep
 from src.sessions.repository import SessionsRepository
-from src.users.dependencies import users_repository_dep, users_service_dep
+from src.users.dependencies import users_repository_dep
 from src.users.models import User
 
 
@@ -52,7 +52,24 @@ async def get_current_user(
         )
 
 
+async def get_current_user_optional(
+    auth_service: auth_service_dep,
+    session_id: UUID = Cookie(None, alias="session_id"),
+) -> User | None:
+    """
+    Provides the current authenticated user from session cookie, or None if not authenticated.
+    """
+    if not session_id:
+        return None
+
+    try:
+        return await auth_service.get_current_user(session_id)
+    except ValueError:
+        return None
+
+
 current_user_dep = Annotated[User, Depends(get_current_user)]
+current_user_optional_dep = Annotated[User | None, Depends(get_current_user_optional)]
 
 
-__all__ = ["auth_service_dep", "current_user_dep"]
+__all__ = ["auth_service_dep", "current_user_dep", "current_user_optional_dep"]
