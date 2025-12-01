@@ -17,6 +17,20 @@ def users_service(
 
 
 @pytest.mark.asyncio
+async def test_get_user(
+    users_service,
+    mock_users_repository,
+    mock_user,
+):
+    user_id = mock_user.id
+
+    user = await users_service.get_user(user_id)
+
+    assert user == mock_user
+    mock_users_repository.get_by_id.assert_called_once_with(user_id)
+
+
+@pytest.mark.asyncio
 async def test_update_user(
     users_service,
     mock_users_repository,

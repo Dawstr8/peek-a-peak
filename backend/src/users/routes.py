@@ -13,6 +13,21 @@ from src.users.models import UserRead, UserUpdate
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
+@router.get("/{username}", response_model=UserRead)
+async def get_user(
+    service: users_service_dep,
+    owner_id: get_access_owner_id_dep,
+):
+    try:
+        return await service.get_user(owner_id)
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve user: {str(e)}"
+        )
+
+
 @router.get("/{username}/photos", response_model=PaginatedResponse[SummitPhotoRead])
 async def get_photos_by_user(
     service: users_service_dep,
