@@ -9,19 +9,16 @@ from src.models import CamelModel
 
 
 class User(SQLModel, table=True):
-    """Database model for a user"""
-
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(index=True, nullable=False, unique=True)
     username: str = Field(index=True, nullable=False, unique=True)
     username_display: str
     hashed_password: str
+    is_private: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class UserCreate(CamelModel):
-    """Request model for creating a new user"""
-
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=30)
     password: str = Field(..., min_length=1)
@@ -36,10 +33,13 @@ class UserCreate(CamelModel):
         return v
 
 
-class UserRead(CamelModel):
-    """Response model for user data without sensitive information"""
+class UserUpdate(CamelModel):
+    is_private: Optional[bool] = None
 
+
+class UserRead(CamelModel):
     email: str
     username: str
     username_display: str
+    is_private: bool
     created_at: datetime

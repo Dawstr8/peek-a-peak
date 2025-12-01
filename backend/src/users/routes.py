@@ -8,6 +8,7 @@ from src.pagination.dependencies import pagination_params_dep
 from src.pagination.models import PaginatedResponse
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation, SummitPhotoRead
 from src.users.dependencies import users_service_dep
+from src.users.models import UserRead, UserUpdate
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
@@ -67,3 +68,17 @@ async def get_summited_peaks_count_by_user(
 ):
     """Get the count of photos uploaded by a specific user."""
     return await service.get_summited_peaks_count_by_user(owner_id)
+
+
+@router.patch("/{username}", response_model=UserRead)
+async def update_user(
+    service: users_service_dep,
+    owner_id: get_access_owner_id_dep,
+    user_update: UserUpdate,
+):
+    try:
+        return await service.update_user(owner_id, user_update)
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")

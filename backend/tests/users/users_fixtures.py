@@ -47,6 +47,12 @@ def mock_users_repository(mock_user: User):
         user.id = 1
         return user
 
+    async def update(user_id, user_update):
+        for field, value in user_update.model_dump(exclude_unset=True).items():
+            setattr(mock_user, field, value)
+
+        return mock_user
+
     async def get_by_email(email):
         return mock_user if email == mock_user.email else None
 
@@ -57,6 +63,7 @@ def mock_users_repository(mock_user: User):
         return mock_user if username == mock_user.username else None
 
     repo.save = AsyncMock(side_effect=save)
+    repo.update = AsyncMock(side_effect=update)
     repo.get_by_email = AsyncMock(side_effect=get_by_email)
     repo.get_by_id = AsyncMock(side_effect=get_by_id)
     repo.get_by_username = AsyncMock(side_effect=get_by_username)

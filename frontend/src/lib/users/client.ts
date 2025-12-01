@@ -8,8 +8,19 @@ import type {
 import { API_ENDPOINTS } from "@/config/api";
 
 import { PaginatedResponse } from "../pagination/types";
+import { User, UserUpdate } from "./types";
 
 export class UsersClient extends ApiClient {
+  static async updateUser(
+    username: string,
+    userUpdate: UserUpdate,
+  ): Promise<User> {
+    return this.patch<User>(
+      API_ENDPOINTS.users.updateUser(username),
+      userUpdate,
+    );
+  }
+
   static async getPhotosByUser(
     username: string,
     sortBy: string | null = null,

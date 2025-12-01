@@ -5,17 +5,24 @@ from src.pagination.models import PaginatedResponse, PaginationParams
 from src.peaks.repository import PeaksRepository
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
+from src.users.models import User, UserUpdate
+from src.users.repository import UsersRepository
 
 
 class UsersService:
 
     def __init__(
         self,
+        users_repository: UsersRepository,
         photos_repository: PhotosRepository,
         peaks_repository: PeaksRepository,
     ):
+        self.users_repository = users_repository
         self.photos_repository = photos_repository
         self.peaks_repository = peaks_repository
+
+    async def update_user(self, owner_id: int, user_update: UserUpdate) -> User:
+        return await self.users_repository.update(owner_id, user_update)
 
     async def get_photos_by_user(
         self,

@@ -14,6 +14,7 @@ BASE_URL = "/api/users"
         ("get", f"{BASE_URL}/username/photos/locations"),
         ("get", f"{BASE_URL}/username/photos/dates"),
         ("get", f"{BASE_URL}/username/peaks/count"),
+        ("patch", f"{BASE_URL}/username"),
     ],
 )
 async def test_endpoints_require_auth(client_with_db, method, url):
@@ -31,6 +32,7 @@ async def test_endpoints_require_auth(client_with_db, method, url):
         ("get", f"{BASE_URL}/username/photos/locations"),
         ("get", f"{BASE_URL}/username/photos/dates"),
         ("get", f"{BASE_URL}/username/peaks/count"),
+        ("patch", f"{BASE_URL}/username"),
     ],
 )
 async def test_endpoints_forbidden_for_other_user(
@@ -239,3 +241,18 @@ async def test_get_user_photo_dates(client_with_db, e2e_photos, logged_in_user):
     for date in dates:
         assert date["id"] is not None
         assert date["capturedAt"] is not None
+
+
+@pytest.mark.asyncio
+async def test_update_user_success(client_with_db, logged_in_user):
+    """Test updating user information successfully"""
+    username = logged_in_user["username"]
+    update_data = {
+        "isPrivate": True,
+    }
+
+    resp = await client_with_db.patch(f"{BASE_URL}/{username}", json=update_data)
+
+    assert resp.status_code == 200
+    updated_user = resp.json()
+    assert updated_user["isPrivate"] == update_data["isPrivate"]
