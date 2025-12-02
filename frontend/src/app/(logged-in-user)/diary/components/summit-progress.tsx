@@ -6,22 +6,21 @@ import { useQuery } from "@tanstack/react-query";
 
 import { PeakClient } from "@/lib/peaks/client";
 import { UsersClient } from "@/lib/users/client";
-import { User } from "@/lib/users/types";
 
 import CircularProgress from "@/components/common/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SummitProgressProps {
-  user?: User;
+  username?: string;
 }
 
-export default function SummitProgress({ user }: SummitProgressProps) {
+export default function SummitProgress({ username }: SummitProgressProps) {
   const { data: summitedByUserCount, isLoading: isSummitedByUserCountLoading } =
     useQuery({
-      queryKey: ["users", user?.username, "peaks", "count"],
-      queryFn: () => UsersClient.getSummitedPeaksCountByUser(user!.username),
-      enabled: !!user,
+      queryKey: ["users", username, "peaks", "count"],
+      queryFn: () => UsersClient.getSummitedPeaksCountByUser(username!),
+      enabled: !!username,
     });
 
   const { data: totalPeaks, isLoading: isPeaksCountLoading } = useQuery({

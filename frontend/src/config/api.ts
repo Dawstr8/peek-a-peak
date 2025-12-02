@@ -63,6 +63,7 @@ export const API_ENDPOINTS = {
       }),
   },
   users: {
+    getUser: (username: string) => buildUrl(`/users/${username}`),
     updateUser: (username: string) => buildUrl(`/users/${username}`),
     getPhotosByUser: (
       username: string,

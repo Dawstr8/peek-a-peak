@@ -6,24 +6,23 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns/format";
 
 import { UsersClient } from "@/lib/users/client";
-import { User } from "@/lib/users/types";
 
 import { ActivityCalendar } from "@/components/common/activity-calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SummitPhotosHeatmapProps {
-  user?: User;
+  username?: string;
   className?: string;
 }
 
 export default function SummitPhotosHeatmap({
-  user,
+  username,
   className,
 }: SummitPhotosHeatmapProps) {
   const { data: summitPhotosDates } = useQuery({
-    queryKey: ["users", user?.username, "photos", "dates"],
-    queryFn: () => UsersClient.getPhotosDatesByUser(user!.username),
-    enabled: !!user,
+    queryKey: ["users", username, "photos", "dates"],
+    queryFn: () => UsersClient.getPhotosDatesByUser(username!),
+    enabled: !!username,
   });
 
   const values = useMemo(() => {

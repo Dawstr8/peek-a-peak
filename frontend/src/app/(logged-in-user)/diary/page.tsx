@@ -9,19 +9,20 @@ import SummitPhotosTimeline from "./components/summit-photos-timeline";
 import SummitProgress from "./components/summit-progress";
 
 export default function DiaryPage() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
+  const username = user?.username || undefined;
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
       <div className="flex-2 space-y-6">
-        <UserHeader user={user} isLoading={isLoading} />
-        <SummitPhotosTimeline user={user} />
+        <UserHeader username={username} />
+        <SummitPhotosTimeline username={username} />
       </div>
 
       <div className="flex-1 space-y-4">
-        <SummitProgress user={user} />
-        <SummitPhotosHeatmap user={user} />
-        <SummitPhotosMap user={user} />
+        <SummitProgress username={username} />
+        <SummitPhotosHeatmap username={username} />
+        <SummitPhotosMap username={username} />
       </div>
     </div>
   );
