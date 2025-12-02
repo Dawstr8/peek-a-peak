@@ -32,5 +32,9 @@ export function RequireAuth({ children }: RequireAuthProps) {
     );
   }
 
+  if (!user) {
+    return null;
+  }
+
   return <>{children}</>;
 }

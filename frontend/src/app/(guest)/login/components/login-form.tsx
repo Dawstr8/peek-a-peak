@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AuthClient } from "@/lib/auth/client";
+import { User } from "@/lib/users/types";
 
 import { useAuth } from "@/components/auth/auth-context";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 type LoginFormProps = {
-  handleLoginSuccess: () => void;
+  handleLoginSuccess: (user: User) => void;
 };
 
 export function LoginForm({ handleLoginSuccess }: LoginFormProps) {
@@ -53,9 +54,7 @@ export function LoginForm({ handleLoginSuccess }: LoginFormProps) {
       login(user);
       return user;
     },
-    onSuccess: () => {
-      handleLoginSuccess();
-    },
+    onSuccess: (user: User) => handleLoginSuccess(user),
   });
 
   const onSubmit = async (data: LoginFormData) => {

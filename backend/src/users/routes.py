@@ -18,6 +18,14 @@ from src.users.models import UserRead, UserUpdate
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
+@router.get("/{username}/access", status_code=200)
+async def check_user_access(
+    owner_id: authorize_private_dep,
+):
+    """Check if the current user has access to view this user's private content."""
+    return {"access": "granted"}
+
+
 @router.get("/{username}", response_model=UserRead)
 async def get_user(
     service: users_service_dep,

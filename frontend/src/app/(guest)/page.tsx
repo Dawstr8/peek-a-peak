@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { Camera, Cloud, MapPin } from "lucide-react";
 
-import { checkIfAuthenticated } from "@/lib/auth/utils";
+import { getCurrentUser } from "@/lib/auth/utils";
 
 import {
   Card,
@@ -37,8 +37,8 @@ const features = [
 ];
 
 export default async function Home() {
-  const isAuthenticated = await checkIfAuthenticated();
-  if (isAuthenticated) redirect("/diary");
+  const user = await getCurrentUser();
+  if (user) redirect(`/diary/${user.username}`);
 
   return (
     <>

@@ -7,6 +7,18 @@ BASE_URL = "/api/users"
 
 
 @pytest.mark.asyncio
+async def test_check_user_access_granted(client_with_db, logged_in_user):
+    """Test checking user access returns granted"""
+    username = logged_in_user["username"]
+
+    resp = await client_with_db.get(f"{BASE_URL}/{username}/access")
+
+    assert resp.status_code == 200
+    access_data = resp.json()
+    assert access_data["access"] == "granted"
+
+
+@pytest.mark.asyncio
 async def test_get_user_success(client_with_db, logged_in_user):
     """Test getting user information successfully"""
     username = logged_in_user["username"]

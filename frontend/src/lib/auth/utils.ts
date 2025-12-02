@@ -1,10 +1,12 @@
 /** Utility functions for authentication */
 import { cookies } from "next/headers";
 
-export async function checkIfAuthenticated(): Promise<boolean> {
+import { User } from "../users/types";
+
+export async function getCurrentUser(): Promise<User | undefined> {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("session_id");
-  if (!sessionCookie) return false;
+  if (!sessionCookie) return undefined;
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const response = await fetch(`${baseUrl}/api/auth/me`, {
@@ -13,8 +15,8 @@ export async function checkIfAuthenticated(): Promise<boolean> {
     },
   });
 
-  if (!response.ok) return false;
+  if (!response.ok) return undefined;
 
   const user = await response.json();
-  return !!user;
+  return user;
 }
