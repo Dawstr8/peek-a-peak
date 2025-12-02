@@ -17,13 +17,13 @@ class RouteTestCase:
 
 
 ROUTES = {
-    "public": RouteTestCase(url="/api/peaks"),
-    "owner_public": RouteTestCase(url="/api/users/{username}"),
-    "owner_private": RouteTestCase(
-        url="/api/users/{username}", requires_private_user=True
+    "not_found": RouteTestCase(method="get", url="/api/users/nonexistentuser"),
+    "public": RouteTestCase(url="/api/users/{username}"),
+    "private_open": RouteTestCase(url="/api/users/{username}/photos"),
+    "private_closed": RouteTestCase(
+        url="/api/users/{username}/photos", requires_private_user=True
     ),
-    "owner_only": RouteTestCase(method="patch", url="/api/users/{username}"),
-    "owner_not_found": RouteTestCase(method="get", url="/api/users/nonexistentuser"),
+    "owner": RouteTestCase(method="patch", url="/api/users/{username}"),
 }
 
 
@@ -51,11 +51,11 @@ async def _make_request(client_with_db, route_case: RouteTestCase, username: str
 @pytest.mark.parametrize(
     "route_name,expected_status",
     [
+        ("not_found", 404),
         ("public", 200),
-        ("owner_public", 200),
-        ("owner_private", 403),
-        ("owner_only", 401),
-        ("owner_not_found", 404),
+        ("private_open", 200),
+        ("private_closed", 403),
+        ("owner", 401),
     ],
 )
 async def test_route_access_without_login(
@@ -75,11 +75,11 @@ async def test_route_access_without_login(
 @pytest.mark.parametrize(
     "route_name,expected_status",
     [
+        ("not_found", 404),
         ("public", 200),
-        ("owner_public", 200),
-        ("owner_private", 403),
-        ("owner_only", 403),
-        ("owner_not_found", 404),
+        ("private_open", 200),
+        ("private_closed", 403),
+        ("owner", 403),
     ],
 )
 async def test_route_access_as_different_user(
@@ -102,11 +102,11 @@ async def test_route_access_as_different_user(
 @pytest.mark.parametrize(
     "route_name,expected_status",
     [
+        ("not_found", 404),
         ("public", 200),
-        ("owner_public", 200),
-        ("owner_private", 200),
-        ("owner_only", 200),
-        ("owner_not_found", 404),
+        ("private_open", 200),
+        ("private_closed", 200),
+        ("owner", 200),
     ],
 )
 async def test_route_access_as_owner(

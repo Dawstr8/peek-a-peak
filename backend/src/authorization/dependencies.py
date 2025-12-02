@@ -19,28 +19,28 @@ async def authorize_owner_access(
     username: str = Path(...),
     authorization_service: AuthorizationService = Depends(get_authorization_service),
 ) -> str:
-    """Ensures the current user has access to the resource owned by the user with given username."""
+    """Ensures the current user is the owner of the resource."""
     username = username.lower()
 
     try:
-        authorization_service.ensure_user_is_owner(current_user, username)
         owner = await users_service.get_user_by_username(username)
+        authorization_service.ensure_user_is_owner(current_user, username)
         return owner.id
     except NotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except (NotAuthorizedException, NotFoundException):
+    except NotAuthorizedException:
         raise HTTPException(
             status_code=403, detail="Not authorized to access this resource"
         )
 
 
-async def authorize_read_access(
+async def authorize_private_access(
     users_service: users_service_dep,
     current_user: current_user_optional_dep,
     username: str = Path(...),
     authorization_service: AuthorizationService = Depends(get_authorization_service),
 ) -> str:
-    """Ensures the current user has read access to the resource owned by the user with given username."""
+    """Ensures the current user has access to potentially private resources (public access or owner access for private)."""
     username = username.lower()
 
     try:
@@ -63,7 +63,26 @@ async def authorize_read_access(
         )
 
 
-authorize_owner_access_dep = Annotated[int, Depends(authorize_owner_access)]
-authorize_read_access_dep = Annotated[int, Depends(authorize_read_access)]
+async def authorize_public_access(
+    users_service: users_service_dep,
+    username: str = Path(...),
+) -> str:
+    """Retrieves the user ID for public access (no authorization required)."""
+    username = username.lower()
 
-__all__ = ["authorize_owner_access_dep", "authorize_read_access_dep"]
+    try:
+        owner = await users_service.get_user_by_username(username)
+        return owner.id
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+authorize_owner_dep = Annotated[str, Depends(authorize_owner_access)]
+authorize_private_dep = Annotated[str, Depends(authorize_private_access)]
+authorize_public_dep = Annotated[str, Depends(authorize_public_access)]
+
+__all__ = [
+    "authorize_owner_dep",
+    "authorize_private_dep",
+    "authorize_public_dep",
+]
