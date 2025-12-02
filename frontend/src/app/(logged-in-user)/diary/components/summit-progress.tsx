@@ -12,15 +12,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SummitProgressProps {
-  username?: string;
+  username: string;
 }
 
 export default function SummitProgress({ username }: SummitProgressProps) {
   const { data: summitedByUserCount, isLoading: isSummitedByUserCountLoading } =
     useQuery({
       queryKey: ["users", username, "peaks", "count"],
-      queryFn: () => UsersClient.getSummitedPeaksCountByUser(username!),
-      enabled: !!username,
+      queryFn: () => UsersClient.getSummitedPeaksCountByUser(username),
     });
 
   const { data: totalPeaks, isLoading: isPeaksCountLoading } = useQuery({

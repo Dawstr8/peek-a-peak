@@ -1,6 +1,5 @@
 import { NotebookPen, User } from "lucide-react";
 
-import { useAuth } from "@/components/auth/auth-context";
 import {
   SidebarContent,
   SidebarFooter,
@@ -8,6 +7,8 @@ import {
   SidebarRail,
   Sidebar as SidebarUI,
 } from "@/components/ui/sidebar";
+
+import { useAuthenticatedUser } from "@/hooks/use-authenticated-user";
 
 import CallToAction from "./sidebar/call-to-action";
 import Logo from "./sidebar/logo";
@@ -20,7 +21,7 @@ export const items = [
 ];
 
 export function Sidebar() {
-  const { user } = useAuth();
+  const user = useAuthenticatedUser();
 
   return (
     <SidebarUI collapsible="icon">

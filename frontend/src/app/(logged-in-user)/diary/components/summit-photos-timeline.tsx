@@ -15,7 +15,7 @@ import { Group } from "./summit-photos-timeline/group";
 import { Skeleton } from "./summit-photos-timeline/skeleton";
 
 interface SummitPhotosTimelineProps {
-  username?: string;
+  username: string;
   className?: string;
 }
 
@@ -34,11 +34,10 @@ export default function SummitPhotosTimeline({
     queryFn: ({ pageParam = 1 }) => {
       const page =
         typeof pageParam === "number" ? pageParam : Number(pageParam) || 1;
-      return UsersClient.getPhotosByUser(username!, "capturedAt", "desc", page);
+      return UsersClient.getPhotosByUser(username, "capturedAt", "desc", page);
     },
     initialPageParam: 1,
     getNextPageParam: (last) => last.nextPage,
-    enabled: !!username,
   });
 
   const summitPhotosGrouped = useMemo<

@@ -11,7 +11,7 @@ import { InteractiveMap } from "@/components/common/interactive-map";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SummitPhotosMapProps {
-  username?: string;
+  username: string;
   className?: string;
 }
 
@@ -21,8 +21,7 @@ export default function SummitPhotosMap({
 }: SummitPhotosMapProps) {
   const { data: summitPhotosLocations } = useQuery({
     queryKey: ["users", username, "photos", "locations"],
-    queryFn: () => UsersClient.getPhotosLocationsByUser(username!),
-    enabled: !!username,
+    queryFn: () => UsersClient.getPhotosLocationsByUser(username),
   });
 
   const locations: LatLng[] = useMemo(() => {
