@@ -11,6 +11,10 @@ import { PaginatedResponse } from "../pagination/types";
 import { User, UserUpdate } from "./types";
 
 export class UsersClient extends ApiClient {
+  static async getUser(username: string): Promise<User> {
+    return this.get<User>(API_ENDPOINTS.users.getUser(username));
+  }
+
   static async updateUser(
     username: string,
     userUpdate: UserUpdate,

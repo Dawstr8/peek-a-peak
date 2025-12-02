@@ -2,26 +2,32 @@
 
 import React from "react";
 
-import { User } from "@/lib/users/types";
+import { useQuery } from "@tanstack/react-query";
+
+import { UsersClient } from "@/lib/users/client";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import UserAvatar from "@/components/users/user-avatar";
 
 type UserHeaderProps = {
-  user?: User;
-  isLoading?: boolean;
+  username?: string;
   showEmail?: boolean;
   avatarClassName?: string;
   children?: React.ReactNode;
 };
 
 export function UserHeader({
-  user,
-  isLoading,
+  username,
   showEmail = false,
   avatarClassName = "size-32",
   children,
 }: UserHeaderProps) {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["users", username],
+    queryFn: () => UsersClient.getUser(username!),
+    enabled: !!username,
+  });
+
   const loading = isLoading || !user;
 
   return (

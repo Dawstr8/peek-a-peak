@@ -6,7 +6,6 @@ import { PaginatedResponse } from "@/lib/pagination/types";
 import { groupPhotosByDate } from "@/lib/photos/service";
 import { SummitPhoto } from "@/lib/photos/types";
 import { UsersClient } from "@/lib/users/client";
-import { User } from "@/lib/users/types";
 import { cn } from "@/lib/utils";
 
 import { InfiniteScroller } from "@/components/pagination/infinite-scroller";
@@ -16,12 +15,12 @@ import { Group } from "./summit-photos-timeline/group";
 import { Skeleton } from "./summit-photos-timeline/skeleton";
 
 interface SummitPhotosTimelineProps {
-  user?: User;
+  username?: string;
   className?: string;
 }
 
 export default function SummitPhotosTimeline({
-  user,
+  username,
   className,
 }: SummitPhotosTimelineProps) {
   const {
@@ -31,20 +30,15 @@ export default function SummitPhotosTimeline({
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery<PaginatedResponse<SummitPhoto>>({
-    queryKey: ["users", user?.username, "photos", "capturedAt", "desc"],
+    queryKey: ["users", username, "photos", "capturedAt", "desc"],
     queryFn: ({ pageParam = 1 }) => {
       const page =
         typeof pageParam === "number" ? pageParam : Number(pageParam) || 1;
-      return UsersClient.getPhotosByUser(
-        user!.username,
-        "capturedAt",
-        "desc",
-        page,
-      );
+      return UsersClient.getPhotosByUser(username!, "capturedAt", "desc", page);
     },
     initialPageParam: 1,
     getNextPageParam: (last) => last.nextPage,
-    enabled: !!user,
+    enabled: !!username,
   });
 
   const summitPhotosGrouped = useMemo<
