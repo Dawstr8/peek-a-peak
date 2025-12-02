@@ -55,7 +55,7 @@ export default function SummitPhotosTimeline({
       {isLoading && <Skeleton />}
       {summitPhotosGrouped && (
         <>
-          {summitPhotosGrouped.size === 0 && <Empty />}
+          {summitPhotosGrouped.size === 0 && <Empty username={username} />}
           <InfiniteScroller
             loadMore={fetchNextPage}
             isLoading={isFetchingNextPage}

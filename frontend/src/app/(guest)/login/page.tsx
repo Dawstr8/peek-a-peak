@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { toast } from "sonner";
 
+import { User } from "@/lib/users/types";
+
 import {
   Card,
   CardContent,
@@ -19,11 +21,11 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (user: User) => {
     toast.success("Logged in successfully!");
 
     const returnTo = searchParams.get("returnTo");
-    router.push(returnTo || "/diary");
+    router.push(returnTo || `/diary/${user.username}`);
   };
 
   return (

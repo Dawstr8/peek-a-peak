@@ -15,13 +15,13 @@ import Logo from "./sidebar/logo";
 import Navigation from "./sidebar/navigation";
 import Profile from "./sidebar/profile";
 
-export const items = [
-  { title: "Diary", url: "/diary", icon: NotebookPen },
-  { title: "Profile", url: "/profile", icon: User },
-];
-
 export function Sidebar() {
   const user = useAuthenticatedUser();
+
+  const items = [
+    { title: "Diary", url: `/diary/${user.username}`, icon: NotebookPen },
+    { title: "Profile", url: "/profile", icon: User },
+  ];
 
   return (
     <SidebarUI collapsible="icon">
