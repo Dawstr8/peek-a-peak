@@ -24,7 +24,7 @@ import {
 import UserPreview from "@/components/users/user-preview";
 
 interface ProfileProps {
-  user?: User;
+  user: User;
 }
 
 export default function Profile({ user }: ProfileProps) {
@@ -52,7 +52,7 @@ export default function Profile({ user }: ProfileProps) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <UserPreview user={user}>
-                  <span className="truncate text-xs">{user?.email}</span>
+                  <span className="truncate text-xs">{user.email}</span>
                 </UserPreview>
               </div>
             </DropdownMenuLabel>

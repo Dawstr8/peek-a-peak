@@ -10,14 +10,16 @@ import { Settings } from "lucide-react";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import { UsersClient } from "@/lib/users/client";
 
-import { useAuth } from "@/components/auth/auth-context";
 import { InfiniteScroller } from "@/components/pagination/infinite-scroller";
 import { SummitPhotosGrid } from "@/components/photos/summit-photos-grid";
 import { Separator } from "@/components/ui/separator";
 import { UserHeader } from "@/components/users/user-header";
 
+import { useAuthenticatedUser } from "@/hooks/use-authenticated-user";
+
 export default function ProfilePage() {
-  const { user, isLoading } = useAuth();
+  const user = useAuthenticatedUser();
+  const { username } = user;
 
   const {
     data: paginatedSummitPhotos,
@@ -27,20 +29,14 @@ export default function ProfilePage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["users", user?.username, "photos", "uploadedAt", "desc"],
+    queryKey: ["users", username, "photos", "uploadedAt", "desc"],
     queryFn: ({ pageParam = 1 }) => {
       const page =
         typeof pageParam === "number" ? pageParam : Number(pageParam) || 1;
-      return UsersClient.getPhotosByUser(
-        user!.username,
-        "uploadedAt",
-        "desc",
-        page,
-      );
+      return UsersClient.getPhotosByUser(username, "uploadedAt", "desc", page);
     },
     initialPageParam: 1,
     getNextPageParam: (last) => last.nextPage,
-    enabled: !!user,
   });
 
   const summitPhotos = useMemo(() => {
@@ -49,7 +45,7 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto max-w-5xl space-y-8 py-8">
-      <UserHeader user={user} isLoading={isLoading} showEmail>
+      <UserHeader user={user} showEmail>
         <Link
           href="/settings"
           className="cursor-pointer opacity-75 hover:opacity-100"

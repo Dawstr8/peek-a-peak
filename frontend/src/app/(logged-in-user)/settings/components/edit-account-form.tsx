@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -10,15 +10,8 @@ import { z } from "zod";
 import { UsersClient } from "@/lib/users/client";
 import type { UserUpdate } from "@/lib/users/types";
 
-import { useAuth } from "@/components/auth/auth-context";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -29,22 +22,26 @@ import {
 } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 
+import { useAuthenticatedUser } from "@/hooks/use-authenticated-user";
+
 const schema = z.object({
   isPrivate: z.boolean(),
 });
 
-const defaultValues = {
-  isPrivate: false,
-};
-
 type FormData = z.infer<typeof schema>;
 
 export function EditAccountForm() {
-  const { user } = useAuth();
+  const user = useAuthenticatedUser();
+
+  const [initial, setInitial] = useState(() => {
+    return {
+      isPrivate: user.isPrivate,
+    };
+  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues,
+    defaultValues: initial,
   });
   const { reset, handleSubmit, control, formState } = form;
 
@@ -55,24 +52,21 @@ export function EditAccountForm() {
     isError,
     error,
   } = useMutation({
-    mutationFn: (userUpdate: UserUpdate) => {
-      if (!user) throw new Error("No user logged in");
-
-      return UsersClient.updateUser(user.username, userUpdate);
-    },
+    mutationFn: (userUpdate: UserUpdate) =>
+      UsersClient.updateUser(user.username, userUpdate),
   });
-
-  const initial = useMemo(() => {
-    const values = updatedUser ?? user ?? defaultValues;
-
-    return {
-      isPrivate: values.isPrivate,
-    };
-  }, [user, updatedUser]);
 
   useEffect(() => {
     reset(initial);
   }, [initial, reset]);
+
+  useEffect(() => {
+    if (!updatedUser) return;
+
+    setInitial({
+      isPrivate: updatedUser.isPrivate,
+    });
+  }, [updatedUser]);
 
   const onSubmit = (data: FormData) => {
     mutate({ isPrivate: data.isPrivate } as UserUpdate);
@@ -97,7 +91,7 @@ export function EditAccountForm() {
                       checked={field.value}
                       onCheckedChange={(v) => field.onChange(v)}
                       aria-label="Private account"
-                      disabled={!user || isPending}
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -116,14 +110,11 @@ export function EditAccountForm() {
                 type="button"
                 variant="outline"
                 onClick={() => reset(initial)}
-                disabled={!user || !formState.isDirty || isPending}
+                disabled={!formState.isDirty || isPending}
               >
                 Discard
               </Button>
-              <Button
-                type="submit"
-                disabled={!user || !formState.isDirty || isPending}
-              >
+              <Button type="submit" disabled={!formState.isDirty || isPending}>
                 {isPending ? "Saving..." : "Save"}
               </Button>
             </div>

@@ -11,7 +11,7 @@ import { ActivityCalendar } from "@/components/common/activity-calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SummitPhotosHeatmapProps {
-  username?: string;
+  username: string;
   className?: string;
 }
 
@@ -21,8 +21,7 @@ export default function SummitPhotosHeatmap({
 }: SummitPhotosHeatmapProps) {
   const { data: summitPhotosDates } = useQuery({
     queryKey: ["users", username, "photos", "dates"],
-    queryFn: () => UsersClient.getPhotosDatesByUser(username!),
-    enabled: !!username,
+    queryFn: () => UsersClient.getPhotosDatesByUser(username),
   });
 
   const values = useMemo(() => {
