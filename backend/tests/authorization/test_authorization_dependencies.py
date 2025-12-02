@@ -23,6 +23,7 @@ ROUTES = {
         url="/api/users/{username}", requires_private_user=True
     ),
     "owner_only": RouteTestCase(method="patch", url="/api/users/{username}"),
+    "owner_not_found": RouteTestCase(method="get", url="/api/users/nonexistentuser"),
 }
 
 
@@ -54,6 +55,7 @@ async def _make_request(client_with_db, route_case: RouteTestCase, username: str
         ("owner_public", 200),
         ("owner_private", 403),
         ("owner_only", 401),
+        ("owner_not_found", 404),
     ],
 )
 async def test_route_access_without_login(
@@ -77,6 +79,7 @@ async def test_route_access_without_login(
         ("owner_public", 200),
         ("owner_private", 403),
         ("owner_only", 403),
+        ("owner_not_found", 404),
     ],
 )
 async def test_route_access_as_different_user(
@@ -103,6 +106,7 @@ async def test_route_access_as_different_user(
         ("owner_public", 200),
         ("owner_private", 200),
         ("owner_only", 200),
+        ("owner_not_found", 404),
     ],
 )
 async def test_route_access_as_owner(

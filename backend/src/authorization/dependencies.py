@@ -26,6 +26,8 @@ async def authorize_owner_access(
         authorization_service.ensure_user_is_owner(current_user, username)
         owner = await users_service.get_user_by_username(username)
         return owner.id
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except (NotAuthorizedException, NotFoundException):
         raise HTTPException(
             status_code=403, detail="Not authorized to access this resource"
@@ -53,7 +55,9 @@ async def authorize_read_access(
 
         authorization_service.ensure_user_is_owner(current_user, username)
         return owner.id
-    except (NotAuthorizedException, NotFoundException):
+    except NotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except NotAuthorizedException:
         raise HTTPException(
             status_code=403, detail="Not authorized to access this resource"
         )
