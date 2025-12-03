@@ -1,6 +1,6 @@
 from typing import List
 
-from src.exceptions import NotFoundException
+from src.common.exceptions import NotFoundException
 from src.pagination.models import PaginatedResponse, PaginationParams
 from src.peaks.repository import PeaksRepository
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation

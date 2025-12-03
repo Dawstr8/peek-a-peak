@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import EmailStr, Field, field_validator
 from sqlmodel import Field, SQLModel
 
-from src.models import CamelModel
+from src.common.models import CamelModel
 
 
 class User(SQLModel, table=True):

@@ -4,7 +4,7 @@ Tests for the PeaksService
 
 import pytest
 
-from src.exceptions import NotFoundException
+from src.common.exceptions import NotFoundException
 from src.peaks.service import PeaksService
 
 

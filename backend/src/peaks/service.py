@@ -4,7 +4,7 @@ Service for matching geographical coordinates to peaks
 
 from typing import List
 
-from src.exceptions import NotFoundException
+from src.common.exceptions import NotFoundException
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
 

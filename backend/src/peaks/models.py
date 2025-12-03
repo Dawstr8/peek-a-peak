@@ -7,7 +7,7 @@ from shapely.geometry import Point
 from sqlalchemy import Column, UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
-from src.models import CamelModel
+from src.common.models import CamelModel
 from src.mountain_ranges.models import MountainRange
 
 if TYPE_CHECKING:

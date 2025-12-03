@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, Path
 from src.auth.dependencies import current_user_dep, current_user_optional_dep
 from src.authorization.exceptions import NotAuthorizedException
 from src.authorization.service import AuthorizationService
-from src.exceptions import NotFoundException
+from src.common.exceptions import NotFoundException
 from src.users.dependencies import users_service_dep
 
 
