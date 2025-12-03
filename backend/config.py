@@ -1,15 +1,20 @@
 import os
 
+from pydantic_settings import BaseSettings
 
-class Config:
-    POSTGRES_SERVER_URL = (
-        "postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432".format(
-            DB_USER=os.getenv("DB_USER", "postgres"),
-            DB_PASSWORD=os.getenv("DB_PASSWORD", "postgres"),
-            DB_HOST=os.getenv("DB_HOST", "postgres"),
+
+class Settings(BaseSettings):
+    postgres_server_url: str = (
+        "postgresql+asyncpg://{db_user}:{db_password}@{db_host}:5432".format(
+            db_user=os.getenv("DB_USER", "postgres"),
+            db_password=os.getenv("DB_PASSWORD", "postgres"),
+            db_host=os.getenv("DB_HOST", "postgres"),
         )
     )
-    DATABASE_URL = "{POSTGRES_SERVER_URL}/{DB_NAME}".format(
-        POSTGRES_SERVER_URL=POSTGRES_SERVER_URL,
-        DB_NAME=os.getenv("DB_NAME", "peek_a_peak"),
+    database_url: str = "{postgres_server_url}/{db_name}".format(
+        postgres_server_url=postgres_server_url,
+        db_name=os.getenv("DB_NAME", "peek_a_peak"),
     )
+
+
+settings = Settings()
