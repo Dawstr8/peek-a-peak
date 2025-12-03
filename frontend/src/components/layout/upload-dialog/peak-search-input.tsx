@@ -28,9 +28,12 @@ import {
 
 import { useDebounce } from "@/hooks/use-debounce";
 
+const SORT_BY = "elevation";
+const ORDER = "desc";
+
 interface PeakSearchInputProps {
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
   onSelect: (peakWithDistance: Peak | null) => void;
   limit?: number;
   disabled?: boolean;
@@ -49,20 +52,31 @@ export function PeakSearchInput({
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery);
 
+  const hasCoordinates = lat !== undefined && lng !== undefined;
+
   const {
     data: peaksWithDistance = [],
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["peak-search", lat, lng, debouncedQuery, limit],
-    queryFn: () =>
-      PeakClient.findNearbyPeaks(
-        lat,
-        lng,
-        limit,
-        debouncedQuery.trim() || undefined,
-      ),
-    enabled: !!lat && !!lng,
+    queryKey: hasCoordinates
+      ? ["peaks", "nearby", lat, lng, debouncedQuery, limit]
+      : ["peaks", "search", debouncedQuery, limit, SORT_BY, ORDER],
+    queryFn: async () => {
+      const nameFilter = debouncedQuery.trim() || undefined;
+      if (hasCoordinates) {
+        return PeakClient.findNearbyPeaks(lat!, lng!, limit, nameFilter);
+      } else {
+        const peaks = await PeakClient.searchPeaks(
+          limit,
+          nameFilter,
+          SORT_BY,
+          ORDER,
+        );
+
+        return peaks.map((peak) => ({ peak, distance: undefined }));
+      }
+    },
     staleTime: 5 * millisecondsInMinute,
   });
 
@@ -141,7 +155,9 @@ export function PeakSearchInput({
               ))}
 
             {peaksWithDistance.length > 0 && (
-              <CommandGroup heading="Nearby peaks">
+              <CommandGroup
+                heading={hasCoordinates ? "Nearby peaks" : "Suggested peaks"}
+              >
                 {peaksWithDistance.map((peakWithDistance) => (
                   <CommandItem
                     key={peakWithDistance.peak.id}

@@ -33,7 +33,7 @@ export function PeakListItem({
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{peak.name}</p>
         <div className="text-muted-foreground flex items-center gap-4 text-xs">
-          <span>{(distance / 1000).toFixed(1)}km away</span>
+          {distance && <span>{(distance / 1000).toFixed(1)}km away</span>}
           <span className="flex items-center gap-1">
             <ArrowUp className="size-3" />
             {peak.elevation}m

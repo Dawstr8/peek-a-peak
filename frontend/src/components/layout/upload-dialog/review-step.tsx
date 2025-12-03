@@ -11,11 +11,6 @@ import { DateTimePicker } from "@/components/common/date-time-picker";
 import { LocationPicker } from "@/components/common/location-picker";
 import { PhotoAspectRatio } from "@/components/photos/photo-aspect-ratio";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 import { useImageUrl } from "@/hooks/use-image-url";
 
@@ -99,25 +94,15 @@ export function ReviewStep({ setPeakToDisplay, back, next }: ReviewStepProps) {
               {errors.capturedAt?.message}
             </span>
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <PeakSearchInput
-                  disabled={!location}
-                  lat={location?.lat ?? 0}
-                  lng={location?.lng ?? 0}
-                  onSelect={(peak) => {
-                    setValue("peakId", peak?.id);
-                    setPeak(peak);
-                    setPeakToDisplay(peak);
-                  }}
-                />
-              </div>
-            </TooltipTrigger>
-            {!location && (
-              <TooltipContent>Select location first</TooltipContent>
-            )}
-          </Tooltip>
+          <PeakSearchInput
+            lat={location?.lat}
+            lng={location?.lng}
+            onSelect={(peak) => {
+              setValue("peakId", peak?.id);
+              setPeak(peak);
+              setPeakToDisplay(peak);
+            }}
+          />
         </div>
       </div>
       <div className="flex justify-center gap-4">

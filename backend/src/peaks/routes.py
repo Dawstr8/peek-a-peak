@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Query
 from src.common.exceptions import NotFoundException
 from src.peaks.dependencies import peaks_service_dep
 from src.peaks.models import ReadPeak, ReadPeakWithDistance
+from src.sorting.dependencies import sort_params_dep
 
 router = APIRouter(
     prefix="/api/peaks",
@@ -26,8 +27,23 @@ async def get_peaks_count(service: peaks_service_dep):
     return await service.get_count()
 
 
-@router.get("/find", response_model=list[ReadPeakWithDistance], tags=["peaks"])
-async def find_nearest_peaks(
+@router.get("/search", response_model=list[ReadPeak], tags=["peaks"])
+async def search_peaks(
+    service: peaks_service_dep,
+    sort_params: sort_params_dep,
+    name_filter: str | None = Query(None, alias="nameFilter"),
+    limit: int = 5,
+):
+    """
+    Search peaks with optional filters and ordering.
+    """
+    return await service.search_peaks(
+        name_filter=name_filter, limit=limit, sort_params=sort_params
+    )
+
+
+@router.get("/nearby", response_model=list[ReadPeakWithDistance], tags=["peaks"])
+async def find_nearby_peaks(
     service: peaks_service_dep,
     lat: float,
     lng: float,
@@ -36,7 +52,7 @@ async def find_nearest_peaks(
     limit: int = 5,
 ):
     """
-    Find the nearest peaks to a given lat and lng.
+    Find peaks near a given location.
 
     Args:
         lat: Latitude coordinate
@@ -48,7 +64,7 @@ async def find_nearest_peaks(
     Returns:
         List of nearest peaks with distances in meters
     """
-    return await service.find_nearest_peaks(
+    return await service.find_nearby_peaks(
         lat=lat,
         lng=lng,
         max_distance=max_distance,
