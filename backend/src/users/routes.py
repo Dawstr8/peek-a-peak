@@ -7,11 +7,11 @@ from src.authorization.dependencies import (
     authorize_private_dep,
     authorize_public_dep,
 )
-from src.dependencies import sort_params_dep
 from src.exceptions import NotFoundException
 from src.pagination.dependencies import pagination_params_dep
 from src.pagination.models import PaginatedResponse
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation, SummitPhotoRead
+from src.sorting.dependencies import sort_params_dep
 from src.users.dependencies import users_service_dep
 from src.users.models import UserRead, UserUpdate
 
