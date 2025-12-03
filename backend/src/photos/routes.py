@@ -13,7 +13,7 @@ from src.sorting.dependencies import sort_params_dep
 router = APIRouter(prefix="/api/photos", tags=["photos"])
 
 
-@router.get("", response_model=List[SummitPhotoRead], tags=["photos"])
+@router.get("", response_model=List[SummitPhotoRead])
 async def get_all_photos(
     photos_service: photos_service_dep,
     sort_params: sort_params_dep,
@@ -35,7 +35,7 @@ async def get_all_photos(
         )
 
 
-@router.post("", response_model=SummitPhotoRead, tags=["photos"])
+@router.post("", response_model=SummitPhotoRead)
 async def upload_photo(
     photos_service: photos_service_dep,
     current_user: current_user_dep,
@@ -67,7 +67,7 @@ async def upload_photo(
         raise HTTPException(status_code=500, detail=f"Failed to upload photo: {str(e)}")
 
 
-@router.get("/{photo_id}", response_model=SummitPhotoRead, tags=["photos"])
+@router.get("/{photo_id}", response_model=SummitPhotoRead)
 async def get_photo_by_id(
     photo_id: int,
     photos_service: photos_service_dep,
@@ -87,7 +87,7 @@ async def get_photo_by_id(
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.delete("/{photo_id}", response_model=dict, tags=["photos"])
+@router.delete("/{photo_id}", response_model=dict)
 async def delete_photo(
     photo_id: int,
     photos_service: photos_service_dep,
