@@ -3,9 +3,9 @@ from typing import List, Optional
 from fastapi import UploadFile
 
 from src.exceptions import NotFoundException
-from src.models import SortParams
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
+from src.sorting.models import SortParams
 from src.uploads.service import UploadsService
 from src.users.models import User
 from src.users.repository import UsersRepository

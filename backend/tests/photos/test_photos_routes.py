@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 
 from main import app
-from src.models import SortParams
 from src.photos import dependencies
+from src.sorting.models import SortParams
 from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
 

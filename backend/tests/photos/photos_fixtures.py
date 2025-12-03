@@ -9,10 +9,10 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
-from src.models import SortParams
 from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
+from src.sorting.models import SortParams
 from tests.auth.auth_fixtures import temporary_login
 
 

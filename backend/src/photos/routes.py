@@ -5,10 +5,10 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 
 from src.auth.dependencies import current_user_dep
-from src.dependencies import sort_params_dep
 from src.exceptions import NotFoundException
 from src.photos.dependencies import photos_service_dep
 from src.photos.models import SummitPhotoCreate, SummitPhotoRead
+from src.sorting.dependencies import sort_params_dep
 
 router = APIRouter(prefix="/api/photos", tags=["photos"])
 

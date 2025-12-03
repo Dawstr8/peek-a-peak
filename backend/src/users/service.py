@@ -1,11 +1,11 @@
 from typing import List
 
 from src.exceptions import NotFoundException
-from src.models import SortParams
 from src.pagination.models import PaginatedResponse, PaginationParams
 from src.peaks.repository import PeaksRepository
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
+from src.sorting.models import SortParams
 from src.users.models import User, UserUpdate
 from src.users.repository import UsersRepository
 

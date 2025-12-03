@@ -1,6 +1,6 @@
 import pytest
 
-from src.models import SortParams
+from src.sorting.models import SortParams
 from src.users.models import User
 
 BASE_URL = "/api/users"

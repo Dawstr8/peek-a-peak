@@ -1,11 +1,4 @@
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict
-
-
-class SortParams(BaseModel):
-    sort_by: Optional[str] = None
-    order: Optional[str] = None
 
 
 def camel_to_snake(string: str) -> str:

@@ -1,8 +1,8 @@
 import pytest
 
-from src.models import SortParams
 from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhotoDate, SummitPhotoLocation
+from src.sorting.models import SortParams
 from src.users.models import UserUpdate
 from src.users.service import UsersService
 

@@ -1,13 +1,14 @@
 from typing import List, Optional
 
 from sqlalchemy.orm import load_only
-from sqlmodel import desc, select
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.models import SortParams
 from src.pagination.models import PaginatedResponse, PaginationParams
 from src.pagination.paginator import Paginator
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
+from src.sorting.models import SortParams
+from src.sorting.utils import apply_sorting
 
 
 class PhotosRepository:
@@ -65,7 +66,7 @@ class PhotosRepository:
             List of SummitPhoto objects
         """
         statement = select(SummitPhoto)
-        statement = self._apply_sorting(statement, sort_params)
+        statement = apply_sorting(statement, SummitPhoto, sort_params)
         result = await self.db.exec(statement)
         return result.all()
 
@@ -76,7 +77,7 @@ class PhotosRepository:
         pagination_params: PaginationParams,
     ) -> PaginatedResponse[SummitPhoto]:
         statement = select(SummitPhoto).where(SummitPhoto.owner_id == owner_id)
-        statement = self._apply_sorting(statement, sort_params)
+        statement = apply_sorting(statement, SummitPhoto, sort_params)
         return await self.paginator.paginate(statement, pagination_params)
 
     async def get_locations_by_owner_id(
@@ -117,15 +118,3 @@ class PhotosRepository:
         await self.db.delete(photo)
         await self.db.commit()
         return True
-
-    def _apply_sorting(self, statement, sort_params: SortParams):
-        if not sort_params.sort_by or not hasattr(SummitPhoto, sort_params.sort_by):
-            return statement
-
-        column = getattr(SummitPhoto, sort_params.sort_by)
-
-        return (
-            statement.order_by(desc(column), desc(SummitPhoto.id))
-            if sort_params.order == "desc"
-            else statement.order_by(column, SummitPhoto.id)
-        )
