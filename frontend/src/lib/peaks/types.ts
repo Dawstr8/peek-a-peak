@@ -12,5 +12,5 @@ export interface Peak {
 
 export interface PeakWithDistance {
   peak: Peak;
-  distance: number;
+  distance?: number;
 }

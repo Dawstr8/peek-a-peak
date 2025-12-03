@@ -12,6 +12,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.peaks.models import Peak, PeakWithDistance
 from src.photos.models import SummitPhoto
+from src.sorting.models import SortParams
+from src.sorting.utils import apply_sorting
 
 
 class PeaksRepository:
@@ -68,7 +70,26 @@ class PeaksRepository:
         result = await self.db.exec(query)
         return result.first()
 
-    async def get_nearest(
+    async def search(
+        self,
+        sort_params: Optional[SortParams] = None,
+        name_filter: Optional[str] = None,
+        limit: int = 5,
+    ) -> List[Peak]:
+        """Search peaks with optional name filtering and sorting."""
+        statement = select(Peak)
+        statement = statement.limit(limit)
+
+        if sort_params is not None:
+            statement = apply_sorting(statement, Peak, sort_params)
+
+        if name_filter is not None:
+            statement = statement.where(Peak.name.ilike(f"%{name_filter}%"))
+
+        restult = await self.db.exec(statement)
+        return restult.all()
+
+    async def find_nearby(
         self,
         lat: float,
         lng: float,
@@ -76,7 +97,8 @@ class PeaksRepository:
         limit: int = 5,
         name_filter: Optional[str] = None,
     ) -> List[PeakWithDistance]:
-        """Find nearest peaks to a given lat and lng.
+        """
+        Find peaks near a given location.
 
         Args:
             lat: Latitude of the reference point

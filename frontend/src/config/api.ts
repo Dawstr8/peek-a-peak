@@ -47,14 +47,26 @@ export const API_ENDPOINTS = {
   },
   peaks: {
     getCount: buildUrl(`/peaks/count`),
-    find: (
+    search: (
+      limit: number = 20,
+      nameFilter?: string,
+      sortBy?: string,
+      order?: "asc" | "desc",
+    ) =>
+      buildUrl(`/peaks/search`, {
+        limit,
+        nameFilter,
+        sortBy,
+        order,
+      }),
+    nearby: (
       lat: number,
       lng: number,
       limit: number = 5,
       nameFilter?: string,
       maxDistance?: number,
     ) =>
-      buildUrl(`/peaks/find`, {
+      buildUrl(`/peaks/nearby`, {
         lat,
         lng,
         limit,

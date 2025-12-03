@@ -2,11 +2,12 @@
 Service for matching geographical coordinates to peaks
 """
 
-from typing import List
+from typing import List, Optional
 
 from src.common.exceptions import NotFoundException
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
+from src.sorting.models import SortParams
 
 
 class PeaksService:
@@ -55,7 +56,17 @@ class PeaksService:
 
         return peak
 
-    async def find_nearest_peaks(
+    async def search_peaks(
+        self,
+        sort_params: Optional[SortParams] = None,
+        name_filter: str | None = None,
+        limit: int = 5,
+    ) -> List[Peak]:
+        return await self.peaks_repository.search(
+            name_filter=name_filter, limit=limit, sort_params=sort_params
+        )
+
+    async def find_nearby_peaks(
         self,
         lat: float,
         lng: float,
@@ -64,7 +75,7 @@ class PeaksService:
         limit: int = 5,
     ) -> List[PeakWithDistance]:
         """
-        Find the nearest peaks to a given lat and lng.
+        Find peaks near a given location.
 
         Args:
             lat: Latitude of the point
@@ -74,9 +85,9 @@ class PeaksService:
             limit: Maximum number of peaks to return (default: 5)
 
         Returns:
-            List of dictionaries containing peak and its distance from the point
+            List of PeakWithDistance models containing peak and distance from the point
         """
-        return await self.peaks_repository.get_nearest(
+        return await self.peaks_repository.find_nearby(
             lat=lat,
             lng=lng,
             max_distance=max_distance,

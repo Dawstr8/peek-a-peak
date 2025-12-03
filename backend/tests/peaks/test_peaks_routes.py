@@ -45,24 +45,54 @@ async def test_get_peaks_count(client_with_db: AsyncClient, db_peaks):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
+    "params,expected_peaks_ids",
+    [
+        ({}, [0, 1, 2]),
+        ({"nameFilter": "rysy"}, [0]),
+        ({"limit": 2}, [0, 1]),
+        ({"sortBy": "elevation", "order": "desc"}, [0, 2, 1]),
+    ],
+)
+async def test_search_peaks_parametrized(
+    client_with_db: AsyncClient, db_peaks, params: dict, expected_peaks_ids: list
+):
+    """Test searching peaks with various parameters."""
+    response = await client_with_db.get("/api/peaks/search", params=params)
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == len(expected_peaks_ids)
+
+    expected_peaks = [db_peaks[idx] for idx in expected_peaks_ids]
+    for peak, expected_peak in zip(data, expected_peaks):
+        assert peak["id"] == expected_peak.id
+        assert peak["name"] == expected_peak.name
+        assert peak["elevation"] == expected_peak.elevation
+        assert peak["lat"] == expected_peak.lat
+        assert peak["lng"] == expected_peak.lng
+        assert peak["mountainRange"]["name"] == expected_peak.mountain_range.name
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
     "coords_key,expected_nearest_name",
     [
         ("near_rysy", "Rysy"),
         ("near_sniezka", "Śnieżka"),
     ],
 )
-async def test_find_nearest_peaks_parametrized(
+async def test_find_nearby_peaks_parametrized(
     client_with_db: AsyncClient,
     db_peaks,
     coords_map: dict,
     coords_key: str,
     expected_nearest_name: str,
 ):
-    """Happy-path nearest peaks search for multiple coordinate sets."""
+    """Happy-path nearby peaks search for multiple coordinate sets."""
     lat, lng = coords_map[coords_key]
 
     response = await client_with_db.get(
-        "/api/peaks/find",
+        "/api/peaks/nearby",
         params={"lat": lat, "lng": lng},
     )
 
@@ -90,7 +120,7 @@ async def test_find_nearest_peaks_parametrized(
         ({"limit": 1, "maxDistance": 100, "nameFilter": "rysy"}, 1, "Rysy"),
     ],
 )
-async def test_find_nearest_peaks_filters_parametrized(
+async def test_find_nearby_peaks_filters_parametrized(
     client_with_db: AsyncClient,
     db_peaks,
     coords_map: dict,
@@ -98,11 +128,11 @@ async def test_find_nearest_peaks_filters_parametrized(
     expected_len: int,
     expected_nearest_name: str,
 ):
-    """Nearest peaks with various filtering combinations (limit, maxDistance, nameFilter)."""
+    """Nearby peaks with various filtering combinations (limit, maxDistance, nameFilter)."""
     lat, lng = coords_map["near_rysy"]
     query = {"lat": lat, "lng": lng, **params}
 
-    response = await client_with_db.get("/api/peaks/find", params=query)
+    response = await client_with_db.get("/api/peaks/nearby", params=query)
 
     assert response.status_code == 200
     data = response.json()
@@ -112,14 +142,14 @@ async def test_find_nearest_peaks_filters_parametrized(
 
 
 @pytest.mark.asyncio
-async def test_find_nearest_peaks_empty_database(
+async def test_find_nearby_peaks_empty_database(
     client_with_db: AsyncClient, coords_map: dict
 ):
     """Nearest peaks returns empty list when DB has no peaks."""
     lat, lng = coords_map["near_rysy"]
 
     response = await client_with_db.get(
-        "/api/peaks/find", params={"lat": lat, "lng": lng}
+        "/api/peaks/nearby", params={"lat": lat, "lng": lng}
     )
     assert response.status_code == 200
     assert response.json() == []
@@ -136,11 +166,11 @@ async def test_find_nearest_peaks_empty_database(
         {"lat": 49.0, "lng": 20.0, "limit": "invalid"},
     ],
 )
-async def test_find_nearest_peaks_validation_errors_parametrized(
+async def test_find_nearby_peaks_validation_errors_parametrized(
     client_with_db: AsyncClient, params: dict
 ):
-    """Validation error scenarios for nearest peaks endpoint."""
-    response = await client_with_db.get("/api/peaks/find", params=params)
+    """Validation error scenarios for nearby peaks endpoint."""
+    response = await client_with_db.get("/api/peaks/nearby", params=params)
 
     assert response.status_code == 422
 
