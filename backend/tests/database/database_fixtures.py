@@ -5,13 +5,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from config import Config
+from config import settings
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def setup_database():
     test_db = "peek_a_peak_test"
-    postgres_url = f"{Config.POSTGRES_SERVER_URL}/postgres"
+    postgres_url = f"{settings.postgres_server_url}/postgres"
     admin_engine = create_async_engine(postgres_url, isolation_level="AUTOCOMMIT")
     async with admin_engine.connect() as conn:
         try:
@@ -27,7 +27,7 @@ async def setup_database():
 @pytest_asyncio.fixture(scope="function")
 async def test_db():
     """Creates a new database session for a test."""
-    db_url = f"{Config.POSTGRES_SERVER_URL}/peek_a_peak_test"
+    db_url = f"{settings.postgres_server_url}/peek_a_peak_test"
     engine = create_async_engine(db_url)
     async_sessionmaker = sessionmaker(
         bind=engine, class_=AsyncSession, expire_on_commit=False
