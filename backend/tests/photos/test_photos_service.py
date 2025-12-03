@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock
 import pytest
 from fastapi import UploadFile
 
-from src.exceptions import NotFoundException
+from src.common.exceptions import NotFoundException
 from src.photos.models import SummitPhotoCreate
 from src.photos.service import PhotosService
 from src.uploads.service import UploadsService

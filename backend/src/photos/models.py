@@ -8,7 +8,7 @@ from shapely.geometry import Point
 from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
-from src.models import CamelModel
+from src.common.models import CamelModel
 from src.peaks.models import ReadPeak
 from src.users.models import User
 

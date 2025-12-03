@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from fastapi import UploadFile
 
-from src.exceptions import NotFoundException
+from src.common.exceptions import NotFoundException
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
 from src.sorting.models import SortParams

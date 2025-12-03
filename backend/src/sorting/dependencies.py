@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 
 from fastapi import Depends, Query
 
-from src.models import camel_to_snake
+from src.common.utils import camel_to_snake
 from src.sorting.models import SortParams
 
 

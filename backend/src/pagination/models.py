@@ -3,7 +3,7 @@ from typing import Generic, Optional, TypeVar
 from pydantic import BaseModel
 from sqlmodel import SQLModel
 
-from src.models import CamelModel
+from src.common.models import CamelModel
 
 
 class PaginationParams(BaseModel):
