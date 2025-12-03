@@ -5,13 +5,10 @@ from src.peaks.dependencies import peaks_service_dep
 from src.peaks.models import ReadPeak, ReadPeakWithDistance
 from src.sorting.dependencies import sort_params_dep
 
-router = APIRouter(
-    prefix="/api/peaks",
-    tags=["peaks"],
-)
+router = APIRouter(prefix="/api/peaks", tags=["peaks"])
 
 
-@router.get("", response_model=list[ReadPeak], tags=["peaks"])
+@router.get("", response_model=list[ReadPeak])
 async def get_peaks(service: peaks_service_dep):
     """
     Retrieve all peaks.
@@ -19,7 +16,7 @@ async def get_peaks(service: peaks_service_dep):
     return await service.get_all()
 
 
-@router.get("/count", response_model=int, tags=["peaks"])
+@router.get("/count", response_model=int)
 async def get_peaks_count(service: peaks_service_dep):
     """
     Retrieve the total count of peaks.
@@ -27,7 +24,7 @@ async def get_peaks_count(service: peaks_service_dep):
     return await service.get_count()
 
 
-@router.get("/search", response_model=list[ReadPeak], tags=["peaks"])
+@router.get("/search", response_model=list[ReadPeak])
 async def search_peaks(
     service: peaks_service_dep,
     sort_params: sort_params_dep,
@@ -42,7 +39,7 @@ async def search_peaks(
     )
 
 
-@router.get("/nearby", response_model=list[ReadPeakWithDistance], tags=["peaks"])
+@router.get("/nearby", response_model=list[ReadPeakWithDistance])
 async def find_nearby_peaks(
     service: peaks_service_dep,
     lat: float,
@@ -73,7 +70,7 @@ async def find_nearby_peaks(
     )
 
 
-@router.get("/{peak_id}", response_model=ReadPeak, tags=["peaks"])
+@router.get("/{peak_id}", response_model=ReadPeak)
 async def get_peak(peak_id: int, service: peaks_service_dep):
     """
     Get a specific peak by ID.

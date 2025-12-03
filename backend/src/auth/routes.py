@@ -5,10 +5,7 @@ from fastapi import APIRouter, Cookie, Form, HTTPException, Response, status
 from src.auth.dependencies import auth_service_dep, current_user_dep
 from src.users.models import UserCreate, UserRead
 
-router = APIRouter(
-    prefix="/api/auth",
-    tags=["auth"],
-)
+router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
