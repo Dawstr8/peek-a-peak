@@ -10,10 +10,12 @@ from src.sorting.models import SortParams
 from src.sorting.utils import apply_sorting
 
 
-class PhotosRepository(BaseRepository):
+class PhotosRepository(BaseRepository[SummitPhoto]):
     """
     Repository for SummitPhoto data access operations.
     """
+
+    model = SummitPhoto
 
     async def save(self, photo: SummitPhoto) -> SummitPhoto:
         """
@@ -29,18 +31,6 @@ class PhotosRepository(BaseRepository):
         await self.db.commit()
         await self.db.refresh(photo)
         return photo
-
-    async def get_by_id(self, photo_id: int) -> Optional[SummitPhoto]:
-        """
-        Get a specific photo by ID.
-
-        Args:
-            photo_id: ID of the photo to retrieve
-
-        Returns:
-            SummitPhoto if found, None otherwise
-        """
-        return await self.db.get(SummitPhoto, photo_id)
 
     async def get_all(
         self, sort_params: Optional[SortParams] = None
