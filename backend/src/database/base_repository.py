@@ -1,8 +1,11 @@
 from typing import Generic, Optional, Type, TypeVar
 
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from backend.src.sorting.models import SortParams
 from src.pagination.paginator import Paginator
+from src.sorting.utils import apply_sorting
 
 T = TypeVar("T")
 
@@ -16,3 +19,11 @@ class BaseRepository(Generic[T]):
 
     async def get_by_id(self, id: int) -> Optional[T]:
         return await self.db.get(self.model, id)
+
+    async def get_all(self, sort_params: Optional[SortParams] = None) -> list[T]:
+        statement = select(self.model)
+        if sort_params is not None:
+            statement = apply_sorting(statement, self.model, sort_params)
+
+        result = await self.db.exec(statement)
+        return result.all()

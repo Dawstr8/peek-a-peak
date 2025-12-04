@@ -129,16 +129,6 @@ class TestPeaksRepository(BaseRepositoryMixin):
         assert "uq_peak_name_elevation_mountain_range" in str(exc_info.value)
 
     @pytest.mark.asyncio
-    async def test_get_all(self, test_repository, db_peaks):
-        """Test retrieving all peaks"""
-        peaks = await test_repository.get_all()
-
-        assert len(peaks) == 3
-        assert any(peak.name == "Rysy" for peak in peaks)
-        assert any(peak.name == "Śnieżka" for peak in peaks)
-        assert any(peak.name == "Babia Góra" for peak in peaks)
-
-    @pytest.mark.asyncio
     async def test_get_all_without_location(self, test_repository, db_peaks):
         """Test retrieving peaks without location"""
         peak_without_location = Peak(

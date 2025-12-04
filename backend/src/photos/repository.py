@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from sqlalchemy.orm import load_only
 from sqlmodel import select
@@ -31,23 +31,6 @@ class PhotosRepository(BaseRepository[SummitPhoto]):
         await self.db.commit()
         await self.db.refresh(photo)
         return photo
-
-    async def get_all(
-        self, sort_params: Optional[SortParams] = None
-    ) -> List[SummitPhoto]:
-        """
-        Get all photos from the database, optionally sorted.
-
-        Args:
-            sort_params: Sorting parameters
-
-        Returns:
-            List of SummitPhoto objects
-        """
-        statement = select(SummitPhoto)
-        statement = apply_sorting(statement, SummitPhoto, sort_params)
-        result = await self.db.exec(statement)
-        return result.all()
 
     async def get_by_owner_id(
         self,

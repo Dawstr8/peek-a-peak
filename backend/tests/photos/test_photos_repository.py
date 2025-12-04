@@ -15,6 +15,7 @@ from tests.database.mixins import BaseRepositoryMixin
 
 class TestPhotosRepository(BaseRepositoryMixin):
     model_class = SummitPhoto
+    sort_by = "captured_at"
 
     @pytest.fixture()
     def test_repository(self, test_db):
@@ -46,41 +47,6 @@ class TestPhotosRepository(BaseRepositoryMixin):
         assert saved_photo.alt == 1720
         assert saved_photo.peak == db_peaks[0]
         assert saved_photo.peak.id == db_peaks[0].id
-
-    @pytest.mark.asyncio
-    async def test_get_all(self, test_repository, db_photos):
-        """Test retrieving all summit photos"""
-        photos = await test_repository.get_all(
-            sort_params=SortParams(sort_by=None, order=None)
-        )
-
-        assert photos is not None
-        assert len(photos) == len(db_photos)
-
-        photo_ids = [photo.id for photo in photos]
-        assert db_photos[0].id in photo_ids
-        assert db_photos[1].id in photo_ids
-        assert db_photos[2].id in photo_ids
-
-        first_photo = next(photo for photo in photos if photo.id == db_photos[0].id)
-        assert first_photo.file_name == db_photos[0].file_name
-        assert first_photo.peak_id == db_photos[0].peak_id
-        assert first_photo.peak is not None
-        assert first_photo.peak.id == db_photos[0].peak_id
-
-    @pytest.mark.asyncio
-    async def test_get_all_with_sorting(self, test_repository, db_photos):
-        """Test retrieving all summit photos with sorting parameters"""
-        photos_asc = await test_repository.get_all(
-            sort_params=SortParams(sort_by="captured_at", order="asc")
-        )
-        photos_desc = await test_repository.get_all(
-            sort_params=SortParams(sort_by="captured_at", order="desc")
-        )
-
-        assert len(photos_asc) == len(db_photos)
-        assert len(photos_desc) == len(db_photos)
-        assert photos_asc[0].id != photos_desc[0].id
 
     @pytest.mark.asyncio
     async def test_get_by_owner_id(self, test_repository, db_photos, db_user):
