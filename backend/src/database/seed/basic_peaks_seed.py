@@ -134,7 +134,7 @@ async def _get_or_create_mountain_range(
 
     name = mountain_range.name
 
-    existing_mountain_range = await repository.get_by_name(name)
+    existing_mountain_range = await repository.get_by_field("name", name)
     if existing_mountain_range:
         print(f"Found existing mountain range: {name}")
         return existing_mountain_range

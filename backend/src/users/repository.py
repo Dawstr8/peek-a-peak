@@ -55,15 +55,3 @@ class UsersRepository(BaseRepository[User]):
         await self.db.refresh(user)
 
         return user
-
-    async def get_by_email(self, email: str) -> User | None:
-        statement = select(User).where(User.email == email)
-
-        result = await self.db.exec(statement)
-        return result.first()
-
-    async def get_by_username(self, username: str) -> User | None:
-        statement = select(User).where(User.username == username)
-
-        result = await self.db.exec(statement)
-        return result.first()

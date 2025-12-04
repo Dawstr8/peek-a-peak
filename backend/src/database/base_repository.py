@@ -20,6 +20,11 @@ class BaseRepository(Generic[T]):
     async def get_by_id(self, id: int) -> Optional[T]:
         return await self.db.get(self.model, id)
 
+    async def get_by_field(self, field: str, value) -> Optional[T]:
+        statement = select(self.model).where(getattr(self.model, field) == value)
+        result = await self.db.exec(statement)
+        return result.first()
+
     async def get_all(self, sort_params: Optional[SortParams] = None) -> list[T]:
         statement = select(self.model)
         if sort_params is not None:

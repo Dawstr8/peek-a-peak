@@ -25,7 +25,7 @@ class UsersService:
         return await self.users_repository.get_by_id(owner_id)
 
     async def get_user_by_username(self, username: str) -> User:
-        user = await self.users_repository.get_by_username(username)
+        user = await self.users_repository.get_by_field("username", username)
         if not user:
             raise NotFoundException(f"User {username} not found.")
 

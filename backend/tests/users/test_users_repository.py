@@ -61,35 +61,3 @@ class TestUsersRepository(BaseRepositoryMixin):
 
         assert original_user.is_private is False
         assert updated_user.is_private is True
-
-    @pytest.mark.asyncio
-    async def test_get_by_email_existing_user(self, test_repository, db_user):
-        """Test getting an existing user by email."""
-        retrieved_user = await test_repository.get_by_email(db_user.email)
-
-        assert retrieved_user is not None
-        assert retrieved_user.id == db_user.id
-        assert retrieved_user.email == db_user.email
-
-    @pytest.mark.asyncio
-    async def test_get_by_email_non_existing_user(self, test_repository):
-        """Test getting a non-existing user by email returns None."""
-        retrieved_user = await test_repository.get_by_email("nonexistent@example.com")
-
-        assert retrieved_user is None
-
-    @pytest.mark.asyncio
-    async def test_get_by_username_existing_user(self, test_repository, db_user):
-        """Test getting an existing user by username."""
-        retrieved_user = await test_repository.get_by_username(db_user.username)
-
-        assert retrieved_user is not None
-        assert retrieved_user.id == db_user.id
-        assert retrieved_user.username == db_user.username
-
-    @pytest.mark.asyncio
-    async def test_get_by_username_non_existing_user(self, test_repository):
-        """Test getting a non-existing user by username returns None."""
-        retrieved_user = await test_repository.get_by_username("other_user")
-
-        assert retrieved_user is None
