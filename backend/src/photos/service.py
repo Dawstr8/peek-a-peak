@@ -21,13 +21,6 @@ class PhotosService:
         uploads_service: UploadsService,
         photos_repository: PhotosRepository,
     ):
-        """
-        Initialize the PhotosService
-
-        Args:
-            uploads_service: Service for handling file uploads and storage
-            photos_repository: Repository for database operations on photos
-        """
         self.uploads_service = uploads_service
         self.photos_repository = photos_repository
 

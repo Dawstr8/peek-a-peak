@@ -17,14 +17,6 @@ class AuthService:
         sessions_repository: SessionsRepository,
         password_service: PasswordService,
     ):
-        """
-        Initialize the AuthService.
-
-        Args:
-            users_repository: Repository for user data
-            sessions_repository: Repository for session management
-            password_service: Service for password hashing and verification
-        """
         self.users_repository = users_repository
         self.sessions_repository = sessions_repository
         self.password_service = password_service

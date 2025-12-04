@@ -13,12 +13,6 @@ class SessionsRepository:
     """
 
     def __init__(self, db: AsyncSession):
-        """
-        Initialize the SessionsRepository.
-
-        Args:
-            db: Database session
-        """
         self.db = db
 
     async def create(self, user_id: int, expires_in_days: int) -> UserSession:
