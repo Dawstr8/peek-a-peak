@@ -29,11 +29,6 @@ class PeaksRepository(BaseRepository[Peak]):
         self.db.add_all(peaks)
         await self.db.commit()
 
-    async def get_all(self) -> List[Peak]:
-        query = select(Peak)
-        result = await self.db.exec(query)
-        return result.all()
-
     async def get_all_without_location(self) -> List[Peak]:
         query = select(Peak).where(Peak.location.is_(None))
         result = await self.db.exec(query)
