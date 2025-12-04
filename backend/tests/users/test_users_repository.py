@@ -1,118 +1,95 @@
 import copy
 
 import pytest
-import pytest_asyncio
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.users.models import User, UserUpdate
 from src.users.repository import UsersRepository
+from tests.database.mixins import BaseRepositoryMixin
 
 
-@pytest_asyncio.fixture
-async def test_users_repository(test_db: AsyncSession) -> UsersRepository:
-    """Create a UsersRepository instance for testing."""
-    return UsersRepository(test_db)
+class TestUsersRepository(BaseRepositoryMixin):
+    model_class = User
+    sort_by = "username"
 
+    @pytest.fixture
+    def test_repository(self, test_db: AsyncSession) -> UsersRepository:
+        return UsersRepository(test_db)
 
-@pytest.mark.asyncio
-async def test_save_user_success(test_users_repository):
-    """Test saving a new user successfully."""
-    user = User(
-        email="test@example.com",
-        username="user",
-        username_display="User",
-        hashed_password="hash",
+    @pytest.fixture()
+    def db_items(self, db_users) -> list[User]:
+        return db_users
+
+    @pytest.fixture()
+    def new_item(self) -> User:
+        return User(
+            email="new@example.com",
+            username="newuser",
+            username_display="New User",
+            hashed_password="newhash",
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "field, error_message",
+        [
+            ("email", "Email is already in use."),
+            ("username", "Username is already taken."),
+        ],
     )
+    async def test_save_unique_constraint_violation(
+        self, test_repository, db_user, new_item, field, error_message
+    ):
+        setattr(new_item, field, getattr(db_user, field))
 
-    saved_user = await test_users_repository.save(user)
+        with pytest.raises(ValueError, match=error_message):
+            await test_repository.save(new_item)
 
-    assert saved_user.id is not None
-    assert saved_user.email == "test@example.com"
+    @pytest.mark.asyncio
+    async def test_update_success(self, test_repository, db_user):
+        """Test updating an existing user successfully and not overriding other fields."""
+        original_user = copy.deepcopy(db_user)
 
+        updated_user = await test_repository.update(
+            db_user.id, UserUpdate(is_private=True)
+        )
 
-@pytest.mark.asyncio
-async def test_save_user_duplicate_email(test_users_repository, db_user):
-    """Test saving a user with a duplicate email raises ValueError."""
-    username = "other_user"
+        assert updated_user.id == original_user.id
+        assert updated_user.email == original_user.email
+        assert updated_user.username == original_user.username
+        assert updated_user.username_display == original_user.username_display
 
-    new_user = User(
-        email=db_user.email,
-        username=username,
-        username_display=username,
-        hashed_password="hash2",
-    )
+        assert original_user.is_private is False
+        assert updated_user.is_private is True
 
-    with pytest.raises(ValueError) as exc:
-        await test_users_repository.save(new_user)
+    @pytest.mark.asyncio
+    async def test_get_by_email_existing_user(self, test_repository, db_user):
+        """Test getting an existing user by email."""
+        retrieved_user = await test_repository.get_by_email(db_user.email)
 
-    assert "Email is already in use" in str(exc.value)
+        assert retrieved_user is not None
+        assert retrieved_user.id == db_user.id
+        assert retrieved_user.email == db_user.email
 
+    @pytest.mark.asyncio
+    async def test_get_by_email_non_existing_user(self, test_repository):
+        """Test getting a non-existing user by email returns None."""
+        retrieved_user = await test_repository.get_by_email("nonexistent@example.com")
 
-@pytest.mark.asyncio
-async def test_save_user_duplicate_username(test_users_repository, db_user):
-    """Test saving a user with a duplicate username raises ValueError."""
-    new_user = User(
-        email="other@example.com",
-        username=db_user.username,
-        username_display=db_user.username_display,
-        hashed_password="hash2",
-    )
+        assert retrieved_user is None
 
-    with pytest.raises(ValueError) as exc:
-        await test_users_repository.save(new_user)
+    @pytest.mark.asyncio
+    async def test_get_by_username_existing_user(self, test_repository, db_user):
+        """Test getting an existing user by username."""
+        retrieved_user = await test_repository.get_by_username(db_user.username)
 
-    assert "Username is already taken" in str(exc.value)
+        assert retrieved_user is not None
+        assert retrieved_user.id == db_user.id
+        assert retrieved_user.username == db_user.username
 
+    @pytest.mark.asyncio
+    async def test_get_by_username_non_existing_user(self, test_repository):
+        """Test getting a non-existing user by username returns None."""
+        retrieved_user = await test_repository.get_by_username("other_user")
 
-@pytest.mark.asyncio
-async def test_update_success(test_users_repository, db_user):
-    """Test updating an existing user successfully and not overriding other fields."""
-    original_user = copy.deepcopy(db_user)
-
-    updated_user = await test_users_repository.update(
-        db_user.id, UserUpdate(is_private=True)
-    )
-
-    assert updated_user.id == original_user.id
-    assert updated_user.email == original_user.email
-    assert updated_user.username == original_user.username
-    assert updated_user.username_display == original_user.username_display
-
-    assert original_user.is_private is False
-    assert updated_user.is_private is True
-
-
-@pytest.mark.asyncio
-async def test_get_by_email_existing_user(test_users_repository, db_user):
-    """Test getting an existing user by email."""
-    retrieved_user = await test_users_repository.get_by_email(db_user.email)
-
-    assert retrieved_user is not None
-    assert retrieved_user.id == db_user.id
-    assert retrieved_user.email == db_user.email
-
-
-@pytest.mark.asyncio
-async def test_get_by_email_non_existing_user(test_users_repository):
-    """Test getting a non-existing user by email returns None."""
-    retrieved_user = await test_users_repository.get_by_email("nonexistent@example.com")
-
-    assert retrieved_user is None
-
-
-@pytest.mark.asyncio
-async def test_get_by_username_existing_user(test_users_repository, db_user):
-    """Test getting an existing user by username."""
-    retrieved_user = await test_users_repository.get_by_username(db_user.username)
-
-    assert retrieved_user is not None
-    assert retrieved_user.id == db_user.id
-    assert retrieved_user.username == db_user.username
-
-
-@pytest.mark.asyncio
-async def test_get_by_username_non_existing_user(test_users_repository):
-    """Test getting a non-existing user by username returns None."""
-    retrieved_user = await test_users_repository.get_by_username("other_user")
-
-    assert retrieved_user is None
+        assert retrieved_user is None

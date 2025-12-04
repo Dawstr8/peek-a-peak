@@ -13,6 +13,18 @@ class UsersRepository(BaseRepository[User]):
     model = User
 
     async def save(self, user: User) -> User:
+        """
+        Save a user with proper integrity constraint handling.
+
+        Args:
+            user: User instance to save
+
+        Returns:
+            The saved User object
+
+        Raises:
+            ValueError: If email or username constraints are violated
+        """
         self.db.add(user)
         try:
             await self.db.commit()

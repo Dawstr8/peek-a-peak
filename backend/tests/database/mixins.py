@@ -1,6 +1,7 @@
 from typing import Type
 
 import pytest
+from pytest_lazy_fixtures import lazy_fixture as lf
 
 from src.database.base_repository import BaseRepository
 from src.sorting.models import SortParams
@@ -9,6 +10,8 @@ from src.sorting.models import SortParams
 class BaseRepositoryMixin:
     model_class: Type = None
     sort_by = "id"
+    unique_fields = []
+    unique_keys = []
 
     @pytest.fixture()
     def test_repository(self) -> BaseRepository:
@@ -18,6 +21,11 @@ class BaseRepositoryMixin:
     @pytest.fixture()
     def db_items(self):
         """Retrieve test items from fixtures based on model_class"""
+        pass
+
+    @pytest.fixture()
+    def new_item(self):
+        """Create a new instance of the model_class for testing"""
         pass
 
     @pytest.mark.asyncio
@@ -78,3 +86,36 @@ class BaseRepositoryMixin:
             assert isinstance(result_item, self.model_class)
             assert result_item.id == db_item.id
             assert result_item == db_item
+
+    @pytest.mark.asyncio
+    async def test_save(self, test_repository, new_item):
+        """Test saving a new item"""
+        saved_item = await test_repository.save(new_item)
+
+        assert saved_item is not None
+        assert isinstance(saved_item, self.model_class)
+        assert saved_item.id is not None
+        assert saved_item == new_item
+
+    @pytest.mark.asyncio
+    async def test_save_unique_constraint_violation(
+        self, test_repository, db_items, new_item
+    ):
+        for field in self.unique_fields:
+            db_item = db_items[0]
+            setattr(new_item, field, getattr(db_item, field))
+
+            with pytest.raises(Exception):
+                await test_repository.save(new_item)
+
+    @pytest.mark.asyncio
+    async def test_save_unique_constraint_violation_multiple_fields(
+        self, test_repository, db_items, new_item
+    ):
+        for keys in self.unique_keys:
+            db_item = db_items[0]
+            for key in keys:
+                setattr(new_item, key, getattr(db_item, key))
+
+            with pytest.raises(Exception):
+                await test_repository.save(new_item)

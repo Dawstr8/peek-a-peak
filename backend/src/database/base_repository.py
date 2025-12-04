@@ -3,8 +3,8 @@ from typing import Generic, Optional, Type, TypeVar
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from backend.src.sorting.models import SortParams
 from src.pagination.paginator import Paginator
+from src.sorting.models import SortParams
 from src.sorting.utils import apply_sorting
 
 T = TypeVar("T")
@@ -27,3 +27,9 @@ class BaseRepository(Generic[T]):
 
         result = await self.db.exec(statement)
         return result.all()
+
+    async def save(self, obj: T) -> T:
+        self.db.add(obj)
+        await self.db.commit()
+        await self.db.refresh(obj)
+        return obj

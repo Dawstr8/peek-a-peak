@@ -19,12 +19,6 @@ from src.sorting.utils import apply_sorting
 class PeaksRepository(BaseRepository[Peak]):
     model = Peak
 
-    async def save(self, peak: Peak) -> Peak:
-        self.db.add(peak)
-        await self.db.commit()
-        await self.db.refresh(peak)
-        return peak
-
     async def save_multiple(self, peaks: List[Peak]) -> None:
         self.db.add_all(peaks)
         await self.db.commit()

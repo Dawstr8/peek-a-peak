@@ -17,21 +17,6 @@ class PhotosRepository(BaseRepository[SummitPhoto]):
 
     model = SummitPhoto
 
-    async def save(self, photo: SummitPhoto) -> SummitPhoto:
-        """
-        Save a photo to the database.
-
-        Args:
-            photo: The SummitPhoto to save
-
-        Returns:
-            The saved SummitPhoto with database ID assigned
-        """
-        self.db.add(photo)
-        await self.db.commit()
-        await self.db.refresh(photo)
-        return photo
-
     async def get_by_owner_id(
         self,
         owner_id: int,
