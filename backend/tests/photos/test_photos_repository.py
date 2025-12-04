@@ -5,6 +5,7 @@ Tests for the PhotosRepository
 from datetime import datetime, timezone
 
 import pytest
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhoto
@@ -18,17 +19,16 @@ class TestPhotosRepository(BaseRepositoryMixin):
     sort_by = "captured_at"
 
     @pytest.fixture()
-    def test_repository(self, test_db):
+    def test_repository(self, test_db: AsyncSession) -> PhotosRepository:
         return PhotosRepository(test_db)
 
     @pytest.fixture()
-    def db_items(self, db_photos):
+    def db_items(self, db_photos) -> list[SummitPhoto]:
         return db_photos
 
-    @pytest.mark.asyncio
-    async def test_save(self, test_repository, db_peaks, db_user):
-        """Test saving a new summit photo"""
-        new_photo = SummitPhoto(
+    @pytest.fixture()
+    def new_item(self, db_user, db_peaks) -> SummitPhoto:
+        return SummitPhoto(
             owner_id=db_user.id,
             file_name="new_photo.jpg",
             captured_at=datetime(2025, 10, 5, 9, 0, tzinfo=timezone.utc),
@@ -36,17 +36,6 @@ class TestPhotosRepository(BaseRepositoryMixin):
             alt=1720,
             peak_id=db_peaks[0].id,
         )
-
-        saved_photo = await test_repository.save(new_photo)
-
-        assert saved_photo.id is not None
-        assert saved_photo.file_name == "new_photo.jpg"
-        assert saved_photo.captured_at == datetime(
-            2025, 10, 5, 9, 0, tzinfo=timezone.utc
-        )
-        assert saved_photo.alt == 1720
-        assert saved_photo.peak == db_peaks[0]
-        assert saved_photo.peak.id == db_peaks[0].id
 
     @pytest.mark.asyncio
     async def test_get_by_owner_id(self, test_repository, db_photos, db_user):

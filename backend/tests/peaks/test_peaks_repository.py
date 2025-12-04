@@ -3,6 +3,7 @@ Tests for the PeaksRepository
 """
 
 import pytest
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.mountain_ranges.models import MountainRange
 from src.peaks.models import Peak
@@ -13,58 +14,23 @@ from tests.database.mixins import BaseRepositoryMixin
 
 class TestPeaksRepository(BaseRepositoryMixin):
     model_class = Peak
+    unique_keys = [("name", "elevation", "mountain_range_id")]
 
     @pytest.fixture()
-    def test_repository(self, test_db):
+    def test_repository(self, test_db: AsyncSession) -> PeaksRepository:
         return PeaksRepository(test_db)
 
     @pytest.fixture()
-    def db_items(self, db_peaks):
+    def db_items(self, db_peaks) -> list[Peak]:
         return db_peaks
 
-    @pytest.mark.asyncio
-    async def test_save(self, test_repository, db_mountain_ranges):
-        """Test saving a single peak"""
-        peak = Peak(
-            name="Test Peak",
-            elevation=2000,
+    @pytest.fixture()
+    def new_item(self, db_mountain_ranges) -> Peak:
+        return Peak(
+            name="New Peak",
+            elevation=2500,
             mountain_range_id=db_mountain_ranges[0].id,
         )
-
-        saved_peak = await test_repository.save(peak)
-
-        assert saved_peak.id is not None
-        assert saved_peak.name == "Test Peak"
-        assert saved_peak.elevation == 2000
-        assert saved_peak.mountain_range_id == db_mountain_ranges[0].id
-
-    @pytest.mark.asyncio
-    async def test_save_duplicate_name_elevation_and_mountain_range_raises_error(
-        self, test_repository, db_mountain_ranges
-    ):
-        """Test unique constraint when saving a single peak"""
-        name = "Unique Peak"
-        elevation = 3000
-        mountain_range_id = db_mountain_ranges[0].id
-
-        peak1 = Peak(
-            name=name,
-            elevation=elevation,
-            mountain_range_id=mountain_range_id,
-        )
-
-        peak2 = Peak(
-            name=name,
-            elevation=elevation,
-            mountain_range_id=mountain_range_id,
-        )
-
-        await test_repository.save(peak1)
-
-        with pytest.raises(Exception) as exc_info:
-            await test_repository.save(peak2)
-
-        assert "uq_peak_name_elevation_mountain_range" in str(exc_info.value)
 
     @pytest.mark.asyncio
     async def test_save_multiple(self, test_repository, db_mountain_ranges):
