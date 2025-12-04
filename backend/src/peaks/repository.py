@@ -8,18 +8,15 @@ from geoalchemy2.functions import (
     ST_SetSRID,
 )
 from sqlmodel import func, select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.database.base_repository import BaseRepository
 from src.peaks.models import Peak, PeakWithDistance
 from src.photos.models import SummitPhoto
 from src.sorting.models import SortParams
 from src.sorting.utils import apply_sorting
 
 
-class PeaksRepository:
-
-    def __init__(self, db: AsyncSession):
-        self.db = db
+class PeaksRepository(BaseRepository):
 
     async def save(self, peak: Peak) -> Peak:
         self.db.add(peak)

@@ -1,17 +1,14 @@
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.database.base_repository import BaseRepository
 from src.users.models import User, UserUpdate
 
 
-class UsersRepository:
+class UsersRepository(BaseRepository):
     """
     Repository for User data access operations.
     """
-
-    def __init__(self, db: AsyncSession):
-        self.db = db
 
     async def save(self, user: User) -> User:
         self.db.add(user)

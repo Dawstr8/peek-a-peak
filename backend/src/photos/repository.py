@@ -2,23 +2,18 @@ from typing import List, Optional
 
 from sqlalchemy.orm import load_only
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.database.base_repository import BaseRepository
 from src.pagination.models import PaginatedResponse, PaginationParams
-from src.pagination.paginator import Paginator
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.sorting.models import SortParams
 from src.sorting.utils import apply_sorting
 
 
-class PhotosRepository:
+class PhotosRepository(BaseRepository):
     """
     Repository for SummitPhoto data access operations.
     """
-
-    def __init__(self, db: AsyncSession):
-        self.db = db
-        self.paginator = Paginator(db)
 
     async def save(self, photo: SummitPhoto) -> SummitPhoto:
         """
