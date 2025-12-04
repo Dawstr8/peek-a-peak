@@ -46,6 +46,26 @@ class BaseRepositoryMixin:
         assert result_item == db_item
 
     @pytest.mark.asyncio
+    async def test_get_by_field_not_found(self, test_repository):
+        result_item = await test_repository.get_by_field("id", -1)
+
+        assert result_item is None
+
+    @pytest.mark.asyncio
+    async def test_get_by_field_found(self, test_repository, db_items):
+        for field in self.unique_fields:
+            db_item = db_items[0]
+
+            result_item = await test_repository.get_by_field(
+                field, getattr(db_item, field)
+            )
+
+            assert result_item is not None
+            assert isinstance(result_item, self.model_class)
+            assert result_item.id == db_item.id
+            assert result_item == db_item
+
+    @pytest.mark.asyncio
     async def test_get_all_empty(self, test_repository):
         result_items = await test_repository.get_all()
 

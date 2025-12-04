@@ -59,12 +59,12 @@ async def test_authenticate_user_wrong_password(service, mock_user):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "email_or_username_fn,called_mock,not_called_mock",
+    "email_or_username_fn,field_called_mock",
     [
-        (lambda u: u.email, "get_by_email", "get_by_username"),
-        (lambda u: u.email.upper(), "get_by_email", "get_by_username"),
-        (lambda u: u.username, "get_by_username", "get_by_email"),
-        (lambda u: u.username.upper(), "get_by_username", "get_by_email"),
+        (lambda u: u.email, "email"),
+        (lambda u: u.email.upper(), "email"),
+        (lambda u: u.username, "username"),
+        (lambda u: u.username.upper(), "username"),
     ],
 )
 async def test_authenticate_user_success(
@@ -72,8 +72,7 @@ async def test_authenticate_user_success(
     mock_user,
     mock_users_repository,
     email_or_username_fn,
-    called_mock,
-    not_called_mock,
+    field_called_mock,
 ):
     """Test successful user authentication."""
     email_or_username = email_or_username_fn(mock_user)
@@ -81,10 +80,9 @@ async def test_authenticate_user_success(
     result = await service.authenticate_user(email_or_username, "correct_password")
 
     assert result == mock_user
-    getattr(mock_users_repository, called_mock).assert_called_with(
-        email_or_username.lower()
+    mock_users_repository.get_by_field.assert_called_once_with(
+        field_called_mock, email_or_username.lower()
     )
-    getattr(mock_users_repository, not_called_mock).assert_not_called()
 
 
 @pytest.mark.asyncio

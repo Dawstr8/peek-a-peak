@@ -37,9 +37,9 @@ class AuthService:
         email_or_username = email_or_username.lower()
 
         user = (
-            await self.users_repository.get_by_email(email_or_username)
+            await self.users_repository.get_by_field("email", email_or_username)
             if "@" in email_or_username
-            else await self.users_repository.get_by_username(email_or_username)
+            else await self.users_repository.get_by_field("username", email_or_username)
         )
 
         if not user:
