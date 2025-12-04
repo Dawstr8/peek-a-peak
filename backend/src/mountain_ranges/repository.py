@@ -1,14 +1,12 @@
 from typing import Optional
 
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.database.base_repository import BaseRepository
 from src.mountain_ranges.models import MountainRange
 
 
-class MountainRangesRepository:
-    def __init__(self, db: AsyncSession):
-        self.db = db
+class MountainRangesRepository(BaseRepository):
 
     async def save(self, mountain_range: MountainRange) -> MountainRange:
         self.db.add(mountain_range)

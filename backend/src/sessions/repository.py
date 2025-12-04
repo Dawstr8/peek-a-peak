@@ -2,18 +2,15 @@ from datetime import datetime, timedelta
 from uuid import UUID
 
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.database.base_repository import BaseRepository
 from src.sessions.models import Session as UserSession
 
 
-class SessionsRepository:
+class SessionsRepository(BaseRepository):
     """
     Repository for managing user sessions.
     """
-
-    def __init__(self, db: AsyncSession):
-        self.db = db
 
     async def create(self, user_id: int, expires_in_days: int) -> UserSession:
         """
