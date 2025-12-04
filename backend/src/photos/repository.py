@@ -17,12 +17,6 @@ class PhotosRepository:
     """
 
     def __init__(self, db: AsyncSession):
-        """
-        Initialize the PhotosRepository.
-
-        Args:
-            db: Database session
-        """
         self.db = db
         self.paginator = Paginator(db)
 

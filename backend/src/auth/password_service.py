@@ -7,9 +7,6 @@ class PasswordService:
     """
 
     def __init__(self):
-        """
-        Initialize the PasswordService.
-        """
         self.password_hash = PasswordHash.recommended()
 
     def get_hash(self, password: str) -> str:

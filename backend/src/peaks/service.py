@@ -17,12 +17,6 @@ class PeaksService:
     """
 
     def __init__(self, peaks_repository: PeaksRepository):
-        """
-        Initialize the PeaksService
-
-        Args:
-            peaks_repository: Repository for accessing peak data
-        """
         self.peaks_repository = peaks_repository
 
     async def get_all(self) -> List[Peak]:

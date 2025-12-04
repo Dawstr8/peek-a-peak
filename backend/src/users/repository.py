@@ -11,12 +11,6 @@ class UsersRepository:
     """
 
     def __init__(self, db: AsyncSession):
-        """
-        Initialize the UsersRepository.
-
-        Args:
-            db: Database session
-        """
         self.db = db
 
     async def save(self, user: User) -> User:
