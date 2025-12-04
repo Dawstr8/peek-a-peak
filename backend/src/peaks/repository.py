@@ -16,7 +16,8 @@ from src.sorting.models import SortParams
 from src.sorting.utils import apply_sorting
 
 
-class PeaksRepository(BaseRepository):
+class PeaksRepository(BaseRepository[Peak]):
+    model = Peak
 
     async def save(self, peak: Peak) -> Peak:
         self.db.add(peak)
@@ -52,9 +53,6 @@ class PeaksRepository(BaseRepository):
         )
         result = await self.db.exec(query)
         return result.one()
-
-    async def get_by_id(self, peak_id: int) -> Optional[Peak]:
-        return await self.db.get(Peak, peak_id)
 
     async def get_by_name_elevation_and_mountain_range(
         self, peak_name: str, elevation: int, mountain_range_id: int

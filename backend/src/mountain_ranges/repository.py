@@ -6,7 +6,8 @@ from src.database.base_repository import BaseRepository
 from src.mountain_ranges.models import MountainRange
 
 
-class MountainRangesRepository(BaseRepository):
+class MountainRangesRepository(BaseRepository[MountainRange]):
+    model = MountainRange
 
     async def save(self, mountain_range: MountainRange) -> MountainRange:
         self.db.add(mountain_range)

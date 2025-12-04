@@ -5,10 +5,12 @@ from src.database.base_repository import BaseRepository
 from src.users.models import User, UserUpdate
 
 
-class UsersRepository(BaseRepository):
+class UsersRepository(BaseRepository[User]):
     """
     Repository for User data access operations.
     """
+
+    model = User
 
     async def save(self, user: User) -> User:
         self.db.add(user)
@@ -41,12 +43,6 @@ class UsersRepository(BaseRepository):
         await self.db.refresh(user)
 
         return user
-
-    async def get_by_id(self, user_id: int) -> User | None:
-        statement = select(User).where(User.id == user_id)
-
-        result = await self.db.exec(statement)
-        return result.first()
 
     async def get_by_email(self, email: str) -> User | None:
         statement = select(User).where(User.email == email)

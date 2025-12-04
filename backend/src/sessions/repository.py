@@ -7,10 +7,12 @@ from src.database.base_repository import BaseRepository
 from src.sessions.models import Session as UserSession
 
 
-class SessionsRepository(BaseRepository):
+class SessionsRepository(BaseRepository[UserSession]):
     """
     Repository for managing user sessions.
     """
+
+    model = UserSession
 
     async def create(self, user_id: int, expires_in_days: int) -> UserSession:
         """
