@@ -31,24 +31,25 @@ class AuthService:
             The authenticated User object.
 
         Raises:
-            NotFoundException: If the user is not found.
-            InvalidCredentialsException: If the password is incorrect.
+            InvalidCredentialsException: If authentication fails.
         """
         email_or_username = email_or_username.lower()
 
-        user = (
-            await self.users_repository.get_by_field("email", email_or_username)
-            if "@" in email_or_username
-            else await self.users_repository.get_by_field("username", email_or_username)
-        )
+        try:
+            user = (
+                await self.users_repository.get_by_field("email", email_or_username)
+                if "@" in email_or_username
+                else await self.users_repository.get_by_field(
+                    "username", email_or_username
+                )
+            )
 
-        if not user:
-            raise NotFoundException("User not found")
+            if not self.password_service.verify(password, user.hashed_password):
+                raise InvalidCredentialsException()
 
-        if not self.password_service.verify(password, user.hashed_password):
+            return user
+        except NotFoundException:
             raise InvalidCredentialsException()
-
-        return user
 
     async def register_user(self, user_create: UserCreate) -> User:
         """Register a new user."""
@@ -74,13 +75,10 @@ class AuthService:
         Raises:
             InvalidCredentialsException: If authentication fails.
         """
-        try:
-            user = await self.authenticate_user(email_or_username, password)
-            session = await self.sessions_repository.create(user.id, expires_in_days=30)
+        user = await self.authenticate_user(email_or_username, password)
+        session = await self.sessions_repository.create(user.id, expires_in_days=30)
 
-            return session.id
-        except (InvalidCredentialsException, NotFoundException):
-            raise InvalidCredentialsException()
+        return session.id
 
     async def logout_user(self, session_id: UUID) -> None:
         """Log out a user by invalidating their session."""
@@ -95,13 +93,10 @@ class AuthService:
 
         Raises:
             NotFoundException: If the session is invalid or expired.
+            NotFoundException: If the user is not found.
         """
         session = await self.sessions_repository.get_active_by_id(session_id)
         if not session:
             raise NotFoundException("Invalid or expired session")
 
-        user = await self.users_repository.get_by_id(session.user_id)
-        if not user:
-            raise NotFoundException("User not found")
-
-        return user
+        return await self.users_repository.get_by_id(session.user_id)

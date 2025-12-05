@@ -208,18 +208,18 @@ async def test_get_photo_by_id(client_with_db, e2e_photo):
 
 
 @pytest.mark.asyncio
-async def test_get_photo_by_id_get_nonexistent_photo(client_with_db, logged_in_user):
+async def test_get_photo_by_id_not_found(client_with_db, logged_in_user):
     """Test getting a photo that doesn't exist"""
     id = 9999
 
     resp = await client_with_db.get(f"/api/photos/{id}")
 
     assert resp.status_code == 404
-    assert resp.json()["detail"] == f"Photo with ID {id} not found"
+    assert resp.json()["detail"] == f"SummitPhoto with id {id} not found."
 
 
 @pytest.mark.asyncio
-async def test_delete_photo_success(client_with_db, e2e_photo):
+async def test_delete_photo(client_with_db, e2e_photo):
     """Test deleting a photo successfully"""
     photo_id = e2e_photo["id"]
     file_path = f"test_uploads/{e2e_photo['fileName']}"
@@ -232,11 +232,11 @@ async def test_delete_photo_success(client_with_db, e2e_photo):
 
 
 @pytest.mark.asyncio
-async def test_delete_nonexistent_photo(client_with_db, logged_in_user):
+async def test_delete_photo_not_found(client_with_db, logged_in_user):
     """Test deleting a photo that doesn't exist"""
     id = 9999
 
     resp = await client_with_db.delete(f"/api/photos/{id}")
 
     assert resp.status_code == 404
-    assert resp.json()["detail"] == f"Photo with ID {id} not found"
+    assert resp.json()["detail"] == f"SummitPhoto with id {id} not found."

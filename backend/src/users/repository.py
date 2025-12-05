@@ -43,9 +43,6 @@ class UsersRepository(BaseRepository[User]):
 
     async def update(self, user_id: int, user_update: UserUpdate) -> User:
         user = await self.get_by_id(user_id)
-        if not user:
-            raise ValueError("User not found.")
-
         user_data = user_update.model_dump(exclude_unset=True)
         for key, value in user_data.items():
             setattr(user, key, value)

@@ -22,14 +22,19 @@ class UsersService:
         self.peaks_repository = peaks_repository
 
     async def get_user(self, owner_id: int) -> User:
+        """
+        Retrieve a user by their ID.
+
+        Returns:
+            User with the given ID
+
+        Raises:
+            NotFoundException: If no user with the given ID exists
+        """
         return await self.users_repository.get_by_id(owner_id)
 
     async def get_user_by_username(self, username: str) -> User:
-        user = await self.users_repository.get_by_field("username", username)
-        if not user:
-            raise NotFoundException(f"User {username} not found.")
-
-        return user
+        return await self.users_repository.get_by_field("username", username)
 
     async def update_user(self, owner_id: int, user_update: UserUpdate) -> User:
         return await self.users_repository.update(owner_id, user_update)

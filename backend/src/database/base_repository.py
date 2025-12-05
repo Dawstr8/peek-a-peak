@@ -3,6 +3,7 @@ from typing import Generic, Optional, Type, TypeVar
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.common.exceptions import NotFoundException
 from src.pagination.paginator import Paginator
 from src.sorting.models import SortParams
 from src.sorting.utils import apply_sorting
@@ -17,13 +18,23 @@ class BaseRepository(Generic[T]):
         self.db = db
         self.paginator = Paginator(db)
 
-    async def get_by_id(self, id: int) -> Optional[T]:
-        return await self.db.get(self.model, id)
+    async def get_by_id(self, id: int) -> T:
+        obj = await self.db.get(self.model, id)
+        if obj is None:
+            raise NotFoundException(f"{self.model.__name__} with id {id} not found.")
 
-    async def get_by_field(self, field: str, value) -> Optional[T]:
+        return obj
+
+    async def get_by_field(self, field: str, value) -> T:
         statement = select(self.model).where(getattr(self.model, field) == value)
         result = await self.db.exec(statement)
-        return result.first()
+        obj = result.first()
+        if obj is None:
+            raise NotFoundException(
+                f"{self.model.__name__} with {field}={value} not found."
+            )
+
+        return obj
 
     async def get_all(self, sort_params: Optional[SortParams] = None) -> list[T]:
         statement = select(self.model)

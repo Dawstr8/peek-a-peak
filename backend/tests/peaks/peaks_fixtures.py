@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
+from src.common.exceptions import NotFoundException
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
 from src.sorting.models import SortParams
@@ -75,7 +76,7 @@ def mock_peaks_repository(mock_peaks_map, coords_map) -> PeaksRepository:
             if peak.id == peak_id:
                 return peak
 
-        return None
+        raise NotFoundException(f"Peak with id {peak_id} not found.")
 
     async def search(
         sort_params: Optional[SortParams] = None,
