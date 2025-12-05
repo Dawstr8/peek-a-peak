@@ -170,7 +170,7 @@ async def _save_or_update_peaks(
             await repository.save(existing_peak)
             peaks_updated += 1
 
-    await repository.save_multiple(peaks_to_add)
+    await repository.save_all(peaks_to_add)
 
     if len(peaks_to_add) > 0:
         print(f"Added {len(peaks_to_add)} new peaks to {mountain_range.name}")

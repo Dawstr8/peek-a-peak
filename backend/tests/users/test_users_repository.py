@@ -29,6 +29,15 @@ class TestUsersRepository(BaseRepositoryMixin):
             hashed_password="newhash",
         )
 
+    @pytest.fixture()
+    def updated_item(self) -> User:
+        return User(
+            email="updated@example.com",
+            username="updateduser",
+            username_display="Updated User",
+            hashed_password="updatedhash",
+        )
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "field, error_message",

@@ -37,6 +37,17 @@ class TestPhotosRepository(BaseRepositoryMixin):
             peak_id=db_peaks[0].id,
         )
 
+    @pytest.fixture()
+    def updated_item(self, db_user, db_peaks) -> SummitPhoto:
+        return SummitPhoto(
+            owner_id=db_user.id,
+            file_name="updated_photo.jpg",
+            captured_at=datetime(2025, 11, 15, 10, 30, tzinfo=timezone.utc),
+            location="POINT(19.5400 49.5800)",
+            alt=1750,
+            peak_id=db_peaks[1].id,
+        )
+
     @pytest.mark.asyncio
     async def test_get_by_owner_id(self, test_repository, db_photos, db_user):
         """Test retrieving all summit photos"""

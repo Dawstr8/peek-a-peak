@@ -111,51 +111,46 @@ async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto
     """
     photos_repo = PhotosRepository(test_db)
 
-    photos = [
-        SummitPhoto(
-            owner_id=db_users[0].id,
-            file_name="test1.jpg",
-            uploaded_at=datetime.now(),
-            captured_at=datetime(2025, 9, 30, 10, 0, tzinfo=timezone.utc),
-            location=f"POINT({coords_map['near_rysy'][1]} {coords_map['near_rysy'][0]})",
-            alt=2495,
-            peak_id=db_peaks[0].id,
-        ),
-        SummitPhoto(
-            owner_id=db_users[0].id,
-            file_name="test2.jpg",
-            uploaded_at=datetime.now(),
-            captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
-            location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
-            alt=1600,
-            peak_id=db_peaks[1].id,
-        ),
-        SummitPhoto(
-            owner_id=db_users[1].id,
-            file_name="test3.jpg",
-            uploaded_at=datetime.now(),
-            captured_at=datetime(2025, 11, 1, 11, 0, tzinfo=timezone.utc),
-            location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
-            alt=1600,
-            peak_id=db_peaks[1].id,
-        ),
-        SummitPhoto(
-            owner_id=db_users[0].id,
-            file_name="test4.jpg",
-            uploaded_at=datetime.now(),
-            captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
-            location=None,
-            alt=None,
-            peak_id=None,
-        ),
-    ]
-
-    saved_photos = []
-    for photo in photos:
-        saved_photo = await photos_repo.save(photo)
-        saved_photos.append(saved_photo)
-
-    return saved_photos
+    return await photos_repo.save_all(
+        [
+            SummitPhoto(
+                owner_id=db_users[0].id,
+                file_name="test1.jpg",
+                uploaded_at=datetime.now(),
+                captured_at=datetime(2025, 9, 30, 10, 0, tzinfo=timezone.utc),
+                location=f"POINT({coords_map['near_rysy'][1]} {coords_map['near_rysy'][0]})",
+                alt=2495,
+                peak_id=db_peaks[0].id,
+            ),
+            SummitPhoto(
+                owner_id=db_users[0].id,
+                file_name="test2.jpg",
+                uploaded_at=datetime.now(),
+                captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
+                location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
+                alt=1600,
+                peak_id=db_peaks[1].id,
+            ),
+            SummitPhoto(
+                owner_id=db_users[1].id,
+                file_name="test3.jpg",
+                uploaded_at=datetime.now(),
+                captured_at=datetime(2025, 11, 1, 11, 0, tzinfo=timezone.utc),
+                location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
+                alt=1600,
+                peak_id=db_peaks[1].id,
+            ),
+            SummitPhoto(
+                owner_id=db_users[0].id,
+                file_name="test4.jpg",
+                uploaded_at=datetime.now(),
+                captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
+                location=None,
+                alt=None,
+                peak_id=None,
+            ),
+        ]
+    )
 
 
 @pytest_asyncio.fixture

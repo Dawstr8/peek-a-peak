@@ -1,7 +1,7 @@
 from typing import Type
 
 import pytest
-from pytest_lazy_fixtures import lazy_fixture as lf
+from sqlalchemy.exc import IntegrityError
 
 from src.database.base_repository import BaseRepository
 from src.sorting.models import SortParams
@@ -26,6 +26,11 @@ class BaseRepositoryMixin:
     @pytest.fixture()
     def new_item(self):
         """Create a new instance of the model_class for testing"""
+        pass
+
+    @pytest.fixture()
+    def updated_item(self):
+        """Create an updated instance of the model_class for testing"""
         pass
 
     @pytest.mark.asyncio
@@ -125,8 +130,10 @@ class BaseRepositoryMixin:
             db_item = db_items[0]
             setattr(new_item, field, getattr(db_item, field))
 
-            with pytest.raises(Exception):
+            with pytest.raises(IntegrityError) as exc_info:
                 await test_repository.save(new_item)
+
+            assert getattr(exc_info.value.orig, "sqlstate") == "23505"
 
     @pytest.mark.asyncio
     async def test_save_unique_constraint_violation_multiple_fields(
@@ -137,8 +144,60 @@ class BaseRepositoryMixin:
             for key in keys:
                 setattr(new_item, key, getattr(db_item, key))
 
-            with pytest.raises(Exception):
+            with pytest.raises(IntegrityError) as exc_info:
                 await test_repository.save(new_item)
+
+            assert getattr(exc_info.value.orig, "sqlstate") == "23505"
+
+    @pytest.mark.asyncio
+    async def test_save_all_empty(self, test_repository):
+        saved_items = await test_repository.save_all([])
+
+        assert saved_items == []
+
+    @pytest.mark.asyncio
+    async def test_save_all(self, test_repository, new_item, updated_item):
+        items_to_save = [new_item, updated_item]
+
+        saved_items = await test_repository.save_all(items_to_save)
+
+        for saved_item, item_to_save in zip(saved_items, items_to_save):
+            assert saved_item is not None
+            assert isinstance(saved_item, self.model_class)
+            assert saved_item.id is not None
+            assert saved_item == item_to_save
+
+    @pytest.mark.asyncio
+    async def test_save_all_unique_constraint_violation(
+        self, test_repository, new_item, updated_item
+    ):
+
+        for field in self.unique_fields:
+            item_to_save = self.model_class(**new_item.model_dump())
+            item_to_save_2 = self.model_class(**updated_item.model_dump())
+
+            setattr(item_to_save_2, field, getattr(item_to_save, field))
+
+            with pytest.raises(IntegrityError) as exc_info:
+                await test_repository.save_all([item_to_save, item_to_save_2])
+
+            assert getattr(exc_info.value.orig, "sqlstate") == "23505"
+
+    @pytest.mark.asyncio
+    async def test_save_all_unique_constraint_violation_multiple_fields(
+        self, test_repository, new_item, updated_item
+    ):
+        for keys in self.unique_keys:
+            item_to_save = self.model_class(**new_item.model_dump())
+            item_to_save_2 = self.model_class(**updated_item.model_dump())
+
+            for key in keys:
+                setattr(item_to_save_2, key, getattr(item_to_save, key))
+
+            with pytest.raises(IntegrityError) as exc_info:
+                await test_repository.save_all([item_to_save, item_to_save_2])
+
+            assert getattr(exc_info.value.orig, "sqlstate") == "23505"
 
     @pytest.mark.asyncio
     async def test_delete(self, test_repository, db_items):

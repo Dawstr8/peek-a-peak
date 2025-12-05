@@ -32,67 +32,13 @@ class TestPeaksRepository(BaseRepositoryMixin):
             mountain_range_id=db_mountain_ranges[0].id,
         )
 
-    @pytest.mark.asyncio
-    async def test_save_multiple(self, test_repository, db_mountain_ranges):
-        """Test saving multiple peaks"""
-        peaks = [
-            Peak(
-                name="Test Peak 1",
-                elevation=1000,
-                mountain_range_id=db_mountain_ranges[0].id,
-            ),
-            Peak(
-                name="Test Peak 2",
-                elevation=1000,
-                mountain_range_id=db_mountain_ranges[0].id,
-            ),
-            Peak(
-                name="Test Peak 1",
-                elevation=1500,
-                mountain_range_id=db_mountain_ranges[0].id,
-            ),
-            Peak(
-                name="Test Peak 1",
-                elevation=1000,
-                mountain_range_id=db_mountain_ranges[1].id,
-            ),
-        ]
-
-        await test_repository.save_multiple(peaks)
-
-        all_peaks = await test_repository.get_all()
-        names = [peak.name for peak in all_peaks]
-
-        assert len(all_peaks) == 4
-        assert "Test Peak 1" in names
-        assert "Test Peak 2" in names
-
-    @pytest.mark.asyncio
-    async def test_save_multiple_duplicate_name_elevation_and_mountain_range_raises_error(
-        self, test_repository, db_mountain_ranges
-    ):
-        """Test unique constraint when saving multiple peaks"""
-        name = "Unique Peak"
-        elevation = 3000
-        mountain_range_id = db_mountain_ranges[0].id
-
-        peaks = [
-            Peak(
-                name=name,
-                elevation=elevation,
-                mountain_range_id=mountain_range_id,
-            ),
-            Peak(
-                name=name,
-                elevation=elevation,
-                mountain_range_id=mountain_range_id,
-            ),
-        ]
-
-        with pytest.raises(Exception) as exc_info:
-            await test_repository.save_multiple(peaks)
-
-        assert "uq_peak_name_elevation_mountain_range" in str(exc_info.value)
+    @pytest.fixture()
+    def updated_item(self, db_mountain_ranges) -> Peak:
+        return Peak(
+            name="Updated Peak",
+            elevation=2600,
+            mountain_range_id=db_mountain_ranges[1].id,
+        )
 
     @pytest.mark.asyncio
     async def test_get_all_without_location(self, test_repository, db_peaks):

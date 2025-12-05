@@ -19,10 +19,6 @@ from src.sorting.utils import apply_sorting
 class PeaksRepository(BaseRepository[Peak]):
     model = Peak
 
-    async def save_multiple(self, peaks: List[Peak]) -> None:
-        self.db.add_all(peaks)
-        await self.db.commit()
-
     async def get_all_without_location(self) -> List[Peak]:
         query = select(Peak).where(Peak.location.is_(None))
         result = await self.db.exec(query)
