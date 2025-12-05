@@ -115,3 +115,23 @@ class TestPhotosRepository(BaseRepositoryMixin):
         for date in photos_dates:
             assert date.id is not None
             assert date.captured_at is not None
+
+    @pytest.mark.asyncio
+    async def test_delete(self, test_repository, db_photos):
+        """Test deleting a summit photo"""
+        photo_id = db_photos[0].id
+        photo = await test_repository.get_by_id(photo_id)
+        assert photo is not None
+
+        result = await test_repository.delete(photo_id)
+        assert result is True
+
+        photo = await test_repository.get_by_id(photo_id)
+        assert photo is None
+
+    @pytest.mark.asyncio
+    async def test_delete_non_existent(self, test_repository):
+        """Test deleting a non-existent summit photo"""
+        result = await test_repository.delete(999999)
+
+        assert result is False

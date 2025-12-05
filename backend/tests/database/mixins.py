@@ -139,12 +139,3 @@ class BaseRepositoryMixin:
 
             with pytest.raises(Exception):
                 await test_repository.save(new_item)
-
-    @pytest.mark.asyncio
-    async def test_delete(self, test_repository, db_items):
-        db_item = db_items[0]
-
-        await test_repository.delete(db_item)
-
-        result_item = await test_repository.get_by_id(db_item.id)
-        assert result_item is None
