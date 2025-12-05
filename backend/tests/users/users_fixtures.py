@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
+from src.common.exceptions import NotFoundException
 from src.users.models import User
 from src.users.repository import UsersRepository
 
@@ -33,10 +34,6 @@ def mock_users_repository(mock_user: User):
     Returns a mock UsersRepository for unit tests.
     This mock does not interact with a real database and is useful for pure unit tests
     that don't need database interaction.
-
-    Usage:
-        # Repository will return mock_user only for ID 1
-        repo.get_by_id.side_effect = lambda id: mock_user if id == 1 else None
     """
     repo = MagicMock(spec=UsersRepository)
 
@@ -51,10 +48,16 @@ def mock_users_repository(mock_user: User):
         return mock_user
 
     async def get_by_id(user_id):
-        return mock_user if user_id == mock_user.id else None
+        if user_id != mock_user.id:
+            raise NotFoundException(f"User with id {user_id} not found.")
+
+        return mock_user
 
     async def get_by_field(field, value):
-        return mock_user if value == getattr(mock_user, field) else None
+        if value != getattr(mock_user, field):
+            raise NotFoundException(f"User with {field}={value} not found.")
+
+        return mock_user
 
     repo.save = AsyncMock(side_effect=save)
     repo.update = AsyncMock(side_effect=update)

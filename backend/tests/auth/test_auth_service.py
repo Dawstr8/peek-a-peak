@@ -46,7 +46,7 @@ def service(
 @pytest.mark.asyncio
 async def test_authenticate_user_not_found(service):
     """Test authentication when user is not found."""
-    with pytest.raises(NotFoundException):
+    with pytest.raises(InvalidCredentialsException):
         await service.authenticate_user("nonexistent@example.com", "password")
 
 
@@ -180,4 +180,4 @@ async def test_get_current_user_user_not_found(service, mock_sessions_repository
     with pytest.raises(NotFoundException) as exc:
         await service.get_current_user(session_id)
 
-    assert "User not found" in str(exc.value)
+    assert f"User with id {user_id} not found." in str(exc.value)

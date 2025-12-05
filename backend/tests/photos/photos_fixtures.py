@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 
+from src.common.exceptions import NotFoundException
 from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
 from src.photos.repository import PhotosRepository
@@ -63,7 +64,10 @@ def mock_photos_repository(
         return photo
 
     async def get_by_id(photo_id):
-        return mock_photo if photo_id in [photo.id for photo in mock_photos] else None
+        if not photo_id in [photo.id for photo in mock_photos]:
+            raise NotFoundException(f"SummitPhoto with id {photo_id} not found.")
+
+        return mock_photo
 
     async def get_all(sort_params=None):
         return mock_photos

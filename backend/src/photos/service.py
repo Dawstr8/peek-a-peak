@@ -2,13 +2,11 @@ from typing import List, Optional
 
 from fastapi import UploadFile
 
-from src.common.exceptions import NotFoundException
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
 from src.sorting.models import SortParams
 from src.uploads.service import UploadsService
 from src.users.models import User
-from src.users.repository import UsersRepository
 
 
 class PhotosService:
@@ -61,22 +59,15 @@ class PhotosService:
 
     async def get_photo_by_id(self, photo_id: int) -> SummitPhoto:
         """
-        Get a photo by its ID.
-
-        Args:
-            photo_id: ID of the photo to retrieve
+        Retrieve a photo by its ID.
 
         Returns:
-            SummitPhoto with peak information if found, None otherwise
+            SummitPhoto: The photo with the given ID
 
         Raises:
             NotFoundException: If no photo with the given ID exists
         """
-        photo = await self.photos_repository.get_by_id(photo_id)
-        if photo is None:
-            raise NotFoundException(f"Photo with ID {photo_id} not found")
-
-        return photo
+        return await self.photos_repository.get_by_id(photo_id)
 
     async def get_all_photos(
         self, sort_params: Optional[SortParams] = None

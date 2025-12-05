@@ -4,7 +4,6 @@ Service for matching geographical coordinates to peaks
 
 from typing import List, Optional
 
-from src.common.exceptions import NotFoundException
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
 from src.sorting.models import SortParams
@@ -33,22 +32,15 @@ class PeaksService:
 
     async def get_by_id(self, peak_id: int) -> Peak:
         """
-        Get a specific peak by ID.
-
-        Args:
-            peak_id: ID of the peak to retrieve
+        Retrieve a peak by its ID.
 
         Returns:
-            Peak if found
+            Peak with the given ID
 
         Raises:
             NotFoundException: If no peak with the given ID exists
         """
-        peak = await self.peaks_repository.get_by_id(peak_id)
-        if peak is None:
-            raise NotFoundException(f"Peak with ID {peak_id} not found")
-
-        return peak
+        return await self.peaks_repository.get_by_id(peak_id)
 
     async def search_peaks(
         self,

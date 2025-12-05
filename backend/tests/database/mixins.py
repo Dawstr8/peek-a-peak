@@ -3,6 +3,7 @@ from typing import Type
 import pytest
 from sqlalchemy.exc import IntegrityError
 
+from src.common.exceptions import NotFoundException
 from src.database.base_repository import BaseRepository
 from src.sorting.models import SortParams
 
@@ -34,13 +35,12 @@ class BaseRepositoryMixin:
         pass
 
     @pytest.mark.asyncio
-    async def test_base_get_by_id_not_found(self, test_repository):
-        result_item = await test_repository.get_by_id(-1)
-
-        assert result_item is None
+    async def test_get_by_id_not_found(self, test_repository):
+        with pytest.raises(NotFoundException):
+            await test_repository.get_by_id(-1)
 
     @pytest.mark.asyncio
-    async def test_base_get_by_id_found(self, test_repository, db_items):
+    async def test_get_by_id_found(self, test_repository, db_items):
         db_item = db_items[0]
 
         result_item = await test_repository.get_by_id(db_item.id)
@@ -52,9 +52,8 @@ class BaseRepositoryMixin:
 
     @pytest.mark.asyncio
     async def test_get_by_field_not_found(self, test_repository):
-        result_item = await test_repository.get_by_field("id", -1)
-
-        assert result_item is None
+        with pytest.raises(NotFoundException):
+            await test_repository.get_by_field("id", -1)
 
     @pytest.mark.asyncio
     async def test_get_by_field_found(self, test_repository, db_items):
@@ -205,5 +204,5 @@ class BaseRepositoryMixin:
 
         await test_repository.delete(db_item)
 
-        result_item = await test_repository.get_by_id(db_item.id)
-        assert result_item is None
+        with pytest.raises(NotFoundException):
+            await test_repository.get_by_id(db_item.id)
