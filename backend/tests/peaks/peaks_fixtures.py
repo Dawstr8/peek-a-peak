@@ -154,28 +154,25 @@ async def db_peaks(test_db, db_mountain_ranges) -> list[Peak]:
     """
     repository = PeaksRepository(test_db)
 
-    peaks = [
-        Peak(
-            name="Rysy",
-            elevation=2499,
-            location="POINT(20.0881 49.1795)",
-            mountain_range_id=db_mountain_ranges[0].id,
-        ),
-        Peak(
-            name="Śnieżka",
-            elevation=1602,
-            location="POINT(15.7400 50.7361)",
-            mountain_range_id=db_mountain_ranges[1].id,
-        ),
-        Peak(
-            name="Babia Góra",
-            elevation=1725,
-            location="POINT(19.5292 49.5731)",
-            mountain_range_id=db_mountain_ranges[2].id,
-        ),
-    ]
-
-    for peak in peaks:
-        await repository.save(peak)
-
-    return peaks
+    return await repository.save_all(
+        [
+            Peak(
+                name="Rysy",
+                elevation=2499,
+                location="POINT(20.0881 49.1795)",
+                mountain_range_id=db_mountain_ranges[0].id,
+            ),
+            Peak(
+                name="Śnieżka",
+                elevation=1602,
+                location="POINT(15.7400 50.7361)",
+                mountain_range_id=db_mountain_ranges[1].id,
+            ),
+            Peak(
+                name="Babia Góra",
+                elevation=1725,
+                location="POINT(19.5292 49.5731)",
+                mountain_range_id=db_mountain_ranges[2].id,
+            ),
+        ]
+    )

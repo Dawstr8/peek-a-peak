@@ -73,22 +73,17 @@ async def db_users(test_db) -> list[User]:
     """
     users_repo = UsersRepository(test_db)
 
-    users = [
-        User(
-            email=f"user{i}@example.com",
-            username=f"user{i}",
-            username_display=f"User{i}",
-            hashed_password=f"hashed_password{i}",
-        )
-        for i in range(1, 3)
-    ]
-
-    saved_users = []
-    for user in users:
-        saved_user = await users_repo.save(user)
-        saved_users.append(saved_user)
-
-    return saved_users
+    return await users_repo.save_all(
+        [
+            User(
+                email=f"user{i}@example.com",
+                username=f"user{i}",
+                username_display=f"User{i}",
+                hashed_password=f"hashed_password{i}",
+            )
+            for i in range(1, 3)
+        ]
+    )
 
 
 @pytest.fixture

@@ -22,3 +22,7 @@ class TestMountainRangesRepository(BaseRepositoryMixin):
     @pytest.fixture
     def new_item(self) -> MountainRange:
         return MountainRange(name="New Mountain Range")
+
+    @pytest.fixture
+    def updated_item(self) -> MountainRange:
+        return MountainRange(name="Updated Mountain Range")
