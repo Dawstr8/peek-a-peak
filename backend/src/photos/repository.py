@@ -47,21 +47,3 @@ class PhotosRepository(BaseRepository[SummitPhoto]):
         )
         result = await self.db.exec(statement)
         return result.all()
-
-    async def delete(self, photo_id: int) -> bool:
-        """
-        Delete a photo by ID.
-
-        Args:
-            photo_id: ID of the photo to delete
-
-        Returns:
-            True if photo was deleted, False if not found
-        """
-        photo = await self.get_by_id(photo_id)
-        if not photo:
-            return False
-
-        await self.db.delete(photo)
-        await self.db.commit()
-        return True

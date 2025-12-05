@@ -142,12 +142,13 @@ async def test_delete_photo_success(
 ):
     """Test deleting a photo successfully"""
     photo_id = mock_photo.id
+
     result = await photos_service.delete_photo(photo_id)
 
     assert result is True
     mock_photos_repository.get_by_id.assert_called_once_with(photo_id)
     mock_uploads_service.delete_file.assert_called_once_with(mock_photo.file_name)
-    mock_photos_repository.delete.assert_called_once_with(photo_id)
+    mock_photos_repository.delete.assert_called_once_with(mock_photo)
 
 
 @pytest.mark.asyncio
