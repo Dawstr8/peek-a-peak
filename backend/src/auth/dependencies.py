@@ -5,6 +5,7 @@ from fastapi import Cookie, Depends, HTTPException, status
 
 from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
+from src.common.exceptions import NotFoundException
 from src.database.core import db_dep
 from src.sessions.repository import SessionsRepository
 from src.users.dependencies import users_repository_dep
@@ -45,7 +46,7 @@ async def get_current_user(
 
     try:
         return await auth_service.get_current_user(session_id)
-    except ValueError:
+    except NotFoundException:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired session",
@@ -64,7 +65,7 @@ async def get_current_user_optional(
 
     try:
         return await auth_service.get_current_user(session_id)
-    except ValueError:
+    except NotFoundException:
         return None
 
 

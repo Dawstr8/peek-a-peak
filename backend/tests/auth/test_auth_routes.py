@@ -192,7 +192,7 @@ async def test_login_with_session_invalid_credentials(client_with_db: AsyncClien
 
     assert response.status_code == 401
     data = response.json()
-    assert "Incorrect email or password" in data["detail"]
+    assert "Incorrect email, username, or password" in data["detail"]
 
 
 @pytest.mark.asyncio

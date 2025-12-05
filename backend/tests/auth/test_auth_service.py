@@ -3,8 +3,10 @@ from uuid import UUID
 
 import pytest
 
+from src.auth.exceptions import InvalidCredentialsException
 from src.auth.password_service import PasswordService
 from src.auth.service import AuthService
+from src.common.exceptions import NotFoundException
 from src.sessions.repository import SessionsRepository
 from src.users.models import UserCreate
 from src.users.repository import UsersRepository
@@ -44,17 +46,15 @@ def service(
 @pytest.mark.asyncio
 async def test_authenticate_user_not_found(service):
     """Test authentication when user is not found."""
-    result = await service.authenticate_user("nonexistent@example.com", "password")
-
-    assert result is None
+    with pytest.raises(NotFoundException):
+        await service.authenticate_user("nonexistent@example.com", "password")
 
 
 @pytest.mark.asyncio
 async def test_authenticate_user_wrong_password(service, mock_user):
     """Test authentication with wrong password."""
-    result = await service.authenticate_user(mock_user.email, "wrong_password")
-
-    assert result is None
+    with pytest.raises(InvalidCredentialsException):
+        await service.authenticate_user(mock_user.email, "wrong_password")
 
 
 @pytest.mark.asyncio
@@ -122,10 +122,8 @@ async def test_login_user_success(service, mock_sessions_repository, mock_user):
 async def test_login_user_invalid_credentials(service):
     """Test login with invalid credentials raises ValueError."""
 
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(InvalidCredentialsException) as exc:
         await service.login_user("nonexistent@example.com", "password")
-
-    assert "Invalid credentials" in str(exc.value)
 
 
 @pytest.mark.asyncio
@@ -163,7 +161,7 @@ async def test_get_current_user_invalid_session(service, mock_sessions_repositor
     session_id = UUID("12345678-1234-5678-1234-567812345678")
     mock_sessions_repository.get_active_by_id.return_value = None
 
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(NotFoundException) as exc:
         await service.get_current_user(session_id)
 
     assert "Invalid or expired session" in str(exc.value)
@@ -179,7 +177,7 @@ async def test_get_current_user_user_not_found(service, mock_sessions_repository
     session.user_id = user_id
     mock_sessions_repository.get_active_by_id.return_value = session
 
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(NotFoundException) as exc:
         await service.get_current_user(session_id)
 
     assert "User not found" in str(exc.value)

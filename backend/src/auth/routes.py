@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Cookie, Form, HTTPException, Response, status
 
 from src.auth.dependencies import auth_service_dep, current_user_dep
+from src.auth.exceptions import InvalidCredentialsException
 from src.users.models import UserCreate, UserRead
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -73,11 +74,10 @@ async def login_with_session(
     """
     try:
         session_id = await auth_service.login_user(emailOrUsername, password)
-
-    except ValueError:
+    except InvalidCredentialsException:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Incorrect email, username, or password",
         )
 
     response.set_cookie(
