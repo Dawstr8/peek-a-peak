@@ -106,7 +106,7 @@ class PhotosService:
         file_deleted = await self.uploads_service.delete_file(photo.file_name)
 
         if file_deleted:
-            db_deleted = await self.photos_repository.delete(photo_id)
-            return db_deleted
+            await self.photos_repository.delete(photo)
+            return True
 
         return False
