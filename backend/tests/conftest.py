@@ -17,6 +17,7 @@ from tests.mountain_ranges.mountain_ranges_fixtures import *
 from tests.peaks.peaks_fixtures import *
 from tests.photos.photos_fixtures import *
 from tests.users.users_fixtures import *
+from tests.weather.weather_fixtures import *
 
 
 @pytest_asyncio.fixture
