@@ -36,6 +36,22 @@ class BaseRepository(Generic[T]):
 
         return obj
 
+    async def get_by_fields(self, filters: dict) -> T:
+        statement = select(self.model)
+
+        for field, value in filters.items():
+            statement = statement.where(getattr(self.model, field) == value)
+
+        result = await self.db.exec(statement)
+        obj = result.first()
+        if obj is None:
+            filter_desc = ", ".join(f"{k}={v}" for k, v in filters.items())
+            raise NotFoundException(
+                f"{self.model.__name__} with {filter_desc} not found."
+            )
+
+        return obj
+
     async def get_all(self, sort_params: Optional[SortParams] = None) -> list[T]:
         statement = select(self.model)
         if sort_params is not None:

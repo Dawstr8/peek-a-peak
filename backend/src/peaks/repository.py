@@ -39,17 +39,6 @@ class PeaksRepository(BaseRepository[Peak]):
         result = await self.db.exec(query)
         return result.one()
 
-    async def get_by_name_elevation_and_mountain_range(
-        self, peak_name: str, elevation: int, mountain_range_id: int
-    ) -> Optional[Peak]:
-        query = select(Peak).where(
-            Peak.name == peak_name,
-            Peak.elevation == elevation,
-            Peak.mountain_range_id == mountain_range_id,
-        )
-        result = await self.db.exec(query)
-        return result.first()
-
     async def search(
         self,
         sort_params: Optional[SortParams] = None,

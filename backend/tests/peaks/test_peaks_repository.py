@@ -87,46 +87,6 @@ class TestPeaksRepository(BaseRepositoryMixin):
         assert count == 2
 
     @pytest.mark.asyncio
-    async def test_get_by_name_elevation_and_mountain_range(
-        self, test_repository, db_peaks
-    ):
-        """Test retrieving a peak by name, elevation, and mountain range ID"""
-        peak = await test_repository.get_by_name_elevation_and_mountain_range(
-            peak_name=db_peaks[0].name,
-            elevation=db_peaks[0].elevation,
-            mountain_range_id=db_peaks[0].mountain_range_id,
-        )
-
-        assert peak is not None
-        assert peak.name == db_peaks[0].name
-        assert peak.elevation == db_peaks[0].elevation
-        assert peak.mountain_range_id == db_peaks[0].mountain_range_id
-
-        peak = await test_repository.get_by_name_elevation_and_mountain_range(
-            peak_name="Nonexistent Peak",
-            elevation=db_peaks[0].elevation,
-            mountain_range_id=db_peaks[0].mountain_range_id,
-        )
-
-        assert peak is None
-
-        peak = await test_repository.get_by_name_elevation_and_mountain_range(
-            peak_name=db_peaks[0].name,
-            elevation=9999,
-            mountain_range_id=db_peaks[0].mountain_range_id,
-        )
-
-        assert peak is None
-
-        peak = await test_repository.get_by_name_elevation_and_mountain_range(
-            peak_name=db_peaks[0].name,
-            elevation=db_peaks[0].elevation,
-            mountain_range_id=9999,
-        )
-
-        assert peak is None
-
-    @pytest.mark.asyncio
     async def test_search_no_peaks(self, test_repository, coords_map):
         """Test searching nearest peaks when database is empty"""
         sort_params = SortParams()

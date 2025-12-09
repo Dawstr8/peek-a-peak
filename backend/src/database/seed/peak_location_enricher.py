@@ -99,8 +99,12 @@ async def _enrich_peak_with_location(
 ) -> None:
     repository = PeaksRepository(db)
 
-    peak = await repository.get_by_name_elevation_and_mountain_range(
-        peak.name, peak.elevation, peak.mountain_range_id
+    peak = await repository.get_by_fields(
+        {
+            "name": peak.name,
+            "elevation": peak.elevation,
+            "mountain_range_id": peak.mountain_range_id,
+        }
     )
 
     if not peak:
