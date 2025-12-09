@@ -171,7 +171,7 @@ async def test_get_current_user_invalid_session(service, mock_sessions_repositor
 async def test_get_current_user_user_not_found(service, mock_sessions_repository):
     """Test getting current user when user is not found raises ValueError."""
     session_id = UUID("12345678-1234-5678-1234-567812345678")
-    user_id = 2
+    user_id = 999
 
     session = MagicMock()
     session.user_id = user_id

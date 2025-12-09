@@ -4,17 +4,14 @@ Photo fixtures for testing across different test types: unit, integration, and e
 
 import json
 from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
 
-from src.common.exceptions import NotFoundException
-from src.pagination.models import PaginationParams
-from src.photos.models import SummitPhoto, SummitPhotoDate, SummitPhotoLocation
+from src.photos.models import SummitPhoto
 from src.photos.repository import PhotosRepository
-from src.sorting.models import SortParams
 from tests.auth.auth_fixtures import temporary_login
+from tests.photos.mock_repository import MockPhotosRepository
 
 
 @pytest.fixture
@@ -49,61 +46,13 @@ def mock_photo(mock_photos) -> SummitPhoto:
 
 
 @pytest.fixture
-def mock_photos_repository(
-    mock_photo: SummitPhoto, mock_photos: list[SummitPhoto]
-) -> PhotosRepository:
+def mock_photos_repository(mock_photos: list[SummitPhoto]) -> PhotosRepository:
     """
     Returns a mock PhotosRepository for unit tests.
     This mock does not interact with a real database and is useful for pure unit tests
     that don't need database interaction.
     """
-    repo = MagicMock(spec=PhotosRepository)
-
-    async def save(photo):
-        photo.id = 1
-        return photo
-
-    async def get_by_id(photo_id):
-        if not photo_id in [photo.id for photo in mock_photos]:
-            raise NotFoundException(f"SummitPhoto with id {photo_id} not found.")
-
-        return mock_photo
-
-    async def get_all(sort_params=None):
-        return mock_photos
-
-    async def get_by_owner_id(
-        owner_id,
-        sort_params=SortParams(),
-        pagination_params=PaginationParams(),
-    ):
-        return [photo for photo in mock_photos if photo.owner_id == owner_id]
-
-    async def get_locations_by_owner_id(owner_id, sort_params=None):
-        return [
-            SummitPhotoLocation(
-                id=photo.id, lat=photo.lat, lng=photo.lng, alt=photo.alt
-            )
-            for photo in mock_photos
-            if photo.owner_id == owner_id and photo.location is not None
-        ]
-
-    async def get_dates_by_owner_id(owner_id, sort_params=None):
-        return [
-            SummitPhotoDate(id=photo.id, captured_at=photo.captured_at)
-            for photo in mock_photos
-            if photo.owner_id == owner_id
-        ]
-
-    repo.save = AsyncMock(side_effect=save)
-    repo.get_by_id = AsyncMock(side_effect=get_by_id)
-    repo.get_by_owner_id = AsyncMock(side_effect=get_by_owner_id)
-    repo.get_locations_by_owner_id = AsyncMock(side_effect=get_locations_by_owner_id)
-    repo.get_dates_by_owner_id = AsyncMock(side_effect=get_dates_by_owner_id)
-    repo.get_all = AsyncMock(side_effect=get_all)
-    repo.delete = AsyncMock(return_value=True)
-
-    return repo
+    return MockPhotosRepository(items=mock_photos).mock
 
 
 @pytest_asyncio.fixture

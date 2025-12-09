@@ -2,14 +2,12 @@
 User fixtures for testing across different test types: unit, integration, and e2e
 """
 
-from unittest.mock import AsyncMock, MagicMock
-
 import pytest
 import pytest_asyncio
 
-from src.common.exceptions import NotFoundException
 from src.users.models import User
 from src.users.repository import UsersRepository
+from tests.users.mock_repository import MockUsersRepository
 
 
 @pytest.fixture
@@ -29,42 +27,13 @@ def mock_user() -> User:
 
 
 @pytest.fixture
-def mock_users_repository(mock_user: User):
+def mock_users_repository(mock_user: User) -> UsersRepository:
     """
     Returns a mock UsersRepository for unit tests.
     This mock does not interact with a real database and is useful for pure unit tests
     that don't need database interaction.
     """
-    repo = MagicMock(spec=UsersRepository)
-
-    async def save(user):
-        user.id = 1
-        return user
-
-    async def update(user_id, user_update):
-        for field, value in user_update.model_dump(exclude_unset=True).items():
-            setattr(mock_user, field, value)
-
-        return mock_user
-
-    async def get_by_id(user_id):
-        if user_id != mock_user.id:
-            raise NotFoundException(f"User with id {user_id} not found.")
-
-        return mock_user
-
-    async def get_by_field(field, value):
-        if value != getattr(mock_user, field):
-            raise NotFoundException(f"User with {field}={value} not found.")
-
-        return mock_user
-
-    repo.save = AsyncMock(side_effect=save)
-    repo.update = AsyncMock(side_effect=update)
-    repo.get_by_id = AsyncMock(side_effect=get_by_id)
-    repo.get_by_field = AsyncMock(side_effect=get_by_field)
-
-    return repo
+    return MockUsersRepository(items=[mock_user]).mock
 
 
 @pytest_asyncio.fixture
