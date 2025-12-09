@@ -58,11 +58,17 @@ class BaseRepositoryMixin:
 
     @pytest.mark.asyncio
     async def test_get_by_field_not_found(self, test_repository):
+        if not self.unique_fields:
+            pytest.skip("No unique fields defined for this model")
+
         with pytest.raises(NotFoundException):
             await test_repository.get_by_field("id", -1)
 
     @pytest.mark.asyncio
     async def test_get_by_field_found(self, test_repository, db_items):
+        if not self.unique_fields:
+            pytest.skip("No unique fields defined for this model")
+
         for field in self.unique_fields:
             db_item = db_items[0]
 
@@ -131,6 +137,9 @@ class BaseRepositoryMixin:
     async def test_save_unique_constraint_violation(
         self, test_repository, db_items, new_item
     ):
+        if not self.unique_fields:
+            pytest.skip("No unique fields defined for this model")
+
         for field in self.unique_fields:
             db_item = db_items[0]
             setattr(new_item, field, getattr(db_item, field))
@@ -144,6 +153,9 @@ class BaseRepositoryMixin:
     async def test_save_unique_constraint_violation_multiple_fields(
         self, test_repository, db_items, new_item
     ):
+        if not self.unique_keys:
+            pytest.skip("No unique keys defined for this model")
+
         for keys in self.unique_keys:
             db_item = db_items[0]
             for key in keys:
@@ -176,6 +188,8 @@ class BaseRepositoryMixin:
     async def test_save_all_unique_constraint_violation(
         self, test_repository, new_item, updated_item
     ):
+        if not self.unique_fields:
+            pytest.skip("No unique fields defined for this model")
 
         for field in self.unique_fields:
             item_to_save = self.model_class(**new_item.model_dump())
@@ -192,6 +206,9 @@ class BaseRepositoryMixin:
     async def test_save_all_unique_constraint_violation_multiple_fields(
         self, test_repository, new_item, updated_item
     ):
+        if not self.unique_keys:
+            pytest.skip("No unique keys defined for this model")
+
         for keys in self.unique_keys:
             item_to_save = self.model_class(**new_item.model_dump())
             item_to_save_2 = self.model_class(**updated_item.model_dump())
