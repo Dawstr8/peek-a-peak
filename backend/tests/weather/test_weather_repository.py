@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.weather.models import WeatherCondition, WeatherRecord
 from src.weather.repository import WeatherConditionsRepository, WeatherRecordsRepository
@@ -9,12 +8,9 @@ from tests.database.mixins import BaseRepositoryMixin
 
 
 class TestWeatherConditionsRepository(BaseRepositoryMixin):
+    repository_class = WeatherConditionsRepository
     model_class = WeatherCondition
     sort_by = "main"
-
-    @pytest.fixture
-    def test_repository(self, test_db: AsyncSession) -> WeatherConditionsRepository:
-        return WeatherConditionsRepository(test_db)
 
     @pytest.fixture()
     def db_items(self, db_weather_conditions) -> list[WeatherCondition]:
@@ -34,12 +30,9 @@ class TestWeatherConditionsRepository(BaseRepositoryMixin):
 
 
 class TestWeatherRecordsRepository(BaseRepositoryMixin):
+    repository_class = WeatherRecordsRepository
     model_class = WeatherRecord
     sort_by = "sunrise"
-
-    @pytest.fixture
-    def test_repository(self, test_db: AsyncSession) -> WeatherRecordsRepository:
-        return WeatherRecordsRepository(test_db)
 
     @pytest.fixture()
     def db_items(self, db_weather_records) -> list[WeatherRecord]:

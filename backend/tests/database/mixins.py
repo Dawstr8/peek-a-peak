@@ -2,6 +2,7 @@ from typing import Type
 
 import pytest
 from sqlalchemy.exc import IntegrityError
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.common.exceptions import NotFoundException
 from src.database.base_repository import BaseRepository
@@ -9,15 +10,20 @@ from src.sorting.models import SortParams
 
 
 class BaseRepositoryMixin:
+    repository_class: Type[BaseRepository] = None
     model_class: Type = None
     sort_by = "id"
     unique_fields = []
     unique_keys = []
 
     @pytest.fixture()
-    def test_repository(self) -> BaseRepository:
-        """Create an instance of the repository for testing"""
-        pass
+    def test_repository(self, test_db: AsyncSession) -> BaseRepository:
+        if self.repository_class is None:
+            raise NotImplementedError(
+                "repository_class must be defined in the subclass."
+            )
+
+        return self.repository_class(test_db)
 
     @pytest.fixture()
     def db_items(self):

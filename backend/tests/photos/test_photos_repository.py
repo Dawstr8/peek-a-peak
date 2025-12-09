@@ -5,7 +5,6 @@ Tests for the PhotosRepository
 from datetime import datetime, timezone
 
 import pytest
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.pagination.models import PaginationParams
 from src.photos.models import SummitPhoto
@@ -15,12 +14,9 @@ from tests.database.mixins import BaseRepositoryMixin
 
 
 class TestPhotosRepository(BaseRepositoryMixin):
+    repository_class = PhotosRepository
     model_class = SummitPhoto
     sort_by = "captured_at"
-
-    @pytest.fixture()
-    def test_repository(self, test_db: AsyncSession) -> PhotosRepository:
-        return PhotosRepository(test_db)
 
     @pytest.fixture()
     def db_items(self, db_photos) -> list[SummitPhoto]:
