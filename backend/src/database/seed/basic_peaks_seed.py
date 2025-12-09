@@ -152,8 +152,12 @@ async def _save_or_update_peaks(
     peaks_updated = 0
 
     for peak in peaks:
-        existing_peak = await repository.get_by_name_elevation_and_mountain_range(
-            peak.name, peak.elevation, mountain_range.id
+        existing_peak = await repository.get_by_fields(
+            {
+                "name": peak.name,
+                "elevation": peak.elevation,
+                "mountain_range_id": mountain_range.id,
+            }
         )
 
         if existing_peak is None:

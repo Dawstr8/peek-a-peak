@@ -82,6 +82,30 @@ class BaseRepositoryMixin:
             assert result_item == db_item
 
     @pytest.mark.asyncio
+    async def test_get_by_fields_not_found(self, test_repository):
+        if not self.unique_keys:
+            pytest.skip("No unique keys defined for this model")
+
+        with pytest.raises(NotFoundException):
+            await test_repository.get_by_fields({"id": -1})
+
+    @pytest.mark.asyncio
+    async def test_get_by_fields_found(self, test_repository, db_items):
+        if not self.unique_keys:
+            pytest.skip("No unique keys defined for this model")
+
+        for keys in self.unique_keys:
+            db_item = db_items[0]
+            filters = {key: getattr(db_item, key) for key in keys}
+
+            result_item = await test_repository.get_by_fields(filters)
+
+            assert result_item is not None
+            assert isinstance(result_item, self.model_class)
+            assert result_item.id == db_item.id
+            assert result_item == db_item
+
+    @pytest.mark.asyncio
     async def test_get_all_empty(self, test_repository):
         result_items = await test_repository.get_all()
 
