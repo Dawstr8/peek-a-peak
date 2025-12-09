@@ -9,12 +9,9 @@ from tests.database.mixins import BaseRepositoryMixin
 
 
 class TestUsersRepository(BaseRepositoryMixin):
+    repository_class = UsersRepository
     model_class = User
     sort_by = "username"
-
-    @pytest.fixture
-    def test_repository(self, test_db: AsyncSession) -> UsersRepository:
-        return UsersRepository(test_db)
 
     @pytest.fixture()
     def db_items(self, db_users) -> list[User]:

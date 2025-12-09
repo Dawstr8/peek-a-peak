@@ -3,7 +3,6 @@ Tests for the PeaksRepository
 """
 
 import pytest
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.mountain_ranges.models import MountainRange
 from src.peaks.models import Peak
@@ -13,12 +12,9 @@ from tests.database.mixins import BaseRepositoryMixin
 
 
 class TestPeaksRepository(BaseRepositoryMixin):
+    repository_class = PeaksRepository
     model_class = Peak
     unique_keys = [("name", "elevation", "mountain_range_id")]
-
-    @pytest.fixture()
-    def test_repository(self, test_db: AsyncSession) -> PeaksRepository:
-        return PeaksRepository(test_db)
 
     @pytest.fixture()
     def db_items(self, db_peaks) -> list[Peak]:
