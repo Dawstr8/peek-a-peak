@@ -7,12 +7,12 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 
 from alembic import context
-from config import Config
+from config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", Config.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -27,6 +27,7 @@ from src.peaks.models import *
 from src.photos.models import *
 from src.sessions.models import *
 from src.users.models import *
+from src.weather.models import *
 
 target_metadata = SQLModel.metadata
 
