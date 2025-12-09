@@ -47,8 +47,4 @@ class UsersRepository(BaseRepository[User]):
         for key, value in user_data.items():
             setattr(user, key, value)
 
-        self.db.add(user)
-        await self.db.commit()
-        await self.db.refresh(user)
-
-        return user
+        return await self.save(user)
