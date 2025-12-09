@@ -24,7 +24,9 @@ async def db_weather_conditions(test_db: AsyncSession) -> list[WeatherCondition]
 
 @pytest_asyncio.fixture
 async def db_weather_records(
-    test_db: AsyncSession, db_photos: list[SummitPhoto]
+    test_db: AsyncSession,
+    db_photos: list[SummitPhoto],
+    db_weather_conditions: list[WeatherCondition],
 ) -> list[WeatherRecord]:
     repo = WeatherRecordsRepository(test_db)
 
@@ -45,6 +47,7 @@ async def db_weather_records(
                 wind_deg=150,
                 rain=0.0,
                 snow=0.0,
+                weather_conditions=db_weather_conditions,
             ),
             WeatherRecord(
                 photo_id=db_photos[1].id,
@@ -61,6 +64,7 @@ async def db_weather_records(
                 wind_deg=200,
                 rain=1.2,
                 snow=0.5,
+                weather_conditions=[db_weather_conditions[1]],
             ),
         ]
     )

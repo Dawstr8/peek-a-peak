@@ -1,7 +1,12 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+
+class WeatherRecordWeatherConditionLink(SQLModel, table=True):
+    record_id: int = Field(foreign_key="weatherrecord.id", primary_key=True)
+    condition_id: int = Field(foreign_key="weathercondition.id", primary_key=True)
 
 
 class WeatherCondition(SQLModel, table=True):
@@ -23,6 +28,13 @@ class WeatherRecord(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     photo_id: int = Field(foreign_key="summitphoto.id")
+
+    conditions: list[WeatherCondition] = Relationship(
+        sa_relationship_kwargs={
+            "secondary": "weatherrecordweatherconditionlink",
+            "lazy": "selectin",
+        },
+    )
 
     # Solar times
     sunrise: datetime = Field(default=None, description="Sunrise time, UTC")
