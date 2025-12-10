@@ -22,7 +22,7 @@ async def test_get_all(mock_peaks_service, mock_peaks_repository):
 
     assert len(peaks) == 3
     assert peaks[0].name == "Rysy"
-    assert peaks[1].name == "Giewont"
+    assert peaks[1].name == "Śnieżka"
     assert peaks[2].name == "Babia Góra"
 
     mock_peaks_repository.get_all.assert_called_once()

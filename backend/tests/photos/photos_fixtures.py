@@ -15,24 +15,63 @@ from tests.photos.mock_repository import MockPhotosRepository
 
 
 @pytest.fixture
-def mock_photos() -> list[SummitPhoto]:
+def photos(users, peaks, coords_map) -> list[SummitPhoto]:
     """
-    Returns a list of mock Photo objects for unit tests.
+    Returns a list of Photo objects for unit tests.
     This photos are not persisted anywhere and are useful for pure unit tests
     that don't need database interaction.
     """
     return [
         SummitPhoto(
-            id=1,
-            file_name="test-photo-1.jpg",
-            location="POINT(20.0880 49.1794)",
+            owner=users[0],
+            peak=peaks[0],
+            file_name="test1.jpg",
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 9, 30, 10, 0, tzinfo=timezone.utc),
+            location=f"POINT({coords_map['near_rysy'][1]} {coords_map['near_rysy'][0]})",
+            alt=2495,
         ),
         SummitPhoto(
-            id=2,
-            file_name="test-photo-2.jpg",
-            location="POINT(20.0880 49.1794)",
+            owner=users[0],
+            peak=peaks[1],
+            file_name="test2.jpg",
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
+            location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
+            alt=1600,
+        ),
+        SummitPhoto(
+            owner=users[1],
+            peak=peaks[1],
+            file_name="test3.jpg",
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 11, 1, 11, 0, tzinfo=timezone.utc),
+            location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
+            alt=1600,
+        ),
+        SummitPhoto(
+            owner=users[0],
+            peak=None,
+            file_name="test4.jpg",
+            uploaded_at=datetime.now(),
+            captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
+            location=None,
+            alt=None,
         ),
     ]
+
+
+@pytest.fixture
+def mock_photos(photos) -> list[SummitPhoto]:
+    """
+    Returns a list of mock Photo objects for unit tests.
+    This photos are not persisted anywhere and are useful for pure unit tests
+    that don't need database interaction.
+    """
+    for photo in photos:
+        photo.id = 1
+
+    return photos
 
 
 @pytest.fixture
@@ -56,54 +95,14 @@ def mock_photos_repository(mock_photos: list[SummitPhoto]) -> PhotosRepository:
 
 
 @pytest_asyncio.fixture
-async def db_photos(test_db, db_users, db_peaks, coords_map) -> list[SummitPhoto]:
+async def db_photos(test_db, photos) -> list[SummitPhoto]:
     """
     Creates and returns a list of real photos in the test database.
     This fixture is useful for integration tests that need
     real photos in the database.
     """
     photos_repo = PhotosRepository(test_db)
-
-    return await photos_repo.save_all(
-        [
-            SummitPhoto(
-                owner_id=db_users[0].id,
-                file_name="test1.jpg",
-                uploaded_at=datetime.now(),
-                captured_at=datetime(2025, 9, 30, 10, 0, tzinfo=timezone.utc),
-                location=f"POINT({coords_map['near_rysy'][1]} {coords_map['near_rysy'][0]})",
-                alt=2495,
-                peak_id=db_peaks[0].id,
-            ),
-            SummitPhoto(
-                owner_id=db_users[0].id,
-                file_name="test2.jpg",
-                uploaded_at=datetime.now(),
-                captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
-                location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
-                alt=1600,
-                peak_id=db_peaks[1].id,
-            ),
-            SummitPhoto(
-                owner_id=db_users[1].id,
-                file_name="test3.jpg",
-                uploaded_at=datetime.now(),
-                captured_at=datetime(2025, 11, 1, 11, 0, tzinfo=timezone.utc),
-                location=f"POINT({coords_map['near_sniezka'][1]} {coords_map['near_sniezka'][0]})",
-                alt=1600,
-                peak_id=db_peaks[1].id,
-            ),
-            SummitPhoto(
-                owner_id=db_users[0].id,
-                file_name="test4.jpg",
-                uploaded_at=datetime.now(),
-                captured_at=datetime(2025, 10, 1, 11, 0, tzinfo=timezone.utc),
-                location=None,
-                alt=None,
-                peak_id=None,
-            ),
-        ]
-    )
+    return await photos_repo.save_all(photos)
 
 
 @pytest_asyncio.fixture

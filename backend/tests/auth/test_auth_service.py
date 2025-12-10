@@ -77,7 +77,7 @@ async def test_authenticate_user_success(
     """Test successful user authentication."""
     email_or_username = email_or_username_fn(mock_user)
 
-    result = await service.authenticate_user(email_or_username, "correct_password")
+    result = await service.authenticate_user(email_or_username, "correct_password1")
 
     assert result == mock_user
     mock_users_repository.get_by_field.assert_called_once_with(
@@ -110,7 +110,7 @@ async def test_login_user_success(service, mock_sessions_repository, mock_user):
     session.id = session_id
     mock_sessions_repository.create.return_value = session
 
-    result = await service.login_user("test@example.com", "correct_password")
+    result = await service.login_user("user1@example.com", "correct_password1")
 
     assert result == session_id
     mock_sessions_repository.create.assert_called_once_with(

@@ -20,6 +20,13 @@ class SummitPhoto(SQLModel, table=True):
     """Database model for a summit photo with metadata"""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+
+    owner_id: int = Field(foreign_key="user.id")
+    owner: User = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
+
+    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
+    peak: Optional["Peak"] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
+
     file_name: str
     uploaded_at: datetime = Field(default_factory=datetime.utcnow)
     captured_at: datetime = Field(
@@ -29,11 +36,6 @@ class SummitPhoto(SQLModel, table=True):
         sa_column=Column(Geography(geometry_type="POINT", srid=4326))
     )
     alt: Optional[float] = None
-
-    owner_id: int = Field(foreign_key="user.id")
-
-    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
-    peak: Optional["Peak"] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
     @property
     def lat(self) -> Optional[float]:

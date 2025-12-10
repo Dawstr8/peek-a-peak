@@ -3,6 +3,8 @@ from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from src.photos.models import SummitPhoto
+
 
 class WeatherRecordWeatherConditionLink(SQLModel, table=True):
     record_id: int = Field(foreign_key="weatherrecord.id", primary_key=True)
@@ -27,7 +29,9 @@ class WeatherRecord(SQLModel, table=True):
     """Database model for detailed weather records"""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+
     photo_id: int = Field(foreign_key="summitphoto.id")
+    photo: SummitPhoto = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
     conditions: list[WeatherCondition] = Relationship(
         sa_relationship_kwargs={

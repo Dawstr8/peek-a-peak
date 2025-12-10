@@ -11,19 +11,28 @@ from tests.users.mock_repository import MockUsersRepository
 
 
 @pytest.fixture
-def mock_user() -> User:
+def users() -> list[User]:
+    """Returns a list of User models for unit tests."""
+    return [
+        User(
+            email=f"user{i}@example.com",
+            username=f"user{i}",
+            username_display=f"User{i}",
+            hashed_password=f"hashed_correct_password{i}",
+        )
+        for i in range(1, 3)
+    ]
+
+
+@pytest.fixture
+def mock_user(users) -> User:
     """
     Returns a mock User object for unit tests.
     This user is not persisted anywhere and is useful for pure unit tests
     that don't need database interaction.
     """
-    return User(
-        id=1,
-        email="test@example.com",
-        username="user",
-        username_display="User",
-        hashed_password="hashed_correct_password",
-    )
+    users[0].id = 1
+    return users[0]
 
 
 @pytest.fixture
@@ -37,25 +46,14 @@ def mock_users_repository(mock_user: User) -> UsersRepository:
 
 
 @pytest_asyncio.fixture
-async def db_users(test_db) -> list[User]:
+async def db_users(test_db, users) -> list[User]:
     """
     Creates and returns multiple real users in the test database.
     This fixture is useful for integration tests that need
     multiple real users in the database.
     """
     users_repo = UsersRepository(test_db)
-
-    return await users_repo.save_all(
-        [
-            User(
-                email=f"user{i}@example.com",
-                username=f"user{i}",
-                username_display=f"User{i}",
-                hashed_password=f"hashed_password{i}",
-            )
-            for i in range(1, 3)
-        ]
-    )
+    return await users_repo.save_all(users)
 
 
 @pytest.fixture
