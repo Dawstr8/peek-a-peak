@@ -5,7 +5,9 @@ from src.mountain_ranges.repository import MountainRangesRepository
 from tests.database.mixins import BaseRepositoryMixin
 
 
-class TestMountainRangesRepository(BaseRepositoryMixin):
+class TestMountainRangesRepository(
+    BaseRepositoryMixin[MountainRange, MountainRangesRepository]
+):
     repository_class = MountainRangesRepository
     model_class = MountainRange
     sort_by = "name"

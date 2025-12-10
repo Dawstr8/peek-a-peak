@@ -11,7 +11,7 @@ from src.sorting.models import SortParams
 from tests.database.mixins import BaseRepositoryMixin
 
 
-class TestPeaksRepository(BaseRepositoryMixin):
+class TestPeaksRepository(BaseRepositoryMixin[Peak, PeaksRepository]):
     repository_class = PeaksRepository
     model_class = Peak
     unique_keys = [("name", "elevation", "mountain_range_id")]

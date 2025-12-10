@@ -7,7 +7,9 @@ from src.weather.repository import WeatherConditionsRepository, WeatherRecordsRe
 from tests.database.mixins import BaseRepositoryMixin
 
 
-class TestWeatherConditionsRepository(BaseRepositoryMixin):
+class TestWeatherConditionsRepository(
+    BaseRepositoryMixin[WeatherCondition, WeatherConditionsRepository]
+):
     repository_class = WeatherConditionsRepository
     model_class = WeatherCondition
     sort_by = "main"
@@ -29,7 +31,9 @@ class TestWeatherConditionsRepository(BaseRepositoryMixin):
         )
 
 
-class TestWeatherRecordsRepository(BaseRepositoryMixin):
+class TestWeatherRecordsRepository(
+    BaseRepositoryMixin[WeatherRecord, WeatherRecordsRepository]
+):
     repository_class = WeatherRecordsRepository
     model_class = WeatherRecord
     sort_by = "sunrise"
