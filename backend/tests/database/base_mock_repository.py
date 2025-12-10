@@ -79,12 +79,16 @@ class BaseMockRepository(Generic[T]):
             elif hasattr(item, "id"):
                 self.items = [i for i in self.items if i.id != item.id]
 
+        async def count() -> int:
+            return len(self.items)
+
         self._add_method("get_by_id", get_by_id)
         self._add_method("get_by_field", get_by_field)
         self._add_method("get_all", get_all)
         self._add_method("save", save)
         self._add_method("save_all", save_all)
         self._add_method("delete", delete)
+        self._add_method("count", count)
 
     def _setup_custom_methods(self) -> None:
         pass

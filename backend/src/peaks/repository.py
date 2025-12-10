@@ -24,11 +24,6 @@ class PeaksRepository(BaseRepository[Peak]):
         result = await self.db.exec(query)
         return result.all()
 
-    async def get_count(self) -> int:
-        query = select(func.count()).select_from(Peak)
-        result = await self.db.exec(query)
-        return result.one()
-
     async def get_summited_by_user_count(self, user_id: int) -> int:
         query = (
             select(func.count(func.distinct(Peak.id)))

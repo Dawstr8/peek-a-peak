@@ -253,3 +253,15 @@ class BaseRepositoryMixin:
 
         with pytest.raises(NotFoundException):
             await test_repository.get_by_id(db_item.id)
+
+    @pytest.mark.asyncio
+    async def test_count_no_items(self, test_repository):
+        count = await test_repository.count()
+
+        assert count == 0
+
+    @pytest.mark.asyncio
+    async def test_count_with_items(self, test_repository, db_items):
+        count = await test_repository.count()
+
+        assert count == len(db_items)

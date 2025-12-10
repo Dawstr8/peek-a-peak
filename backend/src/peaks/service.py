@@ -28,7 +28,7 @@ class PeaksService:
         return await self.peaks_repository.get_all()
 
     async def get_count(self) -> int:
-        return await self.peaks_repository.get_count()
+        return await self.peaks_repository.count()
 
     async def get_by_id(self, peak_id: int) -> Peak:
         """

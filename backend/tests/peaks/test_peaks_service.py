@@ -34,7 +34,7 @@ async def test_get_count(mock_peaks_service, mock_peaks_repository):
 
     assert count == 3
 
-    mock_peaks_repository.get_count.assert_called_once()
+    mock_peaks_repository.count.assert_called_once()
 
 
 @pytest.mark.asyncio
