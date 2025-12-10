@@ -12,27 +12,7 @@ class TestUsersRepository(BaseRepositoryMixin[User, UsersRepository]):
     model_class = User
     sort_by = "username"
 
-    @pytest.fixture()
-    def db_items(self, db_users) -> list[User]:
-        return db_users
-
-    @pytest.fixture()
-    def new_item(self) -> User:
-        return User(
-            email="new@example.com",
-            username="newuser",
-            username_display="New User",
-            hashed_password="newhash",
-        )
-
-    @pytest.fixture()
-    def updated_item(self) -> User:
-        return User(
-            email="updated@example.com",
-            username="updateduser",
-            username_display="Updated User",
-            hashed_password="updatedhash",
-        )
+    items_fixture = "users"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -43,22 +23,30 @@ class TestUsersRepository(BaseRepositoryMixin[User, UsersRepository]):
         ],
     )
     async def test_save_unique_constraint_violation(
-        self, test_repository, db_user, new_item, field, error_message
+        self, test_repository, items, field, error_message
     ):
-        setattr(new_item, field, getattr(db_user, field))
+        # Arrange
+        db_user = await test_repository.save(items[0])
+        new_user = items[1]
+        setattr(new_user, field, getattr(db_user, field))
 
+        # Act & Assert
         with pytest.raises(ValueError, match=error_message):
-            await test_repository.save(new_item)
+            await test_repository.save(new_user)
 
     @pytest.mark.asyncio
-    async def test_update_success(self, test_repository, db_user):
+    async def test_update_success(self, test_repository, items):
         """Test updating an existing user successfully and not overriding other fields."""
+        # Arrange
+        db_user = await test_repository.save(items[0])
         original_user = copy.deepcopy(db_user)
 
+        # Act
         updated_user = await test_repository.update(
             db_user.id, UserUpdate(is_private=True)
         )
 
+        # Assert
         assert updated_user.id == original_user.id
         assert updated_user.email == original_user.email
         assert updated_user.username == original_user.username

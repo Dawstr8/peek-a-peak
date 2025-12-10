@@ -46,21 +46,11 @@ def mock_users_repository(mock_user: User) -> UsersRepository:
 
 
 @pytest_asyncio.fixture
-async def db_users(test_db, users) -> list[User]:
-    """
-    Creates and returns multiple real users in the test database.
-    This fixture is useful for integration tests that need
-    multiple real users in the database.
-    """
-    users_repo = UsersRepository(test_db)
-    return await users_repo.save_all(users)
-
-
-@pytest.fixture
-def db_user(db_users) -> User:
+async def db_user(test_db, users) -> User:
     """
     Creates and returns a real user in the test database.
     This fixture is useful for integration tests that need
     a real user in the database.
     """
-    return db_users[0]
+    users_repo = UsersRepository(test_db)
+    return await users_repo.save(users[0])
