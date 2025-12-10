@@ -7,25 +7,34 @@ from src.mountain_ranges.repository import MountainRangesRepository
 
 
 @pytest.fixture
-def mock_mountain_ranges_map() -> dict[str, MountainRange]:
+def mountain_ranges() -> list[MountainRange]:
+    return [
+        MountainRange(name="Tatry"),
+        MountainRange(name="Karkonosze"),
+        MountainRange(name="Beskidy"),
+    ]
+
+
+@pytest.fixture
+def mock_mountain_ranges_map(mountain_ranges) -> dict[str, MountainRange]:
     """
     Returns a map of mock MountainRange objects for unit tests.
     """
+
+    for i, range in enumerate(mountain_ranges, start=1):
+        range.id = i
+
     return {
-        "tatry": MountainRange(id=1, name="Tatry"),
-        "beskidy": MountainRange(id=2, name="Beskidy"),
+        "tatry": mountain_ranges[0],
+        "karkonosze": mountain_ranges[1],
+        "beskidy": mountain_ranges[2],
     }
 
 
 @pytest_asyncio.fixture
-async def db_mountain_ranges(test_db: AsyncSession) -> dict[str, MountainRange]:
+async def db_mountain_ranges(
+    test_db: AsyncSession, mountain_ranges
+) -> dict[str, MountainRange]:
     """Fixture to seed mountain ranges into the test database."""
     repository = MountainRangesRepository(test_db)
-
-    return await repository.save_all(
-        [
-            MountainRange(name="Tatry"),
-            MountainRange(name="Karkonosze"),
-            MountainRange(name="Beskidy"),
-        ]
-    )
+    return await repository.save_all(mountain_ranges)
