@@ -1,12 +1,9 @@
 from datetime import datetime
 
 import pytest
-import pytest_asyncio
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.photos.models import SummitPhoto
 from src.weather.models import WeatherCondition, WeatherRecord
-from src.weather.repository import WeatherConditionsRepository, WeatherRecordsRepository
 
 
 @pytest.fixture
@@ -61,20 +58,3 @@ def weather_records(
             snow=0.5,
         ),
     ]
-
-
-@pytest_asyncio.fixture
-async def db_weather_conditions(
-    test_db: AsyncSession, weather_conditions
-) -> list[WeatherCondition]:
-    repo = WeatherConditionsRepository(test_db)
-    return await repo.save_all(weather_conditions)
-
-
-@pytest_asyncio.fixture
-async def db_weather_records(
-    test_db: AsyncSession,
-    weather_records,
-) -> list[WeatherRecord]:
-    repo = WeatherRecordsRepository(test_db)
-    return await repo.save_all(weather_records)
