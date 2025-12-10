@@ -1,6 +1,6 @@
 from typing import Generic, Optional, Type, TypeVar
 
-from sqlmodel import select
+from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.common.exceptions import NotFoundException
@@ -77,3 +77,8 @@ class BaseRepository(Generic[T]):
     async def delete(self, obj: T) -> None:
         await self.db.delete(obj)
         await self.db.commit()
+
+    async def count(self) -> int:
+        query = select(func.count()).select_from(self.model)
+        result = await self.db.exec(query)
+        return result.one()

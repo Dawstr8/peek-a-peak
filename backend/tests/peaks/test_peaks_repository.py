@@ -53,18 +53,6 @@ class TestPeaksRepository(BaseRepositoryMixin):
         assert any(peak.name == "No Location Peak" for peak in peaks)
 
     @pytest.mark.asyncio
-    async def test_get_count_no_peaks(self, test_repository):
-        count = await test_repository.get_count()
-
-        assert count == 0
-
-    @pytest.mark.asyncio
-    async def test_get_count(self, test_repository, db_peaks):
-        count = await test_repository.get_count()
-
-        assert count == 3
-
-    @pytest.mark.asyncio
     async def test_get_summited_by_user_count_no_peaks(self, test_repository, db_user):
         count = await test_repository.get_summited_by_user_count(db_user.id)
 
