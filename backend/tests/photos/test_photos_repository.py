@@ -13,7 +13,7 @@ from src.sorting.models import SortParams
 from tests.database.mixins import BaseRepositoryMixin
 
 
-class TestPhotosRepository(BaseRepositoryMixin):
+class TestPhotosRepository(BaseRepositoryMixin[SummitPhoto, PhotosRepository]):
     repository_class = PhotosRepository
     model_class = SummitPhoto
     sort_by = "captured_at"

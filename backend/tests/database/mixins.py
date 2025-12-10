@@ -1,23 +1,27 @@
-from typing import Type
+from typing import Generic, Type, TypeVar
 
 import pytest
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.common.exceptions import NotFoundException
 from src.database.base_repository import BaseRepository
 from src.sorting.models import SortParams
 
+T = TypeVar("T", bound=SQLModel)
+R = TypeVar("R", bound=BaseRepository)
 
-class BaseRepositoryMixin:
-    repository_class: Type[BaseRepository] = None
-    model_class: Type = None
+
+class BaseRepositoryMixin(Generic[T, R]):
+    repository_class: Type[R] = None
+    model_class: Type[T] = None
     sort_by = "id"
     unique_fields = []
     unique_keys = []
 
     @pytest.fixture()
-    def test_repository(self, test_db: AsyncSession) -> BaseRepository:
+    def test_repository(self, test_db: AsyncSession) -> R:
         if self.repository_class is None:
             raise NotImplementedError(
                 "repository_class must be defined in the subclass."
@@ -26,17 +30,17 @@ class BaseRepositoryMixin:
         return self.repository_class(test_db)
 
     @pytest.fixture()
-    def db_items(self):
+    def db_items(self) -> list[T]:
         """Retrieve test items from fixtures based on model_class"""
         pass
 
     @pytest.fixture()
-    def new_item(self):
+    def new_item(self) -> T:
         """Create a new instance of the model_class for testing"""
         pass
 
     @pytest.fixture()
-    def updated_item(self):
+    def updated_item(self) -> T:
         """Create an updated instance of the model_class for testing"""
         pass
 

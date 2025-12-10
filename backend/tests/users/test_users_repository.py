@@ -1,14 +1,13 @@
 import copy
 
 import pytest
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.users.models import User, UserUpdate
 from src.users.repository import UsersRepository
 from tests.database.mixins import BaseRepositoryMixin
 
 
-class TestUsersRepository(BaseRepositoryMixin):
+class TestUsersRepository(BaseRepositoryMixin[User, UsersRepository]):
     repository_class = UsersRepository
     model_class = User
     sort_by = "username"
