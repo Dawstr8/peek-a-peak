@@ -16,5 +16,10 @@ class Settings(BaseSettings):
         db_name=os.getenv("DB_NAME", "peek_a_peak"),
     )
 
+    openweather_api_key: str = os.getenv("OPENWEATHER_API_KEY", "")
+    openweather_base_url: str = os.getenv(
+        "OPENWEATHER_BASE_URL", "https://api.openweathermap.org/data/3.0"
+    )
+
 
 settings = Settings()

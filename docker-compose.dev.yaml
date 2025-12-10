@@ -39,6 +39,8 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=postgres
       - DB_NAME=peek_a_peak
+    env_file:
+      - ./backend/.env
     depends_on:
       - postgres
 
