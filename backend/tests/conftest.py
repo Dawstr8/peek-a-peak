@@ -1,10 +1,11 @@
 import shutil
 from pathlib import Path
 from typing import AsyncGenerator
+from unittest.mock import Mock
 
 import pytest
 import pytest_asyncio
-from fastapi import UploadFile
+from fastapi import BackgroundTasks, UploadFile
 from httpx import ASGITransport, AsyncClient
 from starlette.datastructures import Headers
 
@@ -79,3 +80,9 @@ def mock_upload_file(tmp_path):
         file=open(test_file, "rb"),
         headers=Headers({"content-type": "image/jpeg"}),
     )
+
+
+@pytest.fixture
+def mock_background_tasks():
+    """Create a mock BackgroundTasks"""
+    return Mock(spec=BackgroundTasks)

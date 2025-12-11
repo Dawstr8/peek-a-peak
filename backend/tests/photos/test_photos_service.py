@@ -51,6 +51,7 @@ async def test_upload_photo_with_metadata(
     mock_weather_service,
     coords_map,
     mock_user,
+    mock_background_tasks,
 ):
     """Test uploading a photo with provided metadata"""
     summit_photo_create = SummitPhotoCreate(
@@ -62,7 +63,7 @@ async def test_upload_photo_with_metadata(
     )
 
     result = await photos_service.upload_photo(
-        mock_file, summit_photo_create, mock_user
+        mock_file, summit_photo_create, mock_user, mock_background_tasks
     )
 
     assert result.id == 1
@@ -76,7 +77,9 @@ async def test_upload_photo_with_metadata(
         mock_file, content_type_prefix="image/"
     )
     mock_photos_repository.save.assert_called_once()
-    mock_weather_service.fetch_and_save_weather.assert_awaited_once_with(
+
+    mock_background_tasks.add_task.assert_called_once_with(
+        mock_weather_service.fetch_and_save_weather,
         coords_map["near_rysy"][0],
         coords_map["near_rysy"][1],
         summit_photo_create.captured_at,
@@ -90,8 +93,8 @@ async def test_upload_photo_without_location(
     mock_file,
     mock_uploads_service,
     mock_photos_repository,
-    mock_weather_service,
     mock_user,
+    mock_background_tasks,
 ):
     """Test uploading a photo without any metadata"""
     summit_photo_create = SummitPhotoCreate(
@@ -99,7 +102,7 @@ async def test_upload_photo_without_location(
     )
 
     result = await photos_service.upload_photo(
-        mock_file, summit_photo_create, mock_user
+        mock_file, summit_photo_create, mock_user, mock_background_tasks
     )
 
     assert result.id == 1
@@ -115,7 +118,7 @@ async def test_upload_photo_without_location(
         mock_file, content_type_prefix="image/"
     )
     mock_photos_repository.save.assert_called_once()
-    mock_weather_service.fetch_and_save_weather.assert_not_called()
+    mock_background_tasks.add_task.assert_not_called()
 
 
 @pytest.mark.asyncio

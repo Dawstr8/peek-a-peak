@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 
@@ -39,6 +39,7 @@ async def get_all_photos(
 async def upload_photo(
     photos_service: photos_service_dep,
     current_user: current_user_dep,
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     summit_photo_create: str = Form(..., alias="summitPhotoCreate"),
 ):
@@ -57,7 +58,7 @@ async def upload_photo(
         summit_photo_create = SummitPhotoCreate.model_validate_json(summit_photo_create)
 
         return await photos_service.upload_photo(
-            file, summit_photo_create, current_user
+            file, summit_photo_create, current_user, background_tasks
         )
     except ValidationError as e:
         raise RequestValidationError(e.errors())
