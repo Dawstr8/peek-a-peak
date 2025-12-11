@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any, Dict
 
 import httpx
@@ -15,7 +14,7 @@ class OpenWeatherMapClient(BaseAPIClient):
         self.client = client
 
     async def get_historical_weather(
-        self, lat: float, lng: float, dt: datetime
+        self, lat: float, lng: float, dt: int
     ) -> Dict[str, Any]:
         """
         Retrieve historical weather data for a specific location and time.
@@ -25,7 +24,7 @@ class OpenWeatherMapClient(BaseAPIClient):
         Args:
             lat: Latitude of the location
             lng: Longitude of the location
-            dt: The datetime for which to retrieve weather data
+            dt: Unix timestamp of the desired date and time
 
         Returns:
             Dict[str, Any]: Raw JSON response from OpenWeatherMap API
@@ -39,7 +38,7 @@ class OpenWeatherMapClient(BaseAPIClient):
             params={
                 "lat": lat,
                 "lon": lng,
-                "dt": int(dt.timestamp()),
+                "dt": dt,
                 "appid": self.api_key,
                 "units": "metric",
             },

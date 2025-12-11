@@ -11,6 +11,8 @@ from starlette.datastructures import Headers
 from main import app
 from src.database.core import get_db
 from src.uploads.services.local_storage import LocalFileStorage
+from src.weather.client import OpenWeatherMapClient
+from src.weather.dependencies import get_openweathermap_client
 from tests.auth.auth_fixtures import *
 from tests.database.database_fixtures import *
 from tests.mountain_ranges.mountain_ranges_fixtures import *
@@ -21,7 +23,9 @@ from tests.weather.weather_fixtures import *
 
 
 @pytest_asyncio.fixture
-async def client_with_db(test_db) -> AsyncGenerator[AsyncClient, None]:
+async def client_with_db(
+    test_db, mock_weather_client: OpenWeatherMapClient
+) -> AsyncGenerator[AsyncClient, None]:
     """
     Create a test client with a test database session.
     Reuses the test_db fixture for database operations.
@@ -30,7 +34,13 @@ async def client_with_db(test_db) -> AsyncGenerator[AsyncClient, None]:
     async def override_get_db():
         yield test_db
 
+    async def override_get_openweathermap_client():
+        yield mock_weather_client
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_openweathermap_client] = (
+        override_get_openweathermap_client
+    )
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="https://testserver"

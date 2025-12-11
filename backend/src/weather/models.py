@@ -35,8 +35,11 @@ class WeatherRecord(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    photo_id: int = Field(foreign_key="summitphoto.id")
-    photo: SummitPhoto = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
+    photo_id: int = Field(foreign_key="summitphoto.id", ondelete="CASCADE")
+    photo: SummitPhoto = Relationship(
+        back_populates="weather_record",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
 
     conditions: list[WeatherCondition] = Relationship(
         sa_relationship_kwargs={
