@@ -1,10 +1,13 @@
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
-from src.photos.models import SummitPhoto
+from src.common.models import CamelModel
+
+if TYPE_CHECKING:
+    from src.photos.models import SummitPhoto
 
 
 class WeatherRecordWeatherConditionLink(SQLModel, table=True):
@@ -37,7 +40,7 @@ class WeatherRecord(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     photo_id: int = Field(foreign_key="summitphoto.id", ondelete="CASCADE")
-    photo: SummitPhoto = Relationship(
+    photo: "SummitPhoto" = Relationship(
         back_populates="weather_record",
         sa_relationship_kwargs={"lazy": "selectin"},
     )
@@ -95,3 +98,26 @@ class WeatherRecord(SQLModel, table=True):
     snow: Optional[float] = Field(
         default=None, description="Precipitation for the last 1 hour in mm/h"
     )
+
+
+class WeatherConditionRead(CamelModel):
+    main: Optional[str]
+    description: Optional[str]
+    icon: Optional[str]
+
+
+class WeatherRecordRead(CamelModel):
+    sunrise: Optional[datetime]
+    sunset: Optional[datetime]
+    temp: Optional[float]
+    feels_like: Optional[float]
+    dew_point: Optional[float]
+    pressure: Optional[int]
+    humidity: Optional[int]
+    clouds: Optional[int]
+    visibility: Optional[int]
+    wind_speed: Optional[float]
+    wind_deg: Optional[int]
+    rain: Optional[float]
+    snow: Optional[float]
+    conditions: list[WeatherConditionRead]

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, MapPin, Mountain } from "lucide-react";
+import { ArrowUp, MapPin, Mountain, Thermometer } from "lucide-react";
 
 import type { PhotoDetailsFormatter } from "@/lib/photos/types";
 import type { SummitPhoto } from "@/lib/photos/types";
@@ -77,6 +77,18 @@ export function SummitPhotoHoverableCard({
                 <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
               </ItemDescription>
+            </ItemContent>
+          </Item>
+        )}
+        {summitPhoto.weatherRecord?.temp && (
+          <Item className="p-0">
+            <ItemMedia>
+              <Thermometer />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle className="font-mono text-base">
+                <span>{summitPhoto.weatherRecord.temp}°C</span>
+              </ItemTitle>
             </ItemContent>
           </Item>
         )}
