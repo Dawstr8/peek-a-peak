@@ -12,18 +12,6 @@ from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
 
 
-@pytest.fixture(autouse=True)
-def override_uploads_service(test_upload_dir):
-    """Override the upload service dependency to isolate filesystem writes."""
-
-    def _get_uploads_service():
-        return UploadsService(LocalFileStorage(upload_dir=str(test_upload_dir)))
-
-    app.dependency_overrides[dependencies.get_uploads_service] = _get_uploads_service
-    yield
-    app.dependency_overrides.pop(dependencies.get_uploads_service, None)
-
-
 @pytest.mark.asyncio
 async def test_get_all_photos_empty(client_with_db):
     """Test getting all photos when none exist"""

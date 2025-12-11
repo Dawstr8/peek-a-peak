@@ -11,6 +11,8 @@ from starlette.datastructures import Headers
 
 from main import app
 from src.database.core import get_db
+from src.photos.dependencies import get_uploads_service
+from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
 from src.weather.client import OpenWeatherMapClient
 from src.weather.dependencies import get_openweathermap_client
@@ -23,9 +25,20 @@ from tests.users.users_fixtures import *
 from tests.weather.weather_fixtures import *
 
 
+@pytest.fixture
+def test_upload_dir():
+    """Creates a temporary upload directory for tests"""
+    test_dir = Path("test_uploads")
+    test_dir.mkdir(exist_ok=True)
+    yield test_dir
+
+    if test_dir.exists():
+        shutil.rmtree(test_dir)
+
+
 @pytest_asyncio.fixture
 async def client_with_db(
-    test_db, mock_weather_client: OpenWeatherMapClient
+    test_db, mock_weather_client: OpenWeatherMapClient, test_upload_dir
 ) -> AsyncGenerator[AsyncClient, None]:
     """
     Create a test client with a test database session.
@@ -38,10 +51,14 @@ async def client_with_db(
     async def override_get_openweathermap_client():
         yield mock_weather_client
 
+    def _get_uploads_service():
+        return UploadsService(LocalFileStorage(upload_dir=str(test_upload_dir)))
+
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_openweathermap_client] = (
         override_get_openweathermap_client
     )
+    app.dependency_overrides[get_uploads_service] = _get_uploads_service
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="https://testserver"
@@ -49,17 +66,6 @@ async def client_with_db(
         yield async_test_client
 
     app.dependency_overrides.clear()
-
-
-@pytest.fixture
-def test_upload_dir():
-    """Creates a temporary upload directory for tests"""
-    test_dir = Path("test_uploads")
-    test_dir.mkdir(exist_ok=True)
-    yield test_dir
-
-    if test_dir.exists():
-        shutil.rmtree(test_dir)
 
 
 @pytest.fixture
