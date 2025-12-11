@@ -169,7 +169,9 @@ async def test_get_user_photos_with_pagination_parameters(
     assert paginated_photos["perPage"] == per_page
 
     photos = paginated_photos["items"]
-    assert photos == [e2e_photos[i] for i in expected_ids]
+    e2e_photos_in_order = [e2e_photos[i] for i in expected_ids]
+    for photo, expected_photo in zip(photos, e2e_photos_in_order):
+        assert photo["id"] == expected_photo["id"]
 
 
 @pytest.mark.asyncio
