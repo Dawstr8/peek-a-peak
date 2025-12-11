@@ -2,6 +2,8 @@
 Peak fixtures for testing across different test types: unit, integration, and e2e
 """
 
+from uuid import uuid4
+
 import pytest
 import pytest_asyncio
 
@@ -55,8 +57,8 @@ def mock_peaks_map(peaks) -> dict[str, Peak]:
     These peaks are not persisted anywhere and are useful for pure unit tests
     that don't need database interaction.
     """
-    for i, peak in enumerate(peaks, start=1):
-        peak.id = i
+    for peak in peaks:
+        peak.id = uuid4()
 
     return {"rysy": peaks[0], "śnieżka": peaks[1], "babia_gora": peaks[2]}
 

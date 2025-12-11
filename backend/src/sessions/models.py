@@ -1,14 +1,14 @@
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
+
+from src.database.models import BaseTableModel
 
 
-class Session(SQLModel, table=True):
+class Session(BaseTableModel, table=True):
     """Database model for user sessions"""
 
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    user_id: int = Field(foreign_key="user.id", index=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    user_id: UUID = Field(foreign_key="user.id", index=True)
     expires_at: datetime
     is_active: bool = Field(default=True)

@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile
 from fastapi.exceptions import RequestValidationError
@@ -70,7 +71,7 @@ async def upload_photo(
 
 @router.get("/{photo_id}", response_model=SummitPhotoRead)
 async def get_photo_by_id(
-    photo_id: int,
+    photo_id: UUID,
     photos_service: photos_service_dep,
 ):
     """
@@ -90,7 +91,7 @@ async def get_photo_by_id(
 
 @router.delete("/{photo_id}", response_model=dict)
 async def delete_photo(
-    photo_id: int,
+    photo_id: UUID,
     photos_service: photos_service_dep,
 ):
     """

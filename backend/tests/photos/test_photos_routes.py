@@ -2,6 +2,7 @@ import json
 import os
 import re
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
@@ -54,7 +55,7 @@ async def test_get_all_photos_with_peaks(client_with_db, db_peaks, e2e_photos):
     for photo_with_peak in photos_with_peak:
         assert photo_with_peak is not None
         assert photo_with_peak["peak"] is not None
-        assert photo_with_peak["peak"]["id"] == db_peaks[0].id
+        assert photo_with_peak["peak"]["id"] == str(db_peaks[0].id)
         assert photo_with_peak["peak"]["name"] == db_peaks[0].name
 
 
@@ -156,7 +157,7 @@ async def test_upload_photo_success(
         "lat": coords_map["near_rysy"][0],
         "lng": coords_map["near_rysy"][1],
         "alt": 2450.0,
-        "peakId": db_peaks[0].id,
+        "peakId": str(db_peaks[0].id),
     }
 
     resp = await client_with_db.post(
@@ -198,12 +199,13 @@ async def test_get_photo_by_id(client_with_db, e2e_photo):
 @pytest.mark.asyncio
 async def test_get_photo_by_id_not_found(client_with_db, logged_in_user):
     """Test getting a photo that doesn't exist"""
-    id = 9999
 
-    resp = await client_with_db.get(f"/api/photos/{id}")
+    non_existent_id = uuid4()
+
+    resp = await client_with_db.get(f"/api/photos/{non_existent_id}")
 
     assert resp.status_code == 404
-    assert resp.json()["detail"] == f"SummitPhoto with id {id} not found."
+    assert resp.json()["detail"] == f"SummitPhoto with id {non_existent_id} not found."
 
 
 @pytest.mark.asyncio
@@ -222,9 +224,9 @@ async def test_delete_photo(client_with_db, e2e_photo):
 @pytest.mark.asyncio
 async def test_delete_photo_not_found(client_with_db, logged_in_user):
     """Test deleting a photo that doesn't exist"""
-    id = 9999
+    non_existent_id = uuid4()
 
-    resp = await client_with_db.delete(f"/api/photos/{id}")
+    resp = await client_with_db.delete(f"/api/photos/{non_existent_id}")
 
     assert resp.status_code == 404
-    assert resp.json()["detail"] == f"SummitPhoto with id {id} not found."
+    assert resp.json()["detail"] == f"SummitPhoto with id {non_existent_id} not found."

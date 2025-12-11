@@ -2,6 +2,8 @@
 User fixtures for testing across different test types: unit, integration, and e2e
 """
 
+from uuid import UUID, uuid4
+
 import pytest
 import pytest_asyncio
 
@@ -31,7 +33,7 @@ def mock_user(users) -> User:
     This user is not persisted anywhere and is useful for pure unit tests
     that don't need database interaction.
     """
-    users[0].id = 1
+    users[0].id = uuid4()
     return users[0]
 
 

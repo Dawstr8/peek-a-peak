@@ -14,7 +14,7 @@ class SessionsRepository(BaseRepository[UserSession]):
 
     model = UserSession
 
-    async def create(self, user_id: int, expires_in_days: int) -> UserSession:
+    async def create(self, user_id: UUID, expires_in_days: int) -> UserSession:
         """
         Create a new user session.
 

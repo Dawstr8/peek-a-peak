@@ -1,5 +1,6 @@
+from uuid import UUID
+
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import select
 
 from src.database.base_repository import BaseRepository
 from src.users.models import User, UserUpdate
@@ -41,7 +42,7 @@ class UsersRepository(BaseRepository[User]):
         await self.db.refresh(user)
         return user
 
-    async def update(self, user_id: int, user_update: UserUpdate) -> User:
+    async def update(self, user_id: UUID, user_update: UserUpdate) -> User:
         user = await self.get_by_id(user_id)
         user_data = user_update.model_dump(exclude_unset=True)
         for key, value in user_data.items():

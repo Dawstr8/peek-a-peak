@@ -1,4 +1,5 @@
 from typing import Generic, Optional, Type, TypeVar
+from uuid import UUID
 
 from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -18,7 +19,7 @@ class BaseRepository(Generic[T]):
         self.db = db
         self.paginator = Paginator(db)
 
-    async def get_by_id(self, id: int) -> T:
+    async def get_by_id(self, id: UUID) -> T:
         obj = await self.db.get(self.model, id)
         if obj is None:
             raise NotFoundException(f"{self.model.__name__} with id {id} not found.")

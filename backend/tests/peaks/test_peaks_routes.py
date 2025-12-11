@@ -1,3 +1,5 @@
+from uuid import UUID, uuid4
+
 import pytest
 from httpx import AsyncClient
 
@@ -65,7 +67,7 @@ async def test_search_peaks_parametrized(
 
     expected_peaks = [db_peaks[idx] for idx in expected_peaks_ids]
     for peak, expected_peak in zip(data, expected_peaks):
-        assert peak["id"] == expected_peak.id
+        assert peak["id"] == str(expected_peak.id)
         assert peak["name"] == expected_peak.name
         assert peak["elevation"] == expected_peak.elevation
         assert peak["lat"] == expected_peak.lat
@@ -184,7 +186,7 @@ async def test_get_peak(client_with_db: AsyncClient, db_peaks):
 
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == peak_id
+    assert data["id"] == str(peak_id)
     assert data["name"] == "Rysy"
     assert data["elevation"] == 2499
     assert data["lat"] == 49.1795
@@ -196,7 +198,7 @@ async def test_get_peak(client_with_db: AsyncClient, db_peaks):
 @pytest.mark.asyncio
 async def test_get_peak_not_found(client_with_db: AsyncClient):
     """Test getting a non-existent peak"""
-    id = 999
+    id = uuid4()
 
     response = await client_with_db.get(f"/api/peaks/{id}")
 

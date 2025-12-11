@@ -4,6 +4,7 @@ Photo fixtures for testing across different test types: unit, integration, and e
 
 import json
 from datetime import datetime, timezone
+from uuid import uuid4
 
 import pytest
 import pytest_asyncio
@@ -65,7 +66,7 @@ def mock_photos(photos) -> list[SummitPhoto]:
     that don't need database interaction.
     """
     for photo in photos:
-        photo.id = 1
+        photo.id = uuid4()
 
     return photos
 
@@ -120,7 +121,7 @@ async def e2e_photos(
                     "lat": coords_map["near_rysy"][0],
                     "lng": coords_map["near_rysy"][1],
                     "alt": 2495.0,
-                    "peak_id": db_peaks[0].id,
+                    "peakId": str(db_peaks[0].id),
                 },
                 "file": ("photo1.jpg", b"imagedata1", "image/jpeg"),
             },

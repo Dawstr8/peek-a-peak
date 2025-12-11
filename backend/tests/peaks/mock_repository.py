@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
@@ -19,7 +20,7 @@ class MockPeaksRepository(BaseMockRepository[Peak]):
         async def get_count() -> int:
             return len(self.items)
 
-        async def get_summited_by_user_count(user_id: int) -> int:
+        async def get_summited_by_user_count(user_id: UUID) -> int:
             return 2
 
         async def search(

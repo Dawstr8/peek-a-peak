@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from sqlalchemy.orm import load_only
 from sqlmodel import select
@@ -19,7 +20,7 @@ class PhotosRepository(BaseRepository[SummitPhoto]):
 
     async def get_by_owner_id(
         self,
-        owner_id: int,
+        owner_id: UUID,
         sort_params: SortParams,
         pagination_params: PaginationParams,
     ) -> PaginatedResponse[SummitPhoto]:
@@ -28,7 +29,7 @@ class PhotosRepository(BaseRepository[SummitPhoto]):
         return await self.paginator.paginate(statement, pagination_params)
 
     async def get_locations_by_owner_id(
-        self, owner_id: int
+        self, owner_id: UUID
     ) -> List[SummitPhotoLocation]:
         statement = (
             select(SummitPhoto)
@@ -39,7 +40,7 @@ class PhotosRepository(BaseRepository[SummitPhoto]):
         result = await self.db.exec(statement)
         return result.all()
 
-    async def get_dates_by_owner_id(self, owner_id: int) -> List[SummitPhotoDate]:
+    async def get_dates_by_owner_id(self, owner_id: UUID) -> List[SummitPhotoDate]:
         statement = (
             select(SummitPhoto)
             .where(SummitPhoto.owner_id == owner_id)
