@@ -24,9 +24,13 @@ def mock_uploads_service():
 
 
 @pytest.fixture
-def photos_service(mock_uploads_service, mock_photos_repository):
+def photos_service(mock_uploads_service, mock_photos_repository, mock_weather_service):
     """Create a PhotosService with mocked dependencies"""
-    return PhotosService(mock_uploads_service, mock_photos_repository)
+    return PhotosService(
+        uploads_service=mock_uploads_service,
+        photos_repository=mock_photos_repository,
+        weather_service=mock_weather_service,
+    )
 
 
 @pytest.fixture
@@ -44,6 +48,7 @@ async def test_upload_photo_with_metadata(
     mock_file,
     mock_uploads_service,
     mock_photos_repository,
+    mock_weather_service,
     coords_map,
     mock_user,
 ):
@@ -71,6 +76,12 @@ async def test_upload_photo_with_metadata(
         mock_file, content_type_prefix="image/"
     )
     mock_photos_repository.save.assert_called_once()
+    mock_weather_service.fetch_and_save_weather.assert_awaited_once_with(
+        coords_map["near_rysy"][0],
+        coords_map["near_rysy"][1],
+        summit_photo_create.captured_at,
+        result.id,
+    )
 
 
 @pytest.mark.asyncio
@@ -79,6 +90,7 @@ async def test_upload_photo_without_location(
     mock_file,
     mock_uploads_service,
     mock_photos_repository,
+    mock_weather_service,
     mock_user,
 ):
     """Test uploading a photo without any metadata"""
@@ -103,6 +115,7 @@ async def test_upload_photo_without_location(
         mock_file, content_type_prefix="image/"
     )
     mock_photos_repository.save.assert_called_once()
+    mock_weather_service.fetch_and_save_weather.assert_not_called()
 
 
 @pytest.mark.asyncio

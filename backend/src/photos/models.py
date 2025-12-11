@@ -14,6 +14,7 @@ from src.users.models import User
 
 if TYPE_CHECKING:
     from src.peaks.models import Peak
+    from src.weather.models import WeatherRecord
 
 
 class SummitPhoto(SQLModel, table=True):
@@ -26,6 +27,11 @@ class SummitPhoto(SQLModel, table=True):
 
     peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
     peak: Optional["Peak"] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
+
+    weather_record: Optional["WeatherRecord"] = Relationship(
+        back_populates="photo",
+        sa_relationship_kwargs={"lazy": "selectin", "cascade": "all, delete-orphan"},
+    )
 
     file_name: str
     uploaded_at: datetime = Field(default_factory=datetime.utcnow)

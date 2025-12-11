@@ -7,6 +7,7 @@ from src.photos.repository import PhotosRepository
 from src.sorting.models import SortParams
 from src.uploads.service import UploadsService
 from src.users.models import User
+from src.weather.service import WeatherService
 
 
 class PhotosService:
@@ -18,9 +19,11 @@ class PhotosService:
         self,
         uploads_service: UploadsService,
         photos_repository: PhotosRepository,
+        weather_service: WeatherService,
     ):
         self.uploads_service = uploads_service
         self.photos_repository = photos_repository
+        self.weather_service = weather_service
 
     async def upload_photo(
         self,
@@ -54,6 +57,11 @@ class PhotosService:
         )
 
         saved_photo = await self.photos_repository.save(photo)
+
+        if lat is not None and lng is not None:
+            await self.weather_service.fetch_and_save_weather(
+                lat, lng, summit_photo_create.captured_at, saved_photo.id
+            )
 
         return saved_photo
 

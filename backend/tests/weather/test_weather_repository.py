@@ -9,6 +9,7 @@ class TestWeatherConditionsRepository(
     repository_class = WeatherConditionsRepository
     model_class = WeatherCondition
     sort_by = "main"
+    unique_fields = ["api_id"]
 
     items_fixture = "weather_conditions"
 
