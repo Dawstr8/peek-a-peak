@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.common.exceptions import NotFoundException
 from src.mountain_ranges.models import MountainRange
 from src.mountain_ranges.repository import MountainRangesRepository
 from src.peaks.models import Peak
@@ -134,7 +135,11 @@ async def _get_or_create_mountain_range(
 
     name = mountain_range.name
 
-    existing_mountain_range = await repository.get_by_field("name", name)
+    try:
+        existing_mountain_range = await repository.get_by_field("name", name)
+    except NotFoundException:
+        existing_mountain_range = None
+
     if existing_mountain_range:
         print(f"Found existing mountain range: {name}")
         return existing_mountain_range
@@ -152,13 +157,16 @@ async def _save_or_update_peaks(
     peaks_updated = 0
 
     for peak in peaks:
-        existing_peak = await repository.get_by_fields(
-            {
-                "name": peak.name,
-                "elevation": peak.elevation,
-                "mountain_range_id": mountain_range.id,
-            }
-        )
+        try:
+            existing_peak = await repository.get_by_fields(
+                {
+                    "name": peak.name,
+                    "elevation": peak.elevation,
+                    "mountain_range_id": mountain_range.id,
+                }
+            )
+        except NotFoundException:
+            existing_peak = None
 
         if existing_peak is None:
             peak.mountain_range_id = mountain_range.id
