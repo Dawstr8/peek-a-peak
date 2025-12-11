@@ -19,6 +19,8 @@ class WeatherCondition(SQLModel, table=True):
     """Database model for weather conditions"""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
+
     api_id: int = Field(
         description="ID of the weather condition from the weather API",
         unique=True,
@@ -38,6 +40,7 @@ class WeatherRecord(SQLModel, table=True):
     """Database model for detailed weather records"""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
 
     photo_id: int = Field(foreign_key="summitphoto.id", ondelete="CASCADE")
     photo: "SummitPhoto" = Relationship(

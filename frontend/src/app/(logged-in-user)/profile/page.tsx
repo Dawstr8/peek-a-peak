@@ -29,11 +29,11 @@ export default function ProfilePage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["users", username, "photos", "uploadedAt", "desc"],
+    queryKey: ["users", username, "photos", "createdAt", "desc"],
     queryFn: ({ pageParam = 1 }) => {
       const page =
         typeof pageParam === "number" ? pageParam : Number(pageParam) || 1;
-      return UsersClient.getPhotosByUser(username, "uploadedAt", "desc", page);
+      return UsersClient.getPhotosByUser(username, "createdAt", "desc", page);
     },
     initialPageParam: 1,
     getNextPageParam: (last) => last.nextPage,

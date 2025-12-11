@@ -10,12 +10,13 @@ from src.common.models import CamelModel
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
+
     email: str = Field(index=True, nullable=False, unique=True)
     username: str = Field(index=True, nullable=False, unique=True)
     username_display: str
     hashed_password: str
     is_private: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class UserCreate(CamelModel):
