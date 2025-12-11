@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.photos.models import SummitPhoto
@@ -49,9 +50,16 @@ class WeatherRecord(SQLModel, table=True):
     )
 
     # Solar times
-    sunrise: Optional[datetime] = Field(default=None, description="Sunrise time, UTC")
-    sunset: Optional[datetime] = Field(default=None, description="Sunset time, UTC")
-
+    sunrise: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True), nullable=True),
+        description="Sunrise time, UTC",
+    )
+    sunset: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True), nullable=True),
+        description="Sunset time, UTC",
+    )
     # Temperature measurements
     temp: Optional[float] = Field(default=None, description="Temperature in Celsius")
     feels_like: Optional[float] = Field(
