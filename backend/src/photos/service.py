@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from fastapi import UploadFile
+from fastapi import BackgroundTasks, UploadFile
 
 from src.photos.models import SummitPhoto, SummitPhotoCreate
 from src.photos.repository import PhotosRepository
@@ -30,6 +30,7 @@ class PhotosService:
         file: UploadFile,
         summit_photo_create: SummitPhotoCreate,
         current_user: User,
+        background_tasks: BackgroundTasks,
     ) -> SummitPhoto:
         """
         Upload a photo file and store it in the database with the provided metadata.
@@ -59,8 +60,12 @@ class PhotosService:
         saved_photo = await self.photos_repository.save(photo)
 
         if lat is not None and lng is not None:
-            await self.weather_service.fetch_and_save_weather(
-                lat, lng, summit_photo_create.captured_at, saved_photo.id
+            background_tasks.add_task(
+                self.weather_service.fetch_and_save_weather,
+                lat,
+                lng,
+                summit_photo_create.captured_at,
+                saved_photo.id,
             )
 
         return saved_photo
