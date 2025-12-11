@@ -11,6 +11,7 @@ from sqlmodel import Field, Relationship, SQLModel
 from src.common.models import CamelModel
 from src.peaks.models import ReadPeak
 from src.users.models import User
+from src.weather.models import WeatherRecordRead
 
 if TYPE_CHECKING:
     from src.peaks.models import Peak
@@ -87,17 +88,20 @@ class SummitPhotoRead(CamelModel):
     """Response model for reading a photo with metadata"""
 
     id: int
+
+    owner_id: int
+
+    peak_id: Optional[int] = None
+    peak: Optional[ReadPeak] = None
+
+    weather_record: Optional[WeatherRecordRead] = None
+
     file_name: str
     uploaded_at: datetime
     captured_at: datetime
     lat: Optional[float] = None
     lng: Optional[float] = None
     alt: Optional[float] = None
-
-    peak_id: Optional[int] = None
-    owner_id: int
-
-    peak: Optional[ReadPeak] = None
 
 
 class SummitPhotoLocation(CamelModel):

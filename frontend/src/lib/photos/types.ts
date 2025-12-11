@@ -1,15 +1,20 @@
 import type { Peak } from "@/lib/peaks/types";
+import { WeatherRecord } from "@/lib/weather/types";
 
 export interface SummitPhoto {
   id?: number;
+
+  peakId?: number;
+  peak?: Peak;
+
+  weatherRecord?: WeatherRecord;
+
   fileName: string;
   uploadedAt: string;
   capturedAt: string;
   lat?: number;
   lng?: number;
   alt?: number;
-  peakId?: number;
-  peak?: Peak;
 }
 
 export interface SummitPhotoLocation {
