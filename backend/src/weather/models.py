@@ -15,6 +15,11 @@ class WeatherCondition(SQLModel, table=True):
     """Database model for weather conditions"""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    api_id: int = Field(
+        description="ID of the weather condition from the weather API",
+        unique=True,
+        index=True,
+    )
     main: Optional[str] = Field(
         default=None,
         description="Group of weather parameters (Rain, Snow, Extreme etc.)",
