@@ -1,25 +1,24 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
+from uuid import UUID
 
 from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.common.models import CamelModel
+from src.database.models import BaseTableModel
 
 if TYPE_CHECKING:
     from src.photos.models import SummitPhoto
 
 
 class WeatherRecordWeatherConditionLink(SQLModel, table=True):
-    record_id: int = Field(foreign_key="weatherrecord.id", primary_key=True)
-    condition_id: int = Field(foreign_key="weathercondition.id", primary_key=True)
+    record_id: UUID = Field(foreign_key="weatherrecord.id", primary_key=True)
+    condition_id: UUID = Field(foreign_key="weathercondition.id", primary_key=True)
 
 
-class WeatherCondition(SQLModel, table=True):
+class WeatherCondition(BaseTableModel, table=True):
     """Database model for weather conditions"""
-
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
 
     api_id: int = Field(
         description="ID of the weather condition from the weather API",
@@ -36,13 +35,10 @@ class WeatherCondition(SQLModel, table=True):
     icon: Optional[str] = Field(default=None, description="Weather icon id")
 
 
-class WeatherRecord(SQLModel, table=True):
+class WeatherRecord(BaseTableModel, table=True):
     """Database model for detailed weather records"""
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-
-    photo_id: int = Field(foreign_key="summitphoto.id", ondelete="CASCADE")
+    photo_id: UUID = Field(foreign_key="summitphoto.id", ondelete="CASCADE")
     photo: "SummitPhoto" = Relationship(
         back_populates="weather_record",
         sa_relationship_kwargs={"lazy": "selectin"},

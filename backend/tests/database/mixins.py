@@ -1,4 +1,5 @@
 from typing import Generic, Type, TypeVar
+from uuid import uuid4
 
 import pytest
 from sqlalchemy.exc import IntegrityError
@@ -43,7 +44,7 @@ class BaseRepositoryMixin(Generic[T, R]):
     async def test_get_by_id_not_found(self, test_repository):
         # Act & Assert
         with pytest.raises(NotFoundException):
-            await test_repository.get_by_id(1)
+            await test_repository.get_by_id(uuid4())
 
     @pytest.mark.asyncio
     async def test_get_by_id_found(self, test_repository, items):
@@ -66,7 +67,7 @@ class BaseRepositoryMixin(Generic[T, R]):
 
         # Act & Assert
         with pytest.raises(NotFoundException):
-            await test_repository.get_by_field("id", 1)
+            await test_repository.get_by_field("id", uuid4())
 
     @pytest.mark.asyncio
     async def test_get_by_field_found(self, test_repository, items):
@@ -95,7 +96,7 @@ class BaseRepositoryMixin(Generic[T, R]):
 
         # Act & Assert
         with pytest.raises(NotFoundException):
-            await test_repository.get_by_fields({"id": 1})
+            await test_repository.get_by_fields({"id": uuid4()})
 
     @pytest.mark.asyncio
     async def test_get_by_fields_found(self, test_repository, items):

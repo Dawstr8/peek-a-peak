@@ -4,6 +4,7 @@ Tests for the PhotosService
 
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock
+from uuid import UUID, uuid4
 
 import pytest
 from fastapi import UploadFile
@@ -54,22 +55,23 @@ async def test_upload_photo_with_metadata(
     mock_background_tasks,
 ):
     """Test uploading a photo with provided metadata"""
+    peak_id = uuid4()
     summit_photo_create = SummitPhotoCreate(
         captured_at=datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc),
         lat=coords_map["near_rysy"][0],
         lng=coords_map["near_rysy"][1],
         alt=2450.0,
-        peak_id=1,
+        peak_id=peak_id,
     )
 
     result = await photos_service.upload_photo(
         mock_file, summit_photo_create, mock_user, mock_background_tasks
     )
 
-    assert result.id == 1
+    assert isinstance(result.id, UUID)
     assert result.owner_id == mock_user.id
     assert result.file_name == mock_file.filename
-    assert result.peak_id == 1
+    assert result.peak_id == peak_id
     assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)
     assert result.alt == 2450.0
 
@@ -105,8 +107,8 @@ async def test_upload_photo_without_location(
         mock_file, summit_photo_create, mock_user, mock_background_tasks
     )
 
-    assert result.id == 1
-    assert result.owner_id == mock_user.id
+    assert isinstance(result.id, UUID)
+    assert isinstance(result.owner_id, UUID)
     assert result.file_name == mock_file.filename
     assert result.peak_id is None
     assert result.captured_at == datetime(2025, 10, 6, 14, 30, 0, tzinfo=timezone.utc)

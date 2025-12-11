@@ -91,7 +91,7 @@ async def test_get_user_photos_with_peaks(
 
     assert photo_with_peak is not None
     assert photo_with_peak["peak"] is not None
-    assert photo_with_peak["peak"]["id"] == db_peaks[0].id
+    assert photo_with_peak["peak"]["id"] == str(db_peaks[0].id)
     assert photo_with_peak["peak"]["name"] == db_peaks[0].name
 
 

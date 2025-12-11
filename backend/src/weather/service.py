@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from uuid import UUID
 
 from src.common.exceptions import NotFoundException
 
@@ -19,7 +20,7 @@ class WeatherService:
         self.client = client
 
     async def fetch_and_save_weather(
-        self, lat: float, lng: float, dt: datetime, photo_id: int
+        self, lat: float, lng: float, dt: datetime, photo_id: UUID
     ) -> WeatherRecord:
         weather_data = await self.client.get_historical_weather(
             lat, lng, int(dt.timestamp())

@@ -3,15 +3,13 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import EmailStr, Field, field_validator
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
 
 from src.common.models import CamelModel
+from src.database.models import BaseTableModel
 
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-
+class User(BaseTableModel, table=True):
     email: str = Field(index=True, nullable=False, unique=True)
     username: str = Field(index=True, nullable=False, unique=True)
     username_display: str

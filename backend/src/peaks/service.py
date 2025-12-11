@@ -3,6 +3,7 @@ Service for matching geographical coordinates to peaks
 """
 
 from typing import List, Optional
+from uuid import UUID
 
 from src.peaks.models import Peak, PeakWithDistance
 from src.peaks.repository import PeaksRepository
@@ -30,7 +31,7 @@ class PeaksService:
     async def get_count(self) -> int:
         return await self.peaks_repository.count()
 
-    async def get_by_id(self, peak_id: int) -> Peak:
+    async def get_by_id(self, peak_id: UUID) -> Peak:
         """
         Retrieve a peak by its ID.
 

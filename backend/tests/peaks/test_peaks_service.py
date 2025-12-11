@@ -40,13 +40,15 @@ async def test_get_count(mock_peaks_service, mock_peaks_repository):
 @pytest.mark.asyncio
 async def test_get_by_id(mock_peaks_map, mock_peaks_service, mock_peaks_repository):
     """Test getting a specific peak by ID through the service"""
-    peak = await mock_peaks_service.get_by_id(mock_peaks_map["rysy"].id)
+    peak_id = mock_peaks_map["rysy"].id
+
+    peak = await mock_peaks_service.get_by_id(peak_id)
 
     assert peak is not None
-    assert peak.id == mock_peaks_map["rysy"].id
+    assert peak.id == peak_id
     assert peak.name == mock_peaks_map["rysy"].name
 
-    mock_peaks_repository.get_by_id.assert_called_once_with(1)
+    mock_peaks_repository.get_by_id.assert_called_once_with(peak_id)
 
 
 @pytest.mark.asyncio

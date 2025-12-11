@@ -6,6 +6,7 @@ from src.peaks.models import ReadPeak, ReadPeakWithDistance
 from src.sorting.dependencies import sort_params_dep
 
 router = APIRouter(prefix="/api/peaks", tags=["peaks"])
+from uuid import UUID
 
 
 @router.get("", response_model=list[ReadPeak])
@@ -71,7 +72,7 @@ async def find_nearby_peaks(
 
 
 @router.get("/{peak_id}", response_model=ReadPeak)
-async def get_peak(peak_id: int, service: peaks_service_dep):
+async def get_peak(peak_id: UUID, service: peaks_service_dep):
     """
     Get a specific peak by ID.
     """

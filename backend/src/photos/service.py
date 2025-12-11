@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 
 from fastapi import BackgroundTasks, UploadFile
 
@@ -70,7 +71,7 @@ class PhotosService:
 
         return saved_photo
 
-    async def get_photo_by_id(self, photo_id: int) -> SummitPhoto:
+    async def get_photo_by_id(self, photo_id: UUID) -> SummitPhoto:
         """
         Retrieve a photo by its ID.
 
@@ -96,7 +97,7 @@ class PhotosService:
         """
         return await self.photos_repository.get_all(sort_params=sort_params)
 
-    async def delete_photo(self, photo_id: int) -> bool:
+    async def delete_photo(self, photo_id: UUID) -> bool:
         """
         Delete a photo by ID (both file and database record)
 

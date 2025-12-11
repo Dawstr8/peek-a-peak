@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 
 from geoalchemy2.functions import (
     ST_Distance,
@@ -24,7 +25,7 @@ class PeaksRepository(BaseRepository[Peak]):
         result = await self.db.exec(query)
         return result.all()
 
-    async def get_summited_by_user_count(self, user_id: int) -> int:
+    async def get_summited_by_user_count(self, user_id: UUID) -> int:
         query = (
             select(func.count(func.distinct(Peak.id)))
             .select_from(Peak)

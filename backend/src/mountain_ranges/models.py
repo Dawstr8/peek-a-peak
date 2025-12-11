@@ -1,11 +1,7 @@
-from datetime import datetime
-from typing import Optional
+from sqlmodel import Field
 
-from sqlmodel import Field, SQLModel
+from src.database.models import BaseTableModel
 
 
-class MountainRange(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-
+class MountainRange(BaseTableModel, table=True):
     name: str = Field(index=True, unique=True)

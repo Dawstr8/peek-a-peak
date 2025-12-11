@@ -1,14 +1,16 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
+from uuid import UUID
 
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
 from pydantic import field_validator
 from shapely.geometry import Point
 from sqlalchemy import Column, DateTime
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship
 
 from src.common.models import CamelModel
+from src.database.models import BaseTableModel
 from src.peaks.models import ReadPeak
 from src.users.models import User
 from src.weather.models import WeatherRecordRead
@@ -18,16 +20,13 @@ if TYPE_CHECKING:
     from src.weather.models import WeatherRecord
 
 
-class SummitPhoto(SQLModel, table=True):
+class SummitPhoto(BaseTableModel, table=True):
     """Database model for a summit photo with metadata"""
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-
-    owner_id: int = Field(foreign_key="user.id")
+    owner_id: UUID = Field(foreign_key="user.id")
     owner: User = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
-    peak_id: Optional[int] = Field(default=None, foreign_key="peak.id")
+    peak_id: Optional[UUID] = Field(default=None, foreign_key="peak.id")
     peak: Optional["Peak"] = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
 
     weather_record: Optional["WeatherRecord"] = Relationship(
@@ -69,7 +68,7 @@ class SummitPhotoCreate(CamelModel):
     lng: Optional[float] = None
     alt: Optional[float] = None
 
-    peak_id: Optional[int] = None
+    peak_id: Optional[UUID] = None
 
     @field_validator("captured_at")
     @classmethod
@@ -87,11 +86,11 @@ class SummitPhotoCreate(CamelModel):
 class SummitPhotoRead(CamelModel):
     """Response model for reading a photo with metadata"""
 
-    id: int
+    id: UUID
 
-    owner_id: int
+    owner_id: UUID
 
-    peak_id: Optional[int] = None
+    peak_id: Optional[UUID] = None
     peak: Optional[ReadPeak] = None
 
     weather_record: Optional[WeatherRecordRead] = None
@@ -107,7 +106,7 @@ class SummitPhotoRead(CamelModel):
 class SummitPhotoLocation(CamelModel):
     """Model representing the location of a summit photo"""
 
-    id: int
+    id: UUID
     lat: Optional[float] = None
     lng: Optional[float] = None
     alt: Optional[float] = None
@@ -116,5 +115,5 @@ class SummitPhotoLocation(CamelModel):
 class SummitPhotoDate(CamelModel):
     """Model representing the captured dates of summit photos"""
 
-    id: int
+    id: UUID
     captured_at: datetime

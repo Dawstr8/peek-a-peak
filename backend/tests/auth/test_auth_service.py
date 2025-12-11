@@ -94,7 +94,7 @@ async def test_register_user(service):
 
     user = await service.register_user(user_create)
 
-    assert user.id == 1
+    assert isinstance(user.id, UUID)
     assert user.email == "test@example.com"
     assert user.username == "user"
     assert user.username_display == "User"

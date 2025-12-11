@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import pytest
 
 from src.mountain_ranges.models import MountainRange
@@ -18,8 +20,8 @@ def mock_mountain_ranges_map(mountain_ranges) -> dict[str, MountainRange]:
     Returns a map of mock MountainRange objects for unit tests.
     """
 
-    for i, range in enumerate(mountain_ranges, start=1):
-        range.id = i
+    for range in mountain_ranges:
+        range.id = uuid4()
 
     return {
         "tatry": mountain_ranges[0],
