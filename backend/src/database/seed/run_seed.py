@@ -1,6 +1,18 @@
 """
 Seed the database with sample Polish peaks, mountain ranges, and their associations.
 
+This script follows the Wikimedia Robot Policy guidelines:
+https://wikitech.wikimedia.org/wiki/Robot_policy
+
+Key compliance measures:
+- Proper User-Agent identification (not browser impersonation)
+- Gzip compression for reduced bandwidth
+- Rate limiting with 3-second delays between requests
+- Respect for HTTP 429 (Too Many Requests) with Retry-After header
+- 15-minute pause on 5xx server errors
+- Uses CDN-cached /wiki/ URLs for efficiency
+- Sequential (non-concurrent) requests to minimize server load
+
 Usage:
     python -m src.database.seed.run_seed
 """
