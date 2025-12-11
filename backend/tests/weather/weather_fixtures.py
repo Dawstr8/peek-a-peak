@@ -10,9 +10,9 @@ from src.weather.models import WeatherCondition, WeatherRecord
 def weather_conditions() -> list[WeatherCondition]:
     """Create a list of weather conditions for testing"""
     return [
-        WeatherCondition(id=800, main="Clear", description="clear sky", icon="01d"),
+        WeatherCondition(api_id=800, main="Clear", description="clear sky", icon="01d"),
         WeatherCondition(
-            id=804, main="Clouds", description="overcast clouds", icon="04d"
+            api_id=804, main="Clouds", description="overcast clouds", icon="04d"
         ),
     ]
 
