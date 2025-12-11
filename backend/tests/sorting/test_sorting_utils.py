@@ -36,7 +36,7 @@ async def test_apply_sorting_with_invalid_or_missing_params(
         (SortParams(sort_by="captured_at", order=None), [0, 1, 3, 2]),
         (SortParams(sort_by="captured_at", order="asc"), [0, 1, 3, 2]),
         (SortParams(sort_by="captured_at", order="desc"), [2, 3, 1, 0]),
-        (SortParams(sort_by="uploaded_at", order=None), [0, 1, 2, 3]),
+        (SortParams(sort_by="created_at", order=None), [0, 1, 2, 3]),
     ],
 )
 async def test_apply_sorting_with_valid_params(

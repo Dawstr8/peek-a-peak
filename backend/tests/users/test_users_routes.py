@@ -102,7 +102,7 @@ async def test_get_user_photos_with_peaks(
         (SortParams(sort_by="capturedAt", order=None), False),
         (SortParams(sort_by="capturedAt", order="asc"), False),
         (SortParams(sort_by="capturedAt", order="desc"), True),
-        (SortParams(sort_by="uploadedAt", order=None), False),
+        (SortParams(sort_by="createdAt", order=None), False),
     ],
 )
 async def test_get_user_photos_with_sorting_parameters(

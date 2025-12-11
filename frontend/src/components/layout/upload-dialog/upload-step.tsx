@@ -35,7 +35,6 @@ export function UploadStep({ peakToDisplay, back, next }: UploadStepProps) {
   const summitPhoto = {
     ...summitPhotoCreate,
     fileName: URL.createObjectURL(file),
-    uploadedAt: new Date().toISOString(),
     id: 999,
     peak: peakToDisplay,
   } as SummitPhoto;

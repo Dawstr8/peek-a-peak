@@ -65,7 +65,7 @@ async def test_get_all_photos_with_peaks(client_with_db, db_peaks, e2e_photos):
         (SortParams(sort_by="capturedAt", order=None), False),
         (SortParams(sort_by="capturedAt", order="asc"), False),
         (SortParams(sort_by="capturedAt", order="desc"), True),
-        (SortParams(sort_by="uploadedAt", order=None), False),
+        (SortParams(sort_by="createdAt", order=None), False),
     ],
 )
 async def test_get_all_photos_with_sorting_parameters(

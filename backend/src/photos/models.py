@@ -22,6 +22,7 @@ class SummitPhoto(SQLModel, table=True):
     """Database model for a summit photo with metadata"""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
 
     owner_id: int = Field(foreign_key="user.id")
     owner: User = Relationship(sa_relationship_kwargs={"lazy": "selectin"})
@@ -35,7 +36,6 @@ class SummitPhoto(SQLModel, table=True):
     )
 
     file_name: str
-    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
     captured_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False)
     )
@@ -97,7 +97,7 @@ class SummitPhotoRead(CamelModel):
     weather_record: Optional[WeatherRecordRead] = None
 
     file_name: str
-    uploaded_at: datetime
+    created_at: datetime
     captured_at: datetime
     lat: Optional[float] = None
     lng: Optional[float] = None

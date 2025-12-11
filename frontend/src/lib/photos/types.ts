@@ -10,7 +10,7 @@ export interface SummitPhoto {
   weatherRecord?: WeatherRecord;
 
   fileName: string;
-  uploadedAt: string;
+  createdAt: string;
   capturedAt: string;
   lat?: number;
   lng?: number;
