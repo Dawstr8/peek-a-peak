@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.common.exceptions import NotFoundException
 
@@ -58,8 +58,8 @@ class WeatherService:
         data = data["data"][0]
 
         return WeatherRecord(
-            sunrise=datetime.fromtimestamp(data.get("sunrise")),
-            sunset=datetime.fromtimestamp(data.get("sunset")),
+            sunrise=datetime.fromtimestamp(data.get("sunrise"), tz=timezone.utc),
+            sunset=datetime.fromtimestamp(data.get("sunset"), tz=timezone.utc),
             temp=data.get("temp"),
             feels_like=data.get("feels_like"),
             dew_point=data.get("dew_point"),

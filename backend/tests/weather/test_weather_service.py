@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -77,8 +77,8 @@ async def test_parse_weather_data_full_data(
 
     # Assert
     assert isinstance(weather_record, WeatherRecord)
-    assert weather_record.sunrise == datetime.fromtimestamp(1645866123)
-    assert weather_record.sunset == datetime.fromtimestamp(1645891727)
+    assert weather_record.sunrise == datetime.fromtimestamp(1645866123, tz=timezone.utc)
+    assert weather_record.sunset == datetime.fromtimestamp(1645891727, tz=timezone.utc)
     assert weather_record.temp == 15.0
     assert weather_record.feels_like == 14.0
     assert weather_record.dew_point == 10.0
@@ -109,8 +109,8 @@ async def test_parse_weather_data_missing_optional_fields(
 
     # Assert
     assert isinstance(weather_record, WeatherRecord)
-    assert weather_record.sunrise == datetime.fromtimestamp(1645866123)
-    assert weather_record.sunset == datetime.fromtimestamp(1645891727)
+    assert weather_record.sunrise == datetime.fromtimestamp(1645866123, tz=timezone.utc)
+    assert weather_record.sunset == datetime.fromtimestamp(1645891727, tz=timezone.utc)
     assert weather_record.temp == 15.0
     assert weather_record.feels_like is None
     assert weather_record.dew_point == 10.0
