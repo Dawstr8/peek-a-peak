@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.common.exceptions import NotFoundException
 from src.peaks.models import Peak
 from src.peaks.repository import PeaksRepository
 
@@ -99,13 +100,16 @@ async def _enrich_peak_with_location(
 ) -> None:
     repository = PeaksRepository(db)
 
-    peak = await repository.get_by_fields(
-        {
-            "name": peak.name,
-            "elevation": peak.elevation,
-            "mountain_range_id": peak.mountain_range_id,
-        }
-    )
+    try:
+        peak = await repository.get_by_fields(
+            {
+                "name": peak.name,
+                "elevation": peak.elevation,
+                "mountain_range_id": peak.mountain_range_id,
+            }
+        )
+    except NotFoundException:
+        peak = None
 
     if not peak:
         return
