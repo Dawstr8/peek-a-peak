@@ -18,8 +18,12 @@ BASE_URL = "https://pl.wikipedia.org"
 HIGHEST_PEAKS_URL = (
     f"{BASE_URL}/wiki/Lista_najwy%C5%BCszych_szczyt%C3%B3w_g%C3%B3rskich_w_Polsce"
 )
+# Following Wikimedia Robot Policy: https://wikitech.wikimedia.org/wiki/Robot_policy
+# User-Agent must identify the bot clearly per Wikimedia Foundation User-Agent Policy
+# Format: <client name>/<version> (<contact information>) <library/framework name>/<version>
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    "User-Agent": "PeekAPeak/1.0 (https://github.com/Dawstr8/peek-a-peak; dawid.strojek@gmail.com) python-requests/2.31.0",
+    "Accept-Encoding": "gzip",  # Always request gzip compression to reduce bandwidth
 }
 
 
@@ -43,7 +47,11 @@ async def seed_basic_peaks(db: AsyncSession):
 
 
 def _fetch_webpage_content(url: str, headers: Dict[str, str]) -> BeautifulSoup:
-    response = requests.get(url, headers=headers)
+    """
+    Fetch webpage content following Wikimedia Robot Policy.
+    Uses /wiki/ URLs which are CDN-cached for faster responses.
+    """
+    response = requests.get(url, headers=headers, timeout=30)
     response.raise_for_status()
 
     return BeautifulSoup(response.content, "html.parser")

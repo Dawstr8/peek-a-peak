@@ -10,8 +10,12 @@ from src.common.exceptions import NotFoundException
 from src.peaks.models import Peak
 from src.peaks.repository import PeaksRepository
 
+# Following Wikimedia Robot Policy: https://wikitech.wikimedia.org/wiki/Robot_policy
+# User-Agent must identify the bot clearly per Wikimedia Foundation User-Agent Policy
+# Format: <client name>/<version> (<contact information>) <library/framework name>/<version>
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    "User-Agent": "PeekAPeak/1.0 (https://github.com/Dawstr8/peek-a-peak; dawid.strojek@gmail.com) python-requests/2.31.0",
+    "Accept-Encoding": "gzip",  # Always request gzip compression to reduce bandwidth
 }
 
 
@@ -42,7 +46,9 @@ async def enrich_peaks_with_locations(db: AsyncSession):
             print(f"[{i}/{total_peaks}] Processing {peak.name}...")
 
             try:
-                time.sleep(1)  # Be polite and avoid overwhelming the server
+                # Website rules: Keep requests below 20/second, ideally with delays
+                # Using 3 seconds between requests to be conservative and polite
+                time.sleep(3)
                 soup = _fetch_webpage_content(peak.wiki_page, HEADERS)
                 location = _extract_peak_location(soup)
 
@@ -52,6 +58,31 @@ async def enrich_peaks_with_locations(db: AsyncSession):
                 else:
                     print(f"No location coordinates found for {peak.name}")
 
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code == 429:
+                    # Respect 429 Too Many Requests with Retry-After header
+                    retry_after = e.response.headers.get("Retry-After", "60")
+                    print(
+                        f"Rate limited. Waiting {retry_after} seconds before retrying..."
+                    )
+                    time.sleep(int(retry_after))
+                    # Retry the request once
+                    try:
+                        soup = _fetch_webpage_content(peak.wiki_page, HEADERS)
+                        location = _extract_peak_location(soup)
+                        if location:
+                            await _enrich_peak_with_location(db, peak, location)
+                            enriched_count += 1
+                    except Exception as retry_error:
+                        print(f"Retry failed for {peak.name}: {retry_error}")
+                elif e.response.status_code >= 500:
+                    # For 5xx errors, pause for 15 minutes as per guidelines
+                    print(
+                        f"Server error {e.response.status_code}. Pausing for 15 minutes..."
+                    )
+                    time.sleep(900)
+                else:
+                    print(f"HTTP error for {peak.name}: {e}")
             except Exception as e:
                 print(f"Failed to process {peak.name}: {e}")
                 continue
@@ -71,7 +102,11 @@ async def _get_peaks_without_location(db: AsyncSession) -> list[Peak]:
 
 
 def _fetch_webpage_content(url: str, headers: Dict[str, str]) -> BeautifulSoup:
-    response = requests.get(url, headers=headers)
+    """
+    Fetch webpage content following Wikimedia Robot Policy.
+    Uses /wiki/ URLs which are CDN-cached for faster responses.
+    """
+    response = requests.get(url, headers=headers, timeout=30)
     response.raise_for_status()
 
     return BeautifulSoup(response.content, "html.parser")
