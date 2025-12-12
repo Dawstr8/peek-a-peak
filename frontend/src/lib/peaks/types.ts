@@ -1,7 +1,7 @@
 import { MountainRange } from "@/lib/mountain-ranges/types";
 
 export interface Peak {
-  id: number;
+  id: string;
   name: string;
   elevation: number;
   lat: number;

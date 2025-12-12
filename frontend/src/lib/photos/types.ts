@@ -2,9 +2,9 @@ import type { Peak } from "@/lib/peaks/types";
 import { WeatherRecord } from "@/lib/weather/types";
 
 export interface SummitPhoto {
-  id?: number;
+  id?: string;
 
-  peakId?: number;
+  peakId?: string;
   peak?: Peak;
 
   weatherRecord?: WeatherRecord;
@@ -18,14 +18,14 @@ export interface SummitPhoto {
 }
 
 export interface SummitPhotoLocation {
-  id: number;
+  id: string;
   lat?: number;
   lng?: number;
   alt?: number;
 }
 
 export interface SummitPhotoDate {
-  id: number;
+  id: string;
   capturedAt: string;
 }
 
@@ -34,7 +34,7 @@ export interface SummitPhotoCreate {
   lat?: number;
   lng?: number;
   alt?: number;
-  peakId?: number;
+  peakId?: string;
 }
 
 export interface PhotoDetailsFormatter {
