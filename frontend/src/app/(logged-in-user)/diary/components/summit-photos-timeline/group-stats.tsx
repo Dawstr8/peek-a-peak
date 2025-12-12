@@ -1,6 +1,14 @@
 import { useMemo } from "react";
 
-import { Mountain } from "lucide-react";
+import { format } from "date-fns/format";
+import {
+  ArrowUp,
+  Mountain,
+  Sunrise,
+  Sunset,
+  Thermometer,
+  Wind,
+} from "lucide-react";
 
 import { SummitPhoto } from "@/lib/photos/types";
 import {
@@ -13,29 +21,58 @@ import {
 } from "@/lib/photos/utils";
 import { cn } from "@/lib/utils";
 
-import { AltitudeRange } from "@/components/photos/altitude-range";
-import { SunriseRange } from "@/components/weather/sunrise-range";
-import { SunsetRange } from "@/components/weather/sunset-range";
-import { TemperatureRange } from "@/components/weather/temperature-range";
-import { WindSpeedRange } from "@/components/weather/wind-speed-range";
+import { StatsDisplay } from "@/components/common/stats-display";
 
+const statsConfig = {
+  temperatures: {
+    type: "number",
+    icon: Thermometer,
+    suffix: "°C",
+    format: (temp: number) => temp.toFixed(1),
+  },
+  windSpeeds: {
+    type: "number",
+    icon: Wind,
+    suffix: " m/s",
+    format: (speed: number) => speed.toFixed(1),
+  },
+  altitudes: {
+    type: "number",
+    icon: ArrowUp,
+    suffix: " m",
+    format: (alt: number) => alt.toFixed(1),
+  },
+  sunrises: {
+    type: "date",
+    icon: Sunrise,
+    suffix: undefined,
+    format: (date: Date) => format(date, "HH:mm"),
+  },
+  sunsets: {
+    type: "date",
+    icon: Sunset,
+    suffix: undefined,
+    format: (date: Date) => format(date, "HH:mm"),
+  },
+};
 interface GroupStatsProps {
   photos: SummitPhoto[];
   className?: string;
 }
 
 export function GroupStats({ photos, className }: GroupStatsProps) {
-  const { peaksCount, temperatures, altitudes, sunrises, sunsets, windSpeeds } =
-    useMemo(() => {
-      return {
-        peaksCount: countUniquePeaks(photos),
+  const { peaksCount, stats } = useMemo(() => {
+    return {
+      peaksCount: countUniquePeaks(photos),
+      stats: {
         temperatures: getTemperatures(photos),
+        windSpeeds: getWindSpeeds(photos),
         altitudes: getAltitudes(photos),
         sunrises: getSunrises(photos),
         sunsets: getSunsets(photos),
-        windSpeeds: getWindSpeeds(photos),
-      };
-    }, [photos]);
+      },
+    };
+  }, [photos]);
 
   return (
     <div className={cn("flex items-center gap-2 divide-x", className)}>
@@ -47,11 +84,21 @@ export function GroupStats({ photos, className }: GroupStatsProps) {
           </span>
         </div>
       )}
-      <TemperatureRange temperatures={temperatures} className="pr-2" />
-      <WindSpeedRange windSpeeds={windSpeeds} className="pr-2" />
-      <AltitudeRange altitudes={altitudes} className="pr-2" />
-      <SunriseRange sunrises={sunrises} className="pr-2" />
-      <SunsetRange sunsets={sunsets} className="pr-2" />
+
+      {Object.entries(stats).map(([key, values]) => {
+        const config = statsConfig[key as keyof typeof statsConfig];
+
+        return (
+          <StatsDisplay
+            key={key}
+            stats={values}
+            format={config.format as (value: (typeof values)[number]) => string}
+            suffix={config.suffix}
+            icon={config.icon}
+            className="pr-2"
+          />
+        );
+      })}
     </div>
   );
 }
