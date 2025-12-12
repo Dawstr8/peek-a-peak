@@ -38,10 +38,39 @@ export const combineDateAndTime = (date: Date, time: string): Date => {
   return newDate;
 };
 
-export const minDate = (dates: Date[]): Date => {
-  return new Date(Math.min(...dates.map((d) => d.getTime())));
+export const getMinMax = <T>(items: T[]): [T | undefined, T | undefined] => {
+  if (items.length === 0) {
+    return [undefined, undefined];
+  }
+
+  const first = items[0];
+
+  if (first instanceof Date) {
+    const dates = items as Date[];
+    const min = new Date(Math.min(...dates.map((d) => d.getTime())));
+    const max = new Date(Math.max(...dates.map((d) => d.getTime())));
+    return [min as T, max as T];
+  }
+
+  if (typeof first === "number") {
+    const numbers = items as number[];
+    return [Math.min(...numbers) as T, Math.max(...numbers) as T];
+  }
+
+  if (typeof first === "string") {
+    const strings = items as string[];
+    return [
+      strings.reduce((a, b) => (a < b ? a : b)) as T,
+      strings.reduce((a, b) => (a > b ? a : b)) as T,
+    ];
+  }
+
+  return [undefined, undefined];
 };
 
-export const maxDate = (dates: Date[]): Date => {
-  return new Date(Math.max(...dates.map((d) => d.getTime())));
+export const getRangeDisplay = <T>(
+  min: T | undefined,
+  max: T | undefined,
+): string => {
+  return min === max ? `${min}` : `${min} - ${max}`;
 };
