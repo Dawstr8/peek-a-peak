@@ -18,7 +18,7 @@ export function formatByType(
     case DetailType.TIME:
       return formatTime(value as string | undefined);
 
-    case DetailType.HEIGHT:
+    case DetailType.DISTANCE:
       return formatNumber(value as number | undefined, " m");
 
     case DetailType.DATE:
@@ -26,6 +26,9 @@ export function formatByType(
 
     case DetailType.COORDINATE:
       return formatCoordinate(value as number | undefined);
+
+    case DetailType.PERCENTAGE:
+      return formatNumber(value as number | undefined, "%");
 
     default:
       return NOT_AVAILABLE;

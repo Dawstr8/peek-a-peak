@@ -94,7 +94,7 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
                 <br />
                 Longitude: {formatByType(DetailType.COORDINATE, value.lng)}
                 <br />
-                Altitude: {formatByType(DetailType.HEIGHT, value.alt)}
+                Altitude: {formatByType(DetailType.DISTANCE, value.alt)}
               </Popup>
             </Marker>
           )}
@@ -108,7 +108,7 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
               <Popup>
                 <strong>{peak.name}</strong>
                 <br />
-                {formatByType(DetailType.HEIGHT, peak.elevation)}
+                {formatByType(DetailType.DISTANCE, peak.elevation)}
               </Popup>
             </Marker>
           )}

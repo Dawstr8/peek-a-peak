@@ -1,7 +1,8 @@
 export interface WeatherCondition {
-  main?: string;
-  description?: string;
-  icon?: string;
+  id: string;
+  main: string;
+  description: string;
+  icon: string;
 }
 
 export interface WeatherRecord {

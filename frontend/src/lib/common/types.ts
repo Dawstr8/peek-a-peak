@@ -33,6 +33,7 @@ export enum DetailType {
   TEMPERATURE = "temperature",
   DATE = "date",
   SPEED = "speed",
-  HEIGHT = "height",
+  DISTANCE = "distance",
   COORDINATE = "coordinate",
+  PERCENTAGE = "percentage",
 }

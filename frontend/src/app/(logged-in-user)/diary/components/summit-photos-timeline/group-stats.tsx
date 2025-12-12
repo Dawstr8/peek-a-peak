@@ -35,7 +35,7 @@ const statsConfig = {
   },
   altitudes: {
     icon: ArrowUp,
-    format: (alt: number) => formatByType(DetailType.HEIGHT, alt),
+    format: (alt: number) => formatByType(DetailType.DISTANCE, alt),
   },
   sunrises: {
     icon: Sunrise,
