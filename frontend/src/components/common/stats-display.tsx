@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 
-import { cn, getMinMax, getRangeDisplay } from "@/lib/utils";
+import { getMinMax, getRangeDisplay } from "@/lib/utils";
+
+import { Detail } from "./detail";
 
 interface StatsDisplayProps<T> {
   stats: T[];
@@ -14,7 +16,7 @@ export function StatsDisplay<T>({
   stats,
   suffix,
   format,
-  icon: Icon,
+  icon,
   className,
 }: StatsDisplayProps<T>) {
   const { min, max } = useMemo(() => {
@@ -31,12 +33,10 @@ export function StatsDisplay<T>({
   }
 
   return (
-    <div className={cn("flex items-center space-x-1", className)}>
-      {Icon && <Icon className="size-4" />}
-      <span>
-        {getRangeDisplay(min, max)}
-        {suffix}
-      </span>
-    </div>
+    <Detail
+      icon={icon}
+      text={getRangeDisplay(min, max) + (suffix ?? "")}
+      className={className}
+    />
   );
 }
