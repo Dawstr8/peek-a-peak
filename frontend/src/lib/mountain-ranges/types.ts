@@ -1,4 +1,4 @@
 export interface MountainRange {
-  id: number;
+  id: string;
   name: string;
 }

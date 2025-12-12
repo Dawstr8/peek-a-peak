@@ -20,7 +20,6 @@ import {
 
 import { useValueChange } from "@/hooks/use-value-change";
 
-import { FitToLocations } from "./fit-to-locations";
 import { InteractiveMap } from "./interactive-map";
 import { MapLocationPicker } from "./map-location-picker";
 
