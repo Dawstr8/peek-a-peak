@@ -6,7 +6,6 @@ import { Detail } from "./detail";
 
 interface StatsDisplayProps<T> {
   stats: T[];
-  suffix?: string;
   format?: (value: T) => string;
   icon?: React.ElementType;
   className?: string;
@@ -14,7 +13,6 @@ interface StatsDisplayProps<T> {
 
 export function StatsDisplay<T>({
   stats,
-  suffix,
   format,
   icon,
   className,
@@ -35,7 +33,7 @@ export function StatsDisplay<T>({
   return (
     <Detail
       icon={icon}
-      text={getRangeDisplay(min, max) + (suffix ?? "")}
+      text={getRangeDisplay(min, max)}
       className={className}
     />
   );

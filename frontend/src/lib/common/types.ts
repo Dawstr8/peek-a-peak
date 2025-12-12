@@ -27,3 +27,10 @@ export class ValidationApiError extends ApiError {
     this.errors = errors;
   }
 }
+
+export interface DetailsFormatter {
+  NOT_AVAILABLE: string;
+
+  formatNumber(value: number | undefined, suffix?: string): string;
+  formatTime(value: string | undefined): string;
+}
