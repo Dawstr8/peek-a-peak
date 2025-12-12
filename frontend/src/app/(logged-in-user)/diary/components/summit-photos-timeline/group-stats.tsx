@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import { format } from "date-fns/format";
 import {
   ArrowUp,
   Mountain,
@@ -10,6 +9,7 @@ import {
   Wind,
 } from "lucide-react";
 
+import { detailsFormatter } from "@/lib/common/formatter";
 import { SummitPhoto } from "@/lib/photos/types";
 import {
   countUniquePeaks,
@@ -25,35 +25,19 @@ import { StatsDisplay } from "@/components/common/stats-display";
 
 const statsConfig = {
   temperatures: {
-    type: "number",
     icon: Thermometer,
-    suffix: "°C",
-    format: (temp: number) => temp.toFixed(1),
+    format: (temp: number) => detailsFormatter.formatNumber(temp, "°C"),
   },
   windSpeeds: {
-    type: "number",
     icon: Wind,
-    suffix: " m/s",
-    format: (speed: number) => speed.toFixed(1),
+    format: (speed: number) => detailsFormatter.formatNumber(speed, " m/s"),
   },
   altitudes: {
-    type: "number",
     icon: ArrowUp,
-    suffix: " m",
-    format: (alt: number) => alt.toFixed(1),
+    format: (alt: number) => detailsFormatter.formatNumber(alt, " m"),
   },
-  sunrises: {
-    type: "date",
-    icon: Sunrise,
-    suffix: undefined,
-    format: (date: Date) => format(date, "HH:mm"),
-  },
-  sunsets: {
-    type: "date",
-    icon: Sunset,
-    suffix: undefined,
-    format: (date: Date) => format(date, "HH:mm"),
-  },
+  sunrises: { icon: Sunrise, format: detailsFormatter.formatTime },
+  sunsets: { icon: Sunset, format: detailsFormatter.formatTime },
 };
 interface GroupStatsProps {
   photos: SummitPhoto[];
@@ -93,7 +77,6 @@ export function GroupStats({ photos, className }: GroupStatsProps) {
             key={key}
             stats={values}
             format={config.format as (value: (typeof values)[number]) => string}
-            suffix={config.suffix}
             icon={config.icon}
             className="pr-2"
           />
