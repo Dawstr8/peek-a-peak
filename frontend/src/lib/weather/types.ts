@@ -8,14 +8,14 @@ export interface WeatherRecord {
   sunrise?: string;
   sunset?: string;
   temp?: number;
-  feels_like?: number;
-  dew_point?: number;
+  feelsLike?: number;
+  dewPoint?: number;
   pressure?: number;
   humidity?: number;
   clouds?: number;
   visibility?: number;
-  wind_speed?: number;
-  wind_deg?: number;
+  windSpeed?: number;
+  windDeg?: number;
   rain?: number;
   snow?: number;
   conditions: WeatherCondition[];

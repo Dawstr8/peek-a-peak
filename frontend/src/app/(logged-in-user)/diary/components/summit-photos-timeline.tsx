@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { PaginatedResponse } from "@/lib/pagination/types";
-import { groupPhotosByDate } from "@/lib/photos/service";
 import { SummitPhoto } from "@/lib/photos/types";
+import { groupPhotosByDate } from "@/lib/photos/utils";
 import { UsersClient } from "@/lib/users/client";
 import { cn } from "@/lib/utils";
 
@@ -51,7 +51,7 @@ export default function SummitPhotosTimeline({
   }, [paginatedSummitPhotos]);
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-8", className)}>
       {isLoading && <Skeleton />}
       {summitPhotosGrouped && (
         <>

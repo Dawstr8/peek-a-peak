@@ -37,3 +37,11 @@ export const combineDateAndTime = (date: Date, time: string): Date => {
 
   return newDate;
 };
+
+export const minDate = (dates: Date[]): Date => {
+  return new Date(Math.min(...dates.map((d) => d.getTime())));
+};
+
+export const maxDate = (dates: Date[]): Date => {
+  return new Date(Math.max(...dates.map((d) => d.getTime())));
+};
