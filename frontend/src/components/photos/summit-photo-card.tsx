@@ -62,7 +62,7 @@ export function SummitPhotoCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatByType(DetailType.HEIGHT, alt)}
+                {formatByType(DetailType.DISTANCE, alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -92,7 +92,10 @@ export function SummitPhotoCard({
               <ItemDescription className="flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>
-                  {formatByType(DetailType.HEIGHT, summitPhoto.peak.elevation)}
+                  {formatByType(
+                    DetailType.DISTANCE,
+                    summitPhoto.peak.elevation,
+                  )}
                 </span>
               </ItemDescription>
             </ItemContent>

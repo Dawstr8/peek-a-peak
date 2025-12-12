@@ -100,6 +100,7 @@ class WeatherRecord(BaseTableModel, table=True):
 
 
 class WeatherConditionRead(CamelModel):
+    id: UUID
     main: Optional[str]
     description: Optional[str]
     icon: Optional[str]
