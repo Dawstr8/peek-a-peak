@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import { detailsFormatter } from "@/lib/common/formatter";
-import { SummitPhoto } from "@/lib/photos/types";
+import { PhotoDetailsKeys, SummitPhoto } from "@/lib/photos/types";
 import {
   countUniquePeaks,
   getAltitudes,
@@ -20,24 +20,31 @@ import {
   getWindSpeeds,
 } from "@/lib/photos/utils";
 import { cn } from "@/lib/utils";
+import { WeatherRecordDetailsKeys } from "@/lib/weather/types";
 
 import { StatsDisplay } from "@/components/common/stats-display";
 
 const statsConfig = {
-  temperatures: {
+  [WeatherRecordDetailsKeys.TEMPERATURE]: {
     icon: Thermometer,
     format: (temp: number) => detailsFormatter.formatNumber(temp, "°C"),
   },
-  windSpeeds: {
+  [WeatherRecordDetailsKeys.WIND_SPEED]: {
     icon: Wind,
     format: (speed: number) => detailsFormatter.formatNumber(speed, " m/s"),
   },
-  altitudes: {
+  [PhotoDetailsKeys.ALTITUDE]: {
     icon: ArrowUp,
     format: (alt: number) => detailsFormatter.formatNumber(alt, " m"),
   },
-  sunrises: { icon: Sunrise, format: detailsFormatter.formatTime },
-  sunsets: { icon: Sunset, format: detailsFormatter.formatTime },
+  [WeatherRecordDetailsKeys.SUNRISE]: {
+    icon: Sunrise,
+    format: detailsFormatter.formatTime,
+  },
+  [WeatherRecordDetailsKeys.SUNSET]: {
+    icon: Sunset,
+    format: detailsFormatter.formatTime,
+  },
 };
 interface GroupStatsProps {
   photos: SummitPhoto[];
@@ -49,11 +56,11 @@ export function GroupStats({ photos, className }: GroupStatsProps) {
     return {
       peaksCount: countUniquePeaks(photos),
       stats: {
-        temperatures: getTemperatures(photos),
-        windSpeeds: getWindSpeeds(photos),
-        altitudes: getAltitudes(photos),
-        sunrises: getSunrises(photos),
-        sunsets: getSunsets(photos),
+        [WeatherRecordDetailsKeys.TEMPERATURE]: getTemperatures(photos),
+        [WeatherRecordDetailsKeys.WIND_SPEED]: getWindSpeeds(photos),
+        [PhotoDetailsKeys.ALTITUDE]: getAltitudes(photos),
+        [WeatherRecordDetailsKeys.SUNRISE]: getSunrises(photos),
+        [WeatherRecordDetailsKeys.SUNSET]: getSunsets(photos),
       },
     };
   }, [photos]);

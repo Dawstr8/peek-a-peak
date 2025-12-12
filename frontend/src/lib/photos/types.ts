@@ -43,3 +43,7 @@ export interface PhotoDetailsFormatter {
   formatAlt(alt?: number): string;
   formatCapturedAt(capturedAt: string): string;
 }
+
+export enum PhotoDetailsKeys {
+  ALTITUDE = "altitude",
+}
