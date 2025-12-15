@@ -12,7 +12,7 @@ from sqlmodel import Field, Relationship
 from src.common.models import CamelModel
 from src.database.models import BaseTableModel
 from src.peaks.models import ReadPeak
-from src.users.models import User
+from src.users.models import User, UserRead
 from src.weather.models import WeatherRecordRead
 
 if TYPE_CHECKING:
@@ -89,6 +89,7 @@ class SummitPhotoRead(CamelModel):
     id: UUID
 
     owner_id: UUID
+    owner: UserRead
 
     peak_id: Optional[UUID] = None
     peak: Optional[ReadPeak] = None
