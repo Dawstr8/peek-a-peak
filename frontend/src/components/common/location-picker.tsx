@@ -6,8 +6,8 @@ import { LatLng } from "leaflet";
 import { Eraser, RotateCcw } from "lucide-react";
 import { Marker, Polyline, Popup } from "react-leaflet";
 
-import { detailsFormatter } from "@/lib/common/formatter";
 import { DetailType } from "@/lib/common/types";
+import { formatByType } from "@/lib/common/utils";
 import { createPeakIcon } from "@/lib/leaflet";
 import { Peak } from "@/lib/peaks/types";
 import { latLngEqual } from "@/lib/utils";
@@ -90,20 +90,11 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
               <Popup>
                 <strong>Selected location</strong>
                 <br />
-                Latitude:{" "}
-                {detailsFormatter.formatByType(
-                  DetailType.COORDINATE,
-                  value.lat,
-                )}
+                Latitude: {formatByType(DetailType.COORDINATE, value.lat)}
                 <br />
-                Longitude:{" "}
-                {detailsFormatter.formatByType(
-                  DetailType.COORDINATE,
-                  value.lng,
-                )}
+                Longitude: {formatByType(DetailType.COORDINATE, value.lng)}
                 <br />
-                Altitude:{" "}
-                {detailsFormatter.formatByType(DetailType.HEIGHT, value.alt)}
+                Altitude: {formatByType(DetailType.HEIGHT, value.alt)}
               </Popup>
             </Marker>
           )}
@@ -117,10 +108,7 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
               <Popup>
                 <strong>{peak.name}</strong>
                 <br />
-                {detailsFormatter.formatByType(
-                  DetailType.HEIGHT,
-                  peak.elevation,
-                )}
+                {formatByType(DetailType.HEIGHT, peak.elevation)}
               </Popup>
             </Marker>
           )}

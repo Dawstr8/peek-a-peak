@@ -36,9 +36,3 @@ export enum DetailType {
   HEIGHT = "height",
   COORDINATE = "coordinate",
 }
-
-export interface DetailsFormatter {
-  NOT_AVAILABLE: string;
-
-  formatByType(type: DetailType, value: number | string | undefined): string;
-}

@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { Calendar } from "lucide-react";
 
-import { detailsFormatter } from "@/lib/common/formatter";
 import { SummitPhoto } from "@/lib/photos/types";
 
 import { SummitPhotoHoverableCard } from "@/components/photos/summit-photo-hoverable-card";
@@ -30,7 +29,6 @@ export function Group({ date, photos }: GroupProps) {
           <SummitPhotoHoverableCard
             key={summitPhoto.id}
             summitPhoto={summitPhoto}
-            formatter={detailsFormatter}
           />
         ))}
       </div>
