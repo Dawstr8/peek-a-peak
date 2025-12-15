@@ -11,17 +11,8 @@ import {
   Empty as EmptyUI,
 } from "@/components/ui/empty";
 
-import { useAuthenticatedUser } from "@/hooks/use-authenticated-user";
-
-interface EmptyProps {
-  username: string;
-}
-
-export function Empty({ username }: EmptyProps) {
+export function EmptyAdd() {
   const { openDialog } = useUploadDialog();
-  const user = useAuthenticatedUser();
-
-  const isOwnDiary = user?.username === username;
 
   return (
     <EmptyUI>
@@ -31,17 +22,15 @@ export function Empty({ username }: EmptyProps) {
         </EmptyMedia>
         <EmptyTitle>No photos uploaded yet.</EmptyTitle>
         <EmptyDescription>
-          {isOwnDiary ? "Your" : "This user's"} summit photo timeline is empty.
+          Your summit photo timeline is empty.
         </EmptyDescription>
       </EmptyHeader>
-      {isOwnDiary && (
-        <EmptyContent>
-          <Button onClick={openDialog}>
-            <Plus />
-            Add your first trip
-          </Button>
-        </EmptyContent>
-      )}
+      <EmptyContent>
+        <Button onClick={openDialog}>
+          <Plus />
+          Add your first trip
+        </Button>
+      </EmptyContent>
     </EmptyUI>
   );
 }
