@@ -8,9 +8,11 @@ import { groupPhotosByDate } from "@/lib/photos/utils";
 import { UsersClient } from "@/lib/users/client";
 import { cn } from "@/lib/utils";
 
+import { useAuth } from "@/components/auth";
 import { InfiniteScroller } from "@/components/pagination/infinite-scroller";
 
 import { Empty } from "./summit-photos-timeline/empty";
+import { EmptyAdd } from "./summit-photos-timeline/empty-add";
 import { Group } from "./summit-photos-timeline/group";
 import { Skeleton } from "./summit-photos-timeline/skeleton";
 
@@ -23,6 +25,8 @@ export default function SummitPhotosTimeline({
   username,
   className,
 }: SummitPhotosTimelineProps) {
+  const { user } = useAuth();
+
   const {
     data: paginatedSummitPhotos,
     isLoading,
@@ -50,12 +54,15 @@ export default function SummitPhotosTimeline({
     return allSummitPhotos ? groupPhotosByDate(allSummitPhotos) : undefined;
   }, [paginatedSummitPhotos]);
 
+  const isOwnDiary = user?.username === username;
+
   return (
     <div className={cn("space-y-8", className)}>
       {isLoading && <Skeleton />}
       {summitPhotosGrouped && (
         <>
-          {summitPhotosGrouped.size === 0 && <Empty username={username} />}
+          {summitPhotosGrouped.size === 0 && !isOwnDiary && <Empty />}
+          {summitPhotosGrouped.size === 0 && isOwnDiary && <EmptyAdd />}
           <InfiniteScroller
             loadMore={fetchNextPage}
             isLoading={isFetchingNextPage}
