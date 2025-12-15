@@ -2,7 +2,7 @@ import { format } from "date-fns/format";
 
 import { DetailsFormatter } from "./types";
 
-class DefaultDetailsFormatter implements DetailsFormatter {
+export class DefaultDetailsFormatter implements DetailsFormatter {
   NOT_AVAILABLE = "N/A";
 
   formatNumber(value: number | undefined, suffix?: string): string {
@@ -20,6 +20,12 @@ class DefaultDetailsFormatter implements DetailsFormatter {
     } catch {
       return this.NOT_AVAILABLE;
     }
+  }
+
+  formatCoordinate(value?: number): string {
+    if (value === undefined || value === null) return this.NOT_AVAILABLE;
+
+    return `${value.toFixed(6)}°`;
   }
 }
 

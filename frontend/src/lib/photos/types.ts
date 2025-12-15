@@ -37,13 +37,6 @@ export interface SummitPhotoCreate {
   peakId?: string;
 }
 
-export interface PhotoDetailsFormatter {
-  formatLat(lat?: number): string;
-  formatLng(lng?: number): string;
-  formatAlt(alt?: number): string;
-  formatCapturedAt(capturedAt: string): string;
-}
-
 export enum PhotoDetailsKeys {
   ALTITUDE = "altitude",
 }

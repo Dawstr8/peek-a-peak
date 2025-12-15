@@ -9,7 +9,7 @@ import {
   Wind,
 } from "lucide-react";
 
-import { detailsFormatter } from "@/lib/common/formatter";
+import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import { PhotoDetailsKeys, SummitPhoto } from "@/lib/photos/types";
 import {
   countUniquePeaks,
@@ -20,6 +20,7 @@ import {
   getWindSpeeds,
 } from "@/lib/photos/utils";
 import { cn } from "@/lib/utils";
+import { weatherRecordDetailsFormatter } from "@/lib/weather/formatter";
 import { WeatherRecordDetailsKeys } from "@/lib/weather/types";
 
 import { StatsDisplay } from "@/components/common/stats-display";
@@ -27,23 +28,40 @@ import { StatsDisplay } from "@/components/common/stats-display";
 const statsConfig = {
   [WeatherRecordDetailsKeys.TEMPERATURE]: {
     icon: Thermometer,
-    format: (temp: number) => detailsFormatter.formatNumber(temp, "°C"),
+    format: (temp: number) =>
+      weatherRecordDetailsFormatter.formatByKey(
+        WeatherRecordDetailsKeys.TEMPERATURE,
+        temp,
+      ),
   },
   [WeatherRecordDetailsKeys.WIND_SPEED]: {
     icon: Wind,
-    format: (speed: number) => detailsFormatter.formatNumber(speed, " m/s"),
+    format: (speed: number) =>
+      weatherRecordDetailsFormatter.formatByKey(
+        WeatherRecordDetailsKeys.WIND_SPEED,
+        speed,
+      ),
   },
   [PhotoDetailsKeys.ALTITUDE]: {
     icon: ArrowUp,
-    format: (alt: number) => detailsFormatter.formatNumber(alt, " m"),
+    format: (alt: number) =>
+      photoDetailsFormatter.formatByKey(PhotoDetailsKeys.ALTITUDE, alt),
   },
   [WeatherRecordDetailsKeys.SUNRISE]: {
     icon: Sunrise,
-    format: detailsFormatter.formatTime,
+    format: (sunrise: string) =>
+      weatherRecordDetailsFormatter.formatByKey(
+        WeatherRecordDetailsKeys.SUNRISE,
+        sunrise,
+      ),
   },
   [WeatherRecordDetailsKeys.SUNSET]: {
     icon: Sunset,
-    format: detailsFormatter.formatTime,
+    format: (sunset: string) =>
+      weatherRecordDetailsFormatter.formatByKey(
+        WeatherRecordDetailsKeys.SUNRISE,
+        sunset,
+      ),
   },
 };
 interface GroupStatsProps {

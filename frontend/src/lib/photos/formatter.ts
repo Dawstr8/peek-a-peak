@@ -1,8 +1,21 @@
-import { PhotoDetailsFormatter } from "./types";
+import { DefaultDetailsFormatter } from "@/lib/common/formatter";
 
-const NOT_AVAILABLE = "N/A";
+import { PhotoDetailsKeys } from "./types";
 
-class DefaultPhotoDetailsFormatter implements PhotoDetailsFormatter {
+export class DefaultPhotoDetailsFormatter extends DefaultDetailsFormatter {
+  formatByKey(
+    key: PhotoDetailsKeys,
+    value: number | string | undefined,
+  ): string {
+    switch (key) {
+      case PhotoDetailsKeys.ALTITUDE:
+        return this.formatNumber(value as number | undefined, " m");
+
+      default:
+        return this.NOT_AVAILABLE;
+    }
+  }
+
   formatLat(lat?: number): string {
     return this.formatCoordinate(lat);
   }
@@ -11,27 +24,15 @@ class DefaultPhotoDetailsFormatter implements PhotoDetailsFormatter {
     return this.formatCoordinate(lng);
   }
 
-  formatAlt(alt?: number): string {
-    if (alt === undefined || alt === null) return NOT_AVAILABLE;
-
-    return `${alt.toFixed(1)}m`;
-  }
-
   formatCapturedAt(capturedAt?: string): string {
-    if (!capturedAt) return NOT_AVAILABLE;
+    if (!capturedAt) return this.NOT_AVAILABLE;
 
     try {
       const date = new Date(capturedAt);
       return date.toLocaleString();
     } catch {
-      return NOT_AVAILABLE;
+      return this.NOT_AVAILABLE;
     }
-  }
-
-  private formatCoordinate(value?: number): string {
-    if (value === undefined || value === null) return NOT_AVAILABLE;
-
-    return `${value.toFixed(6)}°`;
   }
 }
 

@@ -3,7 +3,10 @@
 import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
-import type { PhotoDetailsFormatter } from "@/lib/photos/types";
+import {
+  type PhotoDetailsFormatter,
+  PhotoDetailsKeys,
+} from "@/lib/photos/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
 import { PhotoAspectRatio } from "@/components/photos/photo-aspect-ratio";
@@ -63,7 +66,7 @@ export function SummitPhotoCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatAlt(alt)}
+                {formatter.formatByKey(PhotoDetailsKeys.ALTITUDE, alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -91,7 +94,12 @@ export function SummitPhotoCard({
               </ItemTitle>
               <ItemDescription className="flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
-                <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
+                <span>
+                  {formatter.formatByKey(
+                    PhotoDetailsKeys.ALTITUDE,
+                    summitPhoto.peak.elevation,
+                  )}
+                </span>
               </ItemDescription>
             </ItemContent>
           </Item>
