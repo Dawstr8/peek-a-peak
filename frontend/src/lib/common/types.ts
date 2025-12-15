@@ -37,3 +37,9 @@ export enum DetailType {
   COORDINATE = "coordinate",
   PERCENTAGE = "percentage",
 }
+
+export interface Location {
+  lat: number;
+  lng: number;
+  alt?: number;
+}

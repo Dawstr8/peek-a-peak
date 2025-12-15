@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { LatLng } from "leaflet";
 
+import { Location } from "@/lib/common/types";
 import { UsersClient } from "@/lib/users/client";
 
 import { InteractiveMap } from "@/components/common/interactive-map";
@@ -24,14 +24,14 @@ export default function SummitPhotosMap({
     queryFn: () => UsersClient.getPhotosLocationsByUser(username),
   });
 
-  const locations: LatLng[] = useMemo(() => {
-    const locs: LatLng[] = [];
+  const locations: Location[] = useMemo(() => {
+    const locs: Location[] = [];
     if (!summitPhotosLocations) return locs;
 
     summitPhotosLocations.forEach((location) => {
       if (!location.lat || !location.lng) return;
 
-      locs.push(new LatLng(location.lat, location.lng));
+      locs.push({ lat: location.lat, lng: location.lng });
     });
 
     return locs;

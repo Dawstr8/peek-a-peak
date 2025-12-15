@@ -32,7 +32,7 @@ const uploadPhotoSchema = z.object({
   lat: z.number().optional(),
   lng: z.number().optional(),
   alt: z.number().optional(),
-  peakId: z.number().optional(),
+  peakId: z.string().optional(),
 });
 
 export type UploadPhotoFormData = z.infer<typeof uploadPhotoSchema>;

@@ -1,4 +1,4 @@
-import L, { LatLng } from "leaflet";
+import L from "leaflet";
 
 /**
  * Leaflet configuration and utilities
@@ -21,7 +21,7 @@ export function initializeLeafletIcons() {
 }
 
 export const MAP_CONFIG = {
-  DEFAULT_CENTER: new LatLng(50.06143, 19.93658),
+  DEFAULT_CENTER: { lat: 50.06143, lng: 19.93658 },
   DEFAULT_ZOOM: 13,
   DEFAULT_WIDE_ZOOM: 6,
   DEFAULT_HEIGHT: "300px",

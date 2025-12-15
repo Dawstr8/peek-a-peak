@@ -2,15 +2,14 @@
 
 import { useMemo } from "react";
 
-import { LatLng } from "leaflet";
 import { Eraser, RotateCcw } from "lucide-react";
 import { Marker, Polyline, Popup } from "react-leaflet";
 
-import { DetailType } from "@/lib/common/types";
+import { DetailType, Location } from "@/lib/common/types";
 import { formatByType } from "@/lib/common/utils";
 import { createPeakIcon } from "@/lib/leaflet";
 import { Peak } from "@/lib/peaks/types";
-import { latLngEqual } from "@/lib/utils";
+import { locationsEqual } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,21 +24,20 @@ import { InteractiveMap } from "./interactive-map";
 import { MapLocationPicker } from "./map-location-picker";
 
 interface LocationPickerProps {
-  value?: LatLng;
-  onChange?: (value: LatLng | undefined) => void;
+  value?: Location;
+  onChange?: (value: Location | undefined) => void;
   peak: Peak | null;
 }
 
 export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
-  const { originalValue, hasValueChanged } = useValueChange<LatLng | undefined>(
-    value,
-    latLngEqual,
-  );
+  const { originalValue, hasValueChanged } = useValueChange<
+    Location | undefined
+  >(value, locationsEqual);
 
   const locations = useMemo(() => {
     const locs = [];
     if (value) locs.push(value);
-    if (peak) locs.push(new LatLng(peak.lat, peak.lng, peak.elevation));
+    if (peak) locs.push({ lat: peak.lat, lng: peak.lng, alt: peak.elevation });
 
     return locs;
   }, [value, peak]);
@@ -102,7 +100,7 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
           {peak && (
             <Marker
               key={peak.id}
-              position={new LatLng(peak.lat, peak.lng)}
+              position={{ lat: peak.lat, lng: peak.lng }}
               icon={createPeakIcon(18, "green")}
             >
               <Popup>

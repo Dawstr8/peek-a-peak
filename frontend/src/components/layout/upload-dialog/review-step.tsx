@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 
-import { LatLng } from "leaflet";
+import dynamic from "next/dynamic";
+
 import { useFormContext } from "react-hook-form";
 
 import { Peak } from "@/lib/peaks/types";
 
 import { DateTimePicker } from "@/components/common/date-time-picker";
-import { LocationPicker } from "@/components/common/location-picker";
 import { PhotoAspectRatio } from "@/components/photos/photo-aspect-ratio";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +16,14 @@ import { useImageUrl } from "@/hooks/use-image-url";
 
 import type { UploadPhotoFormData } from "../upload-dialog";
 import { PeakSearchInput } from "./peak-search-input";
+
+const LocationPicker = dynamic(
+  () =>
+    import("@/components/common/location-picker").then(
+      (mod) => mod.LocationPicker,
+    ),
+  { ssr: false },
+);
 
 interface ReviewStepProps {
   setPeakToDisplay: (peak: Peak | null) => void;
@@ -41,7 +49,7 @@ export function ReviewStep({ setPeakToDisplay, back, next }: ReviewStepProps) {
   const imageUrl = useImageUrl(file);
 
   const location = useMemo(() => {
-    return lat && lng ? new LatLng(lat, lng, alt) : undefined;
+    return lat && lng ? { lat, lng, alt } : undefined;
   }, [lat, lng, alt]);
 
   const capturedAtDate = useMemo(() => {

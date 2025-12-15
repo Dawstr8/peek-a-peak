@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 
-import { LatLng, LatLngBounds } from "leaflet";
+import { LatLngBounds } from "leaflet";
 import { useMap } from "react-leaflet";
 
+import { Location } from "@/lib/common/types";
 import { MAP_CONFIG } from "@/lib/leaflet";
 
 const { DEFAULT_CENTER, DEFAULT_ZOOM, DEFAULT_WIDE_ZOOM } = MAP_CONFIG;
 
-export function FitToLocations({ locations }: { locations?: LatLng[] }) {
+export function FitToLocations({ locations }: { locations?: Location[] }) {
   const map = useMap();
 
   useEffect(() => {

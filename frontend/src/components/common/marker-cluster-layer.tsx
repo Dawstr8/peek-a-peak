@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 
-import L, { LatLng } from "leaflet";
+import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import { useMap } from "react-leaflet";
 
+import { Location } from "@/lib/common/types";
+
 export function MarkerClusterLayer({
   locations = [],
 }: {
-  locations?: LatLng[];
+  locations?: Location[];
 }) {
   const map = useMap();
 
@@ -18,8 +20,8 @@ export function MarkerClusterLayer({
 
     const clusterGroup = new L.MarkerClusterGroup();
 
-    locations.forEach((latlng) => {
-      clusterGroup.addLayer(L.marker(latlng));
+    locations.forEach((location) => {
+      clusterGroup.addLayer(L.marker(location));
     });
 
     map.addLayer(clusterGroup);
