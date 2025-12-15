@@ -9,8 +9,8 @@ import {
   Wind,
 } from "lucide-react";
 
-import { detailsFormatter } from "@/lib/common/formatter";
 import { DetailType } from "@/lib/common/types";
+import { formatByType } from "@/lib/common/utils";
 import { SummitPhoto } from "@/lib/photos/types";
 import {
   countUniquePeaks,
@@ -27,28 +27,23 @@ import { StatsDisplay } from "@/components/common/stats-display";
 const statsConfig = {
   temperatures: {
     icon: Thermometer,
-    format: (temp: number) =>
-      detailsFormatter.formatByType(DetailType.TEMPERATURE, temp),
+    format: (temp: number) => formatByType(DetailType.TEMPERATURE, temp),
   },
   windSpeeds: {
     icon: Wind,
-    format: (speed: number) =>
-      detailsFormatter.formatByType(DetailType.SPEED, speed),
+    format: (speed: number) => formatByType(DetailType.SPEED, speed),
   },
   altitudes: {
     icon: ArrowUp,
-    format: (alt: number) =>
-      detailsFormatter.formatByType(DetailType.HEIGHT, alt),
+    format: (alt: number) => formatByType(DetailType.HEIGHT, alt),
   },
   sunrises: {
     icon: Sunrise,
-    format: (sunrise: string) =>
-      detailsFormatter.formatByType(DetailType.TIME, sunrise),
+    format: (sunrise: string) => formatByType(DetailType.TIME, sunrise),
   },
   sunsets: {
     icon: Sunset,
-    format: (sunset: string) =>
-      detailsFormatter.formatByType(DetailType.TIME, sunset),
+    format: (sunset: string) => formatByType(DetailType.TIME, sunset),
   },
 };
 interface GroupStatsProps {

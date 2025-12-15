@@ -2,7 +2,6 @@
 
 import { Camera, Plus } from "lucide-react";
 
-import type { PhotoMetadataFormatter } from "@/lib/metadata/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
 import { MessageBlock } from "@/components/common/message-block";
@@ -15,13 +14,11 @@ import { SummitPhotoHoverableCard } from "./summit-photo-hoverable-card";
 interface SummitPhotosGridProps {
   summitPhotos: SummitPhoto[] | undefined;
   isLoading: boolean;
-  formatter: PhotoMetadataFormatter;
 }
 
 export function SummitPhotosGrid({
   summitPhotos,
   isLoading,
-  formatter,
 }: SummitPhotosGridProps) {
   const { openDialog } = useUploadDialog();
 
@@ -56,7 +53,6 @@ export function SummitPhotosGrid({
         <SummitPhotoHoverableCard
           key={summitPhoto.id}
           summitPhoto={summitPhoto}
-          formatter={formatter}
         />
       ))}
     </div>

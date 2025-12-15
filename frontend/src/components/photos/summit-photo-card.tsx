@@ -3,8 +3,8 @@
 import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
-import { DefaultDetailsFormatter } from "@/lib/common/formatter";
 import { DetailType } from "@/lib/common/types";
+import { formatByType } from "@/lib/common/utils";
 import type { SummitPhoto } from "@/lib/photos/types";
 
 import { PhotoAspectRatio } from "@/components/photos/photo-aspect-ratio";
@@ -27,14 +27,12 @@ import { UPLOADS_BASE_URL } from "@/config/api";
 
 interface SummitPhotoCardProps {
   summitPhoto: SummitPhoto;
-  formatter: DefaultDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
 
 export function SummitPhotoCard({
   summitPhoto,
-  formatter,
   className,
   uploadsBaseUrl = UPLOADS_BASE_URL,
 }: SummitPhotoCardProps) {
@@ -64,7 +62,7 @@ export function SummitPhotoCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatByType(DetailType.HEIGHT, alt)}
+                {formatByType(DetailType.HEIGHT, alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -76,8 +74,8 @@ export function SummitPhotoCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatByType(DetailType.COORDINATE, lat)},{" "}
-                {formatter.formatByType(DetailType.COORDINATE, lng)}
+                {formatByType(DetailType.COORDINATE, lat)},{" "}
+                {formatByType(DetailType.COORDINATE, lng)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -94,10 +92,7 @@ export function SummitPhotoCard({
               <ItemDescription className="flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>
-                  {formatter.formatByType(
-                    DetailType.HEIGHT,
-                    summitPhoto.peak.elevation,
-                  )}
+                  {formatByType(DetailType.HEIGHT, summitPhoto.peak.elevation)}
                 </span>
               </ItemDescription>
             </ItemContent>
