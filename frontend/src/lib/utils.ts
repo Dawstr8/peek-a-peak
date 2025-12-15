@@ -1,19 +1,20 @@
 import { type ClassValue, clsx } from "clsx";
-import { LatLng } from "leaflet";
 import { twMerge } from "tailwind-merge";
+
+import { Location } from "@/lib/common/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const latLngEqual = (
-  a: LatLng | undefined,
-  b: LatLng | undefined,
+export const locationsEqual = (
+  a: Location | undefined,
+  b: Location | undefined,
 ): boolean => {
   if (!a && !b) return true;
   if (!a || !b) return false;
 
-  return a.equals(b);
+  return a.lat === b.lat && a.lng === b.lng;
 };
 
 export const dateEqual = (

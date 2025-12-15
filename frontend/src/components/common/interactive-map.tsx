@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 
-import { LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
+import { Location } from "@/lib/common/types";
 import { MAP_CONFIG, initializeLeafletIcons } from "@/lib/leaflet";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +15,7 @@ import { MarkerClusterLayer } from "./marker-cluster-layer";
 const { DEFAULT_HEIGHT } = MAP_CONFIG;
 
 interface InteractiveMapProps {
-  locations?: LatLng[];
+  locations?: Location[];
   hideLocationMarkers?: boolean;
   cluster?: boolean;
   height?: string;
