@@ -6,10 +6,10 @@ import { LatLng } from "leaflet";
 import { Eraser, RotateCcw } from "lucide-react";
 import { Marker, Polyline, Popup } from "react-leaflet";
 
+import { detailsFormatter } from "@/lib/common/formatter";
+import { DetailType } from "@/lib/common/types";
 import { createPeakIcon } from "@/lib/leaflet";
 import { Peak } from "@/lib/peaks/types";
-import { photoDetailsFormatter } from "@/lib/photos/formatter";
-import { PhotoDetailsKeys } from "@/lib/photos/types";
 import { latLngEqual } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -90,15 +90,20 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
               <Popup>
                 <strong>Selected location</strong>
                 <br />
-                Latitude: {photoDetailsFormatter.formatLat(value.lat)}
+                Latitude:{" "}
+                {detailsFormatter.formatByType(
+                  DetailType.COORDINATE,
+                  value.lat,
+                )}
                 <br />
-                Longitude: {photoDetailsFormatter.formatLng(value.lng)}
+                Longitude:{" "}
+                {detailsFormatter.formatByType(
+                  DetailType.COORDINATE,
+                  value.lng,
+                )}
                 <br />
                 Altitude:{" "}
-                {photoDetailsFormatter.formatByKey(
-                  PhotoDetailsKeys.ALTITUDE,
-                  value.alt,
-                )}
+                {detailsFormatter.formatByType(DetailType.HEIGHT, value.alt)}
               </Popup>
             </Marker>
           )}
@@ -112,8 +117,8 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
               <Popup>
                 <strong>{peak.name}</strong>
                 <br />
-                {photoDetailsFormatter.formatByKey(
-                  PhotoDetailsKeys.ALTITUDE,
+                {detailsFormatter.formatByType(
+                  DetailType.HEIGHT,
                   peak.elevation,
                 )}
               </Popup>

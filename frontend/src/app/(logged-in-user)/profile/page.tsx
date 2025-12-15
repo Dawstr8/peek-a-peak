@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
 
-import { photoDetailsFormatter } from "@/lib/photos/formatter";
+import { detailsFormatter } from "@/lib/common/formatter";
 import { UsersClient } from "@/lib/users/client";
 
 import { InfiniteScroller } from "@/components/pagination/infinite-scroller";
@@ -62,7 +62,7 @@ export default function ProfilePage() {
         <SummitPhotosGrid
           summitPhotos={summitPhotos}
           isLoading={!isEnabled || isLoadingSummitPhotos}
-          formatter={photoDetailsFormatter}
+          formatter={detailsFormatter}
         />
       </InfiniteScroller>
     </div>

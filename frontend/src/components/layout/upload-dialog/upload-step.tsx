@@ -3,9 +3,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useFormContext } from "react-hook-form";
 
+import { detailsFormatter } from "@/lib/common/formatter";
 import type { Peak } from "@/lib/peaks/types";
 import { PhotoClient } from "@/lib/photos/client";
-import { photoDetailsFormatter } from "@/lib/photos/formatter";
 import type { SummitPhoto, SummitPhotoCreate } from "@/lib/photos/types";
 
 import { SummitPhotoCard } from "@/components/photos/summit-photo-card";
@@ -56,7 +56,7 @@ export function UploadStep({ peakToDisplay, back, next }: UploadStepProps) {
 
       <SummitPhotoCard
         summitPhoto={summitPhoto}
-        formatter={photoDetailsFormatter}
+        formatter={detailsFormatter}
         uploadsBaseUrl=""
         className="mx-auto max-w-1/3"
       />

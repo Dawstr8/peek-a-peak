@@ -3,10 +3,8 @@
 import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
-import {
-  type PhotoDetailsFormatter,
-  PhotoDetailsKeys,
-} from "@/lib/photos/types";
+import { DefaultDetailsFormatter } from "@/lib/common/formatter";
+import { DetailType } from "@/lib/common/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 
 import { PhotoAspectRatio } from "@/components/photos/photo-aspect-ratio";
@@ -29,7 +27,7 @@ import { UPLOADS_BASE_URL } from "@/config/api";
 
 interface SummitPhotoCardProps {
   summitPhoto: SummitPhoto;
-  formatter: PhotoDetailsFormatter;
+  formatter: DefaultDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
@@ -66,7 +64,7 @@ export function SummitPhotoCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatByKey(PhotoDetailsKeys.ALTITUDE, alt)}
+                {formatter.formatByType(DetailType.HEIGHT, alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -78,7 +76,8 @@ export function SummitPhotoCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatLat(lat)}, {formatter.formatLng(lng)}
+                {formatter.formatByType(DetailType.COORDINATE, lat)},{" "}
+                {formatter.formatByType(DetailType.COORDINATE, lng)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -95,8 +94,8 @@ export function SummitPhotoCard({
               <ItemDescription className="flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>
-                  {formatter.formatByKey(
-                    PhotoDetailsKeys.ALTITUDE,
+                  {formatter.formatByType(
+                    DetailType.HEIGHT,
                     summitPhoto.peak.elevation,
                   )}
                 </span>

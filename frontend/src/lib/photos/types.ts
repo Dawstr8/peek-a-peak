@@ -36,7 +36,3 @@ export interface SummitPhotoCreate {
   alt?: number;
   peakId?: string;
 }
-
-export enum PhotoDetailsKeys {
-  ALTITUDE = "altitude",
-}
