@@ -3,6 +3,7 @@ import { Calendar } from "lucide-react";
 
 import { SummitPhoto } from "@/lib/photos/types";
 
+import { useSummitPhotoDialog } from "@/components/photos/summit-photo-dialog-context";
 import { SummitPhotoHoverableCard } from "@/components/photos/summit-photo-hoverable-card";
 import { Separator } from "@/components/ui/separator";
 
@@ -14,6 +15,8 @@ interface GroupProps {
 }
 
 export function Group({ date, photos }: GroupProps) {
+  const { openDialog } = useSummitPhotoDialog();
+
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2">
@@ -28,6 +31,8 @@ export function Group({ date, photos }: GroupProps) {
         {photos.map((summitPhoto) => (
           <SummitPhotoHoverableCard
             key={summitPhoto.id}
+            className="cursor-pointer"
+            onClick={() => openDialog(summitPhoto)}
             summitPhoto={summitPhoto}
           />
         ))}

@@ -1,8 +1,12 @@
 import type { Peak } from "@/lib/peaks/types";
-import { WeatherRecord } from "@/lib/weather/types";
+import type { User } from "@/lib/users/types";
+import type { WeatherRecord } from "@/lib/weather/types";
 
 export interface SummitPhoto {
   id?: string;
+
+  ownerId: string;
+  owner: User;
 
   peakId?: string;
   peak?: Peak;

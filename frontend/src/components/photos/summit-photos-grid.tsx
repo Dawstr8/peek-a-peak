@@ -9,6 +9,7 @@ import { useUploadDialog } from "@/components/layout/upload-dialog-context";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
+import { useSummitPhotoDialog } from "./summit-photo-dialog-context";
 import { SummitPhotoHoverableCard } from "./summit-photo-hoverable-card";
 
 interface SummitPhotosGridProps {
@@ -21,6 +22,7 @@ export function SummitPhotosGrid({
   isLoading,
 }: SummitPhotosGridProps) {
   const { openDialog } = useUploadDialog();
+  const { openDialog: openSummitPhotoDialog } = useSummitPhotoDialog();
 
   if (isLoading) {
     return (
@@ -52,6 +54,8 @@ export function SummitPhotosGrid({
       {summitPhotos.map((summitPhoto) => (
         <SummitPhotoHoverableCard
           key={summitPhoto.id}
+          className="cursor-pointer"
+          onClick={() => openSummitPhotoDialog(summitPhoto)}
           summitPhoto={summitPhoto}
         />
       ))}
