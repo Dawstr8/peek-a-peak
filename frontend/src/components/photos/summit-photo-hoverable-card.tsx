@@ -2,7 +2,8 @@
 
 import { ArrowUp, MapPin, Mountain, Thermometer } from "lucide-react";
 
-import type { PhotoDetailsFormatter } from "@/lib/photos/types";
+import { DefaultPhotoDetailsFormatter } from "@/lib/photos/formatter";
+import { PhotoDetailsKeys } from "@/lib/photos/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +21,7 @@ import { PhotoAspectRatio } from "./photo-aspect-ratio";
 
 interface SummitPhotoHoverableCardProps {
   summitPhoto: SummitPhoto;
-  formatter: PhotoDetailsFormatter;
+  formatter: DefaultPhotoDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
@@ -47,7 +48,7 @@ export function SummitPhotoHoverableCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatAlt(alt)}
+                {formatter.formatByKey(PhotoDetailsKeys.ALTITUDE, alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -75,7 +76,12 @@ export function SummitPhotoHoverableCard({
               </ItemTitle>
               <ItemDescription className="text-background flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
-                <span>{formatter.formatAlt(summitPhoto.peak.elevation)}</span>
+                <span>
+                  {formatter.formatByKey(
+                    PhotoDetailsKeys.ALTITUDE,
+                    summitPhoto.peak.elevation,
+                  )}
+                </span>
               </ItemDescription>
             </ItemContent>
           </Item>

@@ -9,6 +9,7 @@ import { Marker, Polyline, Popup } from "react-leaflet";
 import { createPeakIcon } from "@/lib/leaflet";
 import { Peak } from "@/lib/peaks/types";
 import { photoDetailsFormatter } from "@/lib/photos/formatter";
+import { PhotoDetailsKeys } from "@/lib/photos/types";
 import { latLngEqual } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -93,7 +94,11 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
                 <br />
                 Longitude: {photoDetailsFormatter.formatLng(value.lng)}
                 <br />
-                Altitude: {photoDetailsFormatter.formatAlt(value.alt)}
+                Altitude:{" "}
+                {photoDetailsFormatter.formatByKey(
+                  PhotoDetailsKeys.ALTITUDE,
+                  value.alt,
+                )}
               </Popup>
             </Marker>
           )}
@@ -107,7 +112,10 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
               <Popup>
                 <strong>{peak.name}</strong>
                 <br />
-                {photoDetailsFormatter.formatAlt(peak.elevation)}
+                {photoDetailsFormatter.formatByKey(
+                  PhotoDetailsKeys.ALTITUDE,
+                  peak.elevation,
+                )}
               </Popup>
             </Marker>
           )}
