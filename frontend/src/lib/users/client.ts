@@ -12,7 +12,7 @@ import { User, UserUpdate } from "./types";
 
 export class UsersClient extends ApiClient {
   static async checkUserAccess(username: string): Promise<void> {
-    await this.get(API_ENDPOINTS.users.checkAccess(username));
+    return await this.get(API_ENDPOINTS.users.checkAccess(username));
   }
 
   static async getUser(username: string): Promise<User> {
