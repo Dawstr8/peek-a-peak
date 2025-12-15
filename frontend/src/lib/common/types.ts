@@ -28,9 +28,17 @@ export class ValidationApiError extends ApiError {
   }
 }
 
+export enum DetailType {
+  TIME = "time",
+  TEMPERATURE = "temperature",
+  DATE = "date",
+  SPEED = "speed",
+  HEIGHT = "height",
+  COORDINATE = "coordinate",
+}
+
 export interface DetailsFormatter {
   NOT_AVAILABLE: string;
 
-  formatNumber(value: number | undefined, suffix?: string): string;
-  formatTime(value: string | undefined): string;
+  formatByType(type: DetailType, value: number | string | undefined): string;
 }

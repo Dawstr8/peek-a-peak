@@ -2,8 +2,8 @@
 
 import { ArrowUp, MapPin, Mountain, Thermometer } from "lucide-react";
 
-import { DefaultPhotoDetailsFormatter } from "@/lib/photos/formatter";
-import { PhotoDetailsKeys } from "@/lib/photos/types";
+import { DefaultDetailsFormatter } from "@/lib/common/formatter";
+import { DetailType } from "@/lib/common/types";
 import type { SummitPhoto } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ import { PhotoAspectRatio } from "./photo-aspect-ratio";
 
 interface SummitPhotoHoverableCardProps {
   summitPhoto: SummitPhoto;
-  formatter: DefaultPhotoDetailsFormatter;
+  formatter: DefaultDetailsFormatter;
   className?: string;
   uploadsBaseUrl?: string;
 }
@@ -48,7 +48,7 @@ export function SummitPhotoHoverableCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatByKey(PhotoDetailsKeys.ALTITUDE, alt)}
+                {formatter.formatByType(DetailType.HEIGHT, alt)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -60,7 +60,8 @@ export function SummitPhotoHoverableCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                {formatter.formatLat(lat)}, {formatter.formatLng(lng)}
+                {formatter.formatByType(DetailType.COORDINATE, lat)},{" "}
+                {formatter.formatByType(DetailType.COORDINATE, lng)}
               </ItemTitle>
             </ItemContent>
           </Item>
@@ -77,8 +78,8 @@ export function SummitPhotoHoverableCard({
               <ItemDescription className="text-background flex w-full justify-between">
                 <span>{summitPhoto.peak.mountainRange.name}</span>
                 <span>
-                  {formatter.formatByKey(
-                    PhotoDetailsKeys.ALTITUDE,
+                  {formatter.formatByType(
+                    DetailType.HEIGHT,
                     summitPhoto.peak.elevation,
                   )}
                 </span>
@@ -93,7 +94,12 @@ export function SummitPhotoHoverableCard({
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="font-mono text-base">
-                <span>{summitPhoto.weatherRecord.temp}°C</span>
+                <span>
+                  {formatter.formatByType(
+                    DetailType.TEMPERATURE,
+                    summitPhoto.weatherRecord.temp,
+                  )}
+                </span>
               </ItemTitle>
             </ItemContent>
           </Item>

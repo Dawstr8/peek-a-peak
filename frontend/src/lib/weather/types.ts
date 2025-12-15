@@ -20,10 +20,3 @@ export interface WeatherRecord {
   snow?: number;
   conditions: WeatherCondition[];
 }
-
-export enum WeatherRecordDetailsKeys {
-  TEMPERATURE = "temperature",
-  WIND_SPEED = "windSpeed",
-  SUNRISE = "sunrise",
-  SUNSET = "sunset",
-}

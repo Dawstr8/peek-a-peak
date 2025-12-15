@@ -9,8 +9,9 @@ import {
   Wind,
 } from "lucide-react";
 
-import { photoDetailsFormatter } from "@/lib/photos/formatter";
-import { PhotoDetailsKeys, SummitPhoto } from "@/lib/photos/types";
+import { detailsFormatter } from "@/lib/common/formatter";
+import { DetailType } from "@/lib/common/types";
+import { SummitPhoto } from "@/lib/photos/types";
 import {
   countUniquePeaks,
   getAltitudes,
@@ -20,48 +21,34 @@ import {
   getWindSpeeds,
 } from "@/lib/photos/utils";
 import { cn } from "@/lib/utils";
-import { weatherRecordDetailsFormatter } from "@/lib/weather/formatter";
-import { WeatherRecordDetailsKeys } from "@/lib/weather/types";
 
 import { StatsDisplay } from "@/components/common/stats-display";
 
 const statsConfig = {
-  [WeatherRecordDetailsKeys.TEMPERATURE]: {
+  temperatures: {
     icon: Thermometer,
     format: (temp: number) =>
-      weatherRecordDetailsFormatter.formatByKey(
-        WeatherRecordDetailsKeys.TEMPERATURE,
-        temp,
-      ),
+      detailsFormatter.formatByType(DetailType.TEMPERATURE, temp),
   },
-  [WeatherRecordDetailsKeys.WIND_SPEED]: {
+  windSpeeds: {
     icon: Wind,
     format: (speed: number) =>
-      weatherRecordDetailsFormatter.formatByKey(
-        WeatherRecordDetailsKeys.WIND_SPEED,
-        speed,
-      ),
+      detailsFormatter.formatByType(DetailType.SPEED, speed),
   },
-  [PhotoDetailsKeys.ALTITUDE]: {
+  altitudes: {
     icon: ArrowUp,
     format: (alt: number) =>
-      photoDetailsFormatter.formatByKey(PhotoDetailsKeys.ALTITUDE, alt),
+      detailsFormatter.formatByType(DetailType.HEIGHT, alt),
   },
-  [WeatherRecordDetailsKeys.SUNRISE]: {
+  sunrises: {
     icon: Sunrise,
     format: (sunrise: string) =>
-      weatherRecordDetailsFormatter.formatByKey(
-        WeatherRecordDetailsKeys.SUNRISE,
-        sunrise,
-      ),
+      detailsFormatter.formatByType(DetailType.TIME, sunrise),
   },
-  [WeatherRecordDetailsKeys.SUNSET]: {
+  sunsets: {
     icon: Sunset,
     format: (sunset: string) =>
-      weatherRecordDetailsFormatter.formatByKey(
-        WeatherRecordDetailsKeys.SUNRISE,
-        sunset,
-      ),
+      detailsFormatter.formatByType(DetailType.TIME, sunset),
   },
 };
 interface GroupStatsProps {
@@ -74,11 +61,11 @@ export function GroupStats({ photos, className }: GroupStatsProps) {
     return {
       peaksCount: countUniquePeaks(photos),
       stats: {
-        [WeatherRecordDetailsKeys.TEMPERATURE]: getTemperatures(photos),
-        [WeatherRecordDetailsKeys.WIND_SPEED]: getWindSpeeds(photos),
-        [PhotoDetailsKeys.ALTITUDE]: getAltitudes(photos),
-        [WeatherRecordDetailsKeys.SUNRISE]: getSunrises(photos),
-        [WeatherRecordDetailsKeys.SUNSET]: getSunsets(photos),
+        temperatures: getTemperatures(photos),
+        windSpeeds: getWindSpeeds(photos),
+        altitudes: getAltitudes(photos),
+        sunrises: getSunrises(photos),
+        sunsets: getSunsets(photos),
       },
     };
   }, [photos]);
