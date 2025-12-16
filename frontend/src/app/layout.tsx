@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Peek-a-Peak - Document Your Mountain Adventures",
+  title: "Peek-a-Peak - Share Your Hiking Memories",
   description:
-    "Track and share your conquests of Polish mountain peaks with weather data, locations, and beautiful memories. A social platform for mountain enthusiasts.",
+    "Share your hiking photos and memories from Polish mountain peaks with weather data and locations. A social platform for mountain enthusiasts.",
 };
 
 export default function RootLayout({

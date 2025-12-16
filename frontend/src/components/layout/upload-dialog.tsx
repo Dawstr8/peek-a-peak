@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, Upload } from "lucide-react";
+import { Camera, Check } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -71,8 +71,8 @@ export default function UploadDialog() {
       <DialogContent className="px-0 lg:!max-w-5xl">
         <DialogHeader className="px-6">
           <DialogTitle className="flex items-center gap-2">
-            <Upload className="size-6" />
-            <span>Share Your Mountain Adventure</span>
+            <Camera className="size-6" />
+            <span>Add new memory</span>
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[calc(90vh-80px)] overflow-auto px-6">

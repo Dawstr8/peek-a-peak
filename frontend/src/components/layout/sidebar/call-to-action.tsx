@@ -14,10 +14,10 @@ export default function CallToAction() {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        <SidebarMenuButton asChild tooltip="Add trip" onClick={openDialog}>
+        <SidebarMenuButton asChild tooltip="Add memory" onClick={openDialog}>
           <Button className="flex justify-start">
             <Plus />
-            <span>Add trip</span>
+            <span>Add memory</span>
           </Button>
         </SidebarMenuButton>
       </SidebarMenu>

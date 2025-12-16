@@ -56,7 +56,7 @@ export function ActivityCalendar({ values }: ActivityCalendarProps) {
               <g>{element}</g>
             </TooltipTrigger>
             <TooltipContent side="top">
-              {`${value.count} photo${value.count !== 1 ? "s" : ""} taken on ${format(new Date(value.date), "MMMM do")}`}
+              {`${value.count} hiking photo${value.count !== 1 ? "s" : ""} taken on ${format(new Date(value.date), "MMMM do")}`}
             </TooltipContent>
           </Tooltip>
         );

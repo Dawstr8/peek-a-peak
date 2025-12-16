@@ -37,13 +37,13 @@ export function SummitPhotosGrid({
       <div className="flex flex-col items-center justify-center py-20">
         <MessageBlock
           iconComponent={Camera}
-          title="Start your summit journal"
-          description="Upload photos from your mountain adventures to create a personal diary of your achievements"
+          title="Share your hiking memories"
+          description="Upload your favorite photos from your hikes to share memories with the community."
           className="mb-4"
         />
         <Button onClick={openDialog}>
           <Plus />
-          Add your first trip
+          Add your first memory
         </Button>
       </div>
     );

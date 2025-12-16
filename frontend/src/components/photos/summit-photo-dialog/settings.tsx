@@ -69,9 +69,9 @@ export function Settings({ photoId }: SettingsProps) {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete photo</DialogTitle>
+            <DialogTitle>Delete memory</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this photo? This action cannot be
+              Are you sure you want to delete this memory? This action cannot be
               undone.
             </DialogDescription>
           </DialogHeader>
