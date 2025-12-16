@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from config import settings
 from src.api import register_routes
 
 app = FastAPI(
@@ -21,7 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+if settings.storage_type == "local":
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 register_routes(app)
 
