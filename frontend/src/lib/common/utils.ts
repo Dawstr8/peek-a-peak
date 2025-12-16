@@ -1,4 +1,5 @@
 import { format } from "date-fns/format";
+import { formatDistance } from "date-fns/formatDistance";
 
 import { DetailType } from "./types";
 
@@ -30,6 +31,9 @@ export function formatByType(
     case DetailType.PERCENTAGE:
       return formatNumber(value as number | undefined, "%");
 
+    case DetailType.DATE_DISTANCE:
+      return formatDateDistance(value as string | undefined);
+
     default:
       return NOT_AVAILABLE;
   }
@@ -56,4 +60,12 @@ function formatCoordinate(value?: number): string {
   if (value === undefined || value === null) return NOT_AVAILABLE;
 
   return `${value.toFixed(6)}°`;
+}
+
+function formatDateDistance(value: string | undefined): string {
+  if (value === undefined || value === null) return NOT_AVAILABLE;
+
+  return formatDistance(new Date(value), new Date(), {
+    addSuffix: true,
+  });
 }

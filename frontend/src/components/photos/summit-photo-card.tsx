@@ -1,6 +1,5 @@
 "use client";
 
-import { formatDistance } from "date-fns";
 import { ArrowUp, MapPin, Mountain } from "lucide-react";
 
 import { DetailType } from "@/lib/common/types";
@@ -43,10 +42,7 @@ export function SummitPhotoCard({
       <CardHeader>
         <CardTitle>#{summitPhoto.id}</CardTitle>
         <CardDescription>
-          {summitPhoto.capturedAt &&
-            formatDistance(new Date(summitPhoto.capturedAt), new Date(), {
-              addSuffix: true,
-            })}
+          {formatByType(DetailType.DATE_DISTANCE, summitPhoto.capturedAt)}
         </CardDescription>
       </CardHeader>
 

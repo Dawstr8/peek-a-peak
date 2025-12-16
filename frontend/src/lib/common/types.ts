@@ -36,6 +36,7 @@ export enum DetailType {
   DISTANCE = "distance",
   COORDINATE = "coordinate",
   PERCENTAGE = "percentage",
+  DATE_DISTANCE = "date_distance",
 }
 
 export interface Location {
