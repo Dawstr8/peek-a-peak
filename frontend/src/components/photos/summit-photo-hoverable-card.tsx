@@ -6,7 +6,6 @@ import {
   Cloud,
   Droplets,
   Eye,
-  Mountain,
   Sunrise,
   Sunset,
   Thermometer,
@@ -19,6 +18,7 @@ import type { SummitPhoto } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
 import { Detail } from "@/components/common/detail";
+import { PeakItem } from "@/components/peaks/peak-item";
 import { WeatherConditionsList } from "@/components/weather/weather-conditions-list";
 
 import { UPLOADS_BASE_URL } from "@/config/api";
@@ -45,25 +45,7 @@ export function SummitPhotoHoverableCard({
       alt={`Summit photo ${summitPhoto.id}`}
     >
       <div className="absolute inset-0 hidden flex-col justify-between bg-gradient-to-t from-black/90 to-black/60 p-3 text-white group-hover:flex">
-        <div>
-          {peak && (
-            <div className="flex items-start gap-2">
-              <Mountain className="mt-0.5 size-4 shrink-0" />
-              <div className="flex-1 overflow-hidden">
-                <div className="truncate text-sm font-semibold">
-                  {peak.name}
-                </div>
-                <div className="flex items-center justify-between gap-2 text-xs opacity-90">
-                  <span className="truncate">{peak.mountainRange.name}</span>
-                  <span className="shrink-0">
-                    {formatByType(DetailType.DISTANCE, peak.elevation)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
+        <div>{peak && <PeakItem peak={peak} />}</div>
         <div className="grid grid-cols-2 gap-2 text-sm">
           <Detail
             icon={Clock}
@@ -94,7 +76,6 @@ export function SummitPhotoHoverableCard({
             text={formatByType(DetailType.DISTANCE, weatherRecord?.visibility)}
           />
         </div>
-
         <div className="space-y-2 text-sm">
           <Detail
             icon={Thermometer}
