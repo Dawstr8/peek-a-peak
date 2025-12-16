@@ -30,6 +30,20 @@ class BaseMockRepository(Generic[T]):
 
             raise NotFoundException(f"{self.model.__name__} with id {id} not found.")
 
+        async def get_by_id_if_owned(id: UUID, owner_id: UUID) -> T:
+            for item in self.items:
+                if (
+                    hasattr(item, "id")
+                    and hasattr(item, "owner")
+                    and item.id == id
+                    and item.owner.id == owner_id
+                ):
+                    return item
+
+            raise NotFoundException(
+                f"{self.model.__name__} with id {id} not found or not owned by user."
+            )
+
         async def get_by_field(field: str, value: Any) -> T:
             for item in self.items:
                 if hasattr(item, field) and getattr(item, field) == value:
@@ -82,6 +96,7 @@ class BaseMockRepository(Generic[T]):
             return len(self.items)
 
         self._add_method("get_by_id", get_by_id)
+        self._add_method("get_by_id_if_owned", get_by_id_if_owned)
         self._add_method("get_by_field", get_by_field)
         self._add_method("get_all", get_all)
         self._add_method("save", save)

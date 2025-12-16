@@ -93,6 +93,7 @@ async def get_photo_by_id(
 async def delete_photo(
     photo_id: UUID,
     photos_service: photos_service_dep,
+    current_user: current_user_dep,
 ):
     """
     Delete an uploaded photo by ID
@@ -104,7 +105,7 @@ async def delete_photo(
         dict: Success status of the operation
     """
     try:
-        success = await photos_service.delete_photo(photo_id)
+        success = await photos_service.delete_photo(photo_id, current_user)
         return {"success": success}
     except NotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))

@@ -27,14 +27,22 @@ def users() -> list[User]:
 
 
 @pytest.fixture
-def mock_user(users) -> User:
+def mock_users(users) -> list[User]:
+    """Returns a list of User models with assigned IDs for unit tests."""
+    for user in users:
+        user.id = uuid4()
+
+    return users
+
+
+@pytest.fixture
+def mock_user(mock_users) -> User:
     """
     Returns a mock User object for unit tests.
     This user is not persisted anywhere and is useful for pure unit tests
     that don't need database interaction.
     """
-    users[0].id = uuid4()
-    return users[0]
+    return mock_users[0]
 
 
 @pytest.fixture

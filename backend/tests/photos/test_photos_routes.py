@@ -209,24 +209,63 @@ async def test_get_photo_by_id_not_found(client_with_db, logged_in_user):
 
 
 @pytest.mark.asyncio
-async def test_delete_photo(client_with_db, e2e_photo):
-    """Test deleting a photo successfully"""
+async def test_delete_photo_not_authenticated(client_with_db, e2e_photo):
+    """Test deleting a photo without authentication"""
+    # Arrange
     photo_id = e2e_photo["id"]
-    file_path = f"test_uploads/{e2e_photo['fileName']}"
 
-    delete_resp = await client_with_db.delete(f"/api/photos/{photo_id}")
+    # Act
+    resp = await client_with_db.delete(f"/api/photos/{photo_id}")
 
-    assert delete_resp.status_code == 200
-    assert delete_resp.json()["success"] is True
-    assert not os.path.exists(file_path)
+    # Assert
+    assert resp.status_code == 401
 
 
 @pytest.mark.asyncio
 async def test_delete_photo_not_found(client_with_db, logged_in_user):
     """Test deleting a photo that doesn't exist"""
+    # Arrange
     non_existent_id = uuid4()
 
+    # Act
     resp = await client_with_db.delete(f"/api/photos/{non_existent_id}")
 
+    # Assert
     assert resp.status_code == 404
-    assert resp.json()["detail"] == f"SummitPhoto with id {non_existent_id} not found."
+    assert (
+        resp.json()["detail"]
+        == f"SummitPhoto with id {non_existent_id} not found or not owned by user."
+    )
+
+
+@pytest.mark.asyncio
+async def test_delete_photo_not_owned(client_with_db, e2e_photos, logged_in_user):
+    """Test deleting a photo not owned by the user"""
+    # Arrange
+    photo_id = e2e_photos[3]["id"]
+
+    # Act
+    resp = await client_with_db.delete(f"/api/photos/{photo_id}")
+
+    # Assert
+    assert resp.status_code == 404
+    assert (
+        resp.json()["detail"]
+        == f"SummitPhoto with id {photo_id} not found or not owned by user."
+    )
+
+
+@pytest.mark.asyncio
+async def test_delete_photo(client_with_db, e2e_photo, logged_in_user):
+    """Test deleting a photo successfully"""
+    # Arrange
+    photo_id = e2e_photo["id"]
+    file_path = f"test_uploads/{e2e_photo['fileName']}"
+
+    # Act
+    delete_resp = await client_with_db.delete(f"/api/photos/{photo_id}")
+
+    # Assert
+    assert delete_resp.status_code == 200
+    assert delete_resp.json()["success"] is True
+    assert not os.path.exists(file_path)

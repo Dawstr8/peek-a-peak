@@ -20,6 +20,7 @@ class BaseRepositoryMixin(Generic[T, R]):
     sort_by = "id"
     unique_fields = []
     unique_keys = []
+    has_owner = False
 
     items_fixture = None
 
@@ -53,6 +54,37 @@ class BaseRepositoryMixin(Generic[T, R]):
 
         # Act
         result_item = await test_repository.get_by_id(db_item.id)
+
+        # Assert
+        assert result_item is not None
+        assert isinstance(result_item, self.model_class)
+        assert result_item.id == db_item.id
+        assert result_item == db_item
+
+    @pytest.mark.asyncio
+    async def test_get_by_id_if_owned_not_found(self, test_repository, items):
+        if not self.has_owner:
+            pytest.skip("Model does not have an owner field")
+
+        # Arrange
+        db_item = await test_repository.save(items[0])
+
+        # Act & Assert
+        with pytest.raises(NotFoundException):
+            await test_repository.get_by_id_if_owned(db_item.id, uuid4())
+
+    @pytest.mark.asyncio
+    async def test_get_by_id_if_owned_found(self, test_repository, items):
+        if not self.has_owner:
+            pytest.skip("Model does not have an owner field")
+
+        # Arrange
+        db_item = await test_repository.save(items[0])
+
+        # Act
+        result_item = await test_repository.get_by_id_if_owned(
+            db_item.id, db_item.owner_id
+        )
 
         # Assert
         assert result_item is not None

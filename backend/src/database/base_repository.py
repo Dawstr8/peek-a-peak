@@ -26,6 +26,14 @@ class BaseRepository(Generic[T]):
 
         return obj
 
+    async def get_by_id_if_owned(self, id: UUID, owner_id: UUID) -> T:
+        try:
+            return await self.get_by_fields({"id": id, "owner_id": owner_id})
+        except NotFoundException:
+            raise NotFoundException(
+                f"{self.model.__name__} with id {id} not found or not owned by user."
+            )
+
     async def get_by_field(self, field: str, value) -> T:
         statement = select(self.model).where(getattr(self.model, field) == value)
         result = await self.db.exec(statement)

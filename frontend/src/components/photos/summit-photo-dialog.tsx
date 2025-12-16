@@ -7,6 +7,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { DetailType } from "@/lib/common/types";
 import { formatByType } from "@/lib/common/utils";
 
+import { useAuth } from "@/components/auth";
 import { PeakItem } from "@/components/peaks/peak-item";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
@@ -18,6 +19,7 @@ import { UPLOADS_BASE_URL } from "@/config/api";
 import { PhotoAspectRatio } from "./photo-aspect-ratio";
 import { useSummitPhotoDialog } from "./summit-photo-dialog-context";
 import { SummitPhotoDialogDetailsList } from "./summit-photo-dialog/details-list";
+import { Settings } from "./summit-photo-dialog/settings";
 
 const SummitPhotoMap = dynamic(
   () => import("./summit-photo-map").then((mod) => mod.SummitPhotoMap),
@@ -25,7 +27,11 @@ const SummitPhotoMap = dynamic(
 );
 
 export function SummitPhotoDialog() {
+  const { user } = useAuth();
   const { isOpen, closeDialog, selectedPhoto } = useSummitPhotoDialog();
+
+  const isOwnPhoto =
+    user && selectedPhoto && user.username === selectedPhoto.owner.username;
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
@@ -41,7 +47,12 @@ export function SummitPhotoDialog() {
             </div>
             <div className="flex-1 space-y-4 overflow-auto">
               <div className="flex items-center justify-between space-x-2">
-                <UserLink user={selectedPhoto.owner} />
+                <div className="flex items-center space-x-0.5">
+                  <UserLink user={selectedPhoto.owner} />
+                  {isOwnPhoto && selectedPhoto.id && (
+                    <Settings photoId={selectedPhoto.id} />
+                  )}
+                </div>
                 <span className="text-muted-foreground text-xs">
                   added{" "}
                   {formatByType(

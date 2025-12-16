@@ -97,19 +97,21 @@ class PhotosService:
         """
         return await self.photos_repository.get_all(sort_params=sort_params)
 
-    async def delete_photo(self, photo_id: UUID) -> bool:
+    async def delete_photo(self, photo_id: UUID, current_user: User) -> bool:
         """
         Delete a photo by ID (both file and database record)
 
         Args:
             photo_id: ID of the photo to delete
-
+            current_user: The user attempting to delete the photo
         Returns:
             bool: True if deletion was successful
         """
-        photo = await self.get_photo_by_id(photo_id)
-        file_deleted = await self.uploads_service.delete_file(photo.file_name)
+        photo = await self.photos_repository.get_by_id_if_owned(
+            photo_id, current_user.id
+        )
 
+        file_deleted = await self.uploads_service.delete_file(photo.file_name)
         if file_deleted:
             await self.photos_repository.delete(photo)
             return True
