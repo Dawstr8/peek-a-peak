@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   rewrites: async () => {
     const backendUrl =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const s3Url = process.env.NEXT_PUBLIC_S3_URL;
 
     return [
       {
@@ -15,7 +16,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/uploads/:path*",
-        destination: `${backendUrl}/uploads/:path*`,
+        destination: `${s3Url || `${backendUrl}/uploads`}/:path*`,
       },
     ];
   },

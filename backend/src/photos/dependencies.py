@@ -2,16 +2,28 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from config import settings
 from src.database.core import db_dep
 from src.photos.repository import PhotosRepository
 from src.photos.service import PhotosService
 from src.uploads.service import UploadsService
 from src.uploads.services.local_storage import LocalFileStorage
+from src.uploads.services.s3_storage import S3Storage
 from src.weather.dependencies import weather_service_dep
 
 
 def get_uploads_service() -> UploadsService:
-    storage = LocalFileStorage()
+    if settings.storage_type == "s3":
+        storage = S3Storage(
+            endpoint=settings.s3_endpoint,
+            access_key=settings.s3_access_key,
+            secret_key=settings.s3_secret_key,
+            bucket_name=settings.s3_bucket_name,
+            secure=settings.s3_secure,
+        )
+    else:
+        storage = LocalFileStorage()
+
     return UploadsService(storage)
 
 
