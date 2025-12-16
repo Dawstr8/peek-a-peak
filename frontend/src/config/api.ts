@@ -44,6 +44,7 @@ export const API_ENDPOINTS = {
       order: "asc" | "desc" | null = null,
     ) => buildUrl(`/photos`, { sortBy, order }),
     post: buildUrl(`/photos`),
+    delete: (photoId: string) => buildUrl(`/photos/${photoId}`),
   },
   peaks: {
     getCount: buildUrl(`/peaks/count`),

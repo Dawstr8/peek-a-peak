@@ -15,6 +15,7 @@ class TestPhotosRepository(BaseRepositoryMixin[SummitPhoto, PhotosRepository]):
     repository_class = PhotosRepository
     model_class = SummitPhoto
     sort_by = "captured_at"
+    has_owner = True
 
     items_fixture = "photos"
 

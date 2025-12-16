@@ -155,42 +155,87 @@ async def test_get_all_photos(photos_service, mock_photos_repository, mock_photo
 
 
 @pytest.mark.asyncio
-async def test_delete_photo_success(
-    photos_service, mock_uploads_service, mock_photos_repository, mock_photo
+async def test_delete_photo_failure_not_found(
+    photos_service, mock_photos_repository, mock_uploads_service, mock_users
 ):
-    """Test deleting a photo successfully"""
+    """Test deleting a photo that doesn't exist"""
+    # Arrange
+    photo_id = uuid4()
+    current_user = mock_users[1]
+
+    # Act & Assert
+    with pytest.raises(NotFoundException):
+        await photos_service.delete_photo(photo_id=photo_id, current_user=current_user)
+
+    mock_photos_repository.get_by_id_if_owned.assert_called_once_with(
+        photo_id, current_user.id
+    )
+    mock_uploads_service.delete_file.assert_not_called()
+    mock_photos_repository.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_delete_photo_failure_not_owned(
+    photos_service, mock_photos_repository, mock_uploads_service, mock_photo, mock_users
+):
+    """Test deleting a photo that is not owned by the current user"""
+    # Arrange
     photo_id = mock_photo.id
+    current_user = mock_users[1]
 
-    result = await photos_service.delete_photo(photo_id)
+    # Act & Assert
+    with pytest.raises(NotFoundException):
+        await photos_service.delete_photo(photo_id=photo_id, current_user=current_user)
 
-    assert result is True
-    mock_photos_repository.get_by_id.assert_called_once_with(photo_id)
-    mock_uploads_service.delete_file.assert_called_once_with(mock_photo.file_name)
-    mock_photos_repository.delete.assert_called_once_with(mock_photo)
+    mock_photos_repository.get_by_id_if_owned.assert_called_once_with(
+        photo_id, current_user.id
+    )
+    mock_uploads_service.delete_file.assert_not_called()
+    mock_photos_repository.delete.assert_not_called()
 
 
 @pytest.mark.asyncio
 async def test_delete_photo_failure_no_file(
-    photos_service, mock_uploads_service, mock_photos_repository, mock_photo
+    photos_service, mock_uploads_service, mock_photos_repository, mock_photo, mock_users
 ):
     """Test deleting a photo when the file deletion fails"""
+    # Arrange
     photo_id = mock_photo.id
+    current_user = mock_users[0]
     mock_uploads_service.delete_file.return_value = False
 
-    result = await photos_service.delete_photo(photo_id)
+    # Act
+    result = await photos_service.delete_photo(
+        photo_id=photo_id, current_user=current_user
+    )
 
+    # Assert
     assert result is False
-    mock_photos_repository.get_by_id.assert_called_once_with(photo_id)
+    mock_photos_repository.get_by_id_if_owned.assert_called_once_with(
+        photo_id, current_user.id
+    )
     mock_uploads_service.delete_file.assert_called_once_with(mock_photo.file_name)
     mock_photos_repository.delete.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_delete_photo_failure_not_found(photos_service, mock_photos_repository):
-    """Test deleting a photo that doesn't exist"""
-    photo_id = 999
+async def test_delete_photo_success(
+    photos_service, mock_uploads_service, mock_photos_repository, mock_photo, mock_users
+):
+    """Test deleting a photo successfully"""
+    # Arrange
+    photo_id = mock_photo.id
+    current_user = mock_users[0]
 
-    with pytest.raises(NotFoundException):
-        await photos_service.delete_photo(photo_id)
+    # Act
+    result = await photos_service.delete_photo(
+        photo_id=photo_id, current_user=current_user
+    )
 
-    mock_photos_repository.delete.assert_not_called()
+    # Assert
+    assert result is True
+    mock_photos_repository.get_by_id_if_owned.assert_called_once_with(
+        photo_id, current_user.id
+    )
+    mock_uploads_service.delete_file.assert_called_once_with(mock_photo.file_name)
+    mock_photos_repository.delete.assert_called_once_with(mock_photo)

@@ -43,4 +43,8 @@ export class PhotoClient extends ApiClient {
 
     return this.post<SummitPhoto>(API_ENDPOINTS.photos.post, formData);
   }
+
+  static async deletePhoto(photoId: string): Promise<void> {
+    return this.delete<void>(API_ENDPOINTS.photos.delete(photoId));
+  }
 }
