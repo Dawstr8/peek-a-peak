@@ -3,14 +3,12 @@
 import { useMemo } from "react";
 
 import { Eraser, RotateCcw } from "lucide-react";
-import { Marker, Polyline, Popup } from "react-leaflet";
 
-import { DetailType, Location } from "@/lib/common/types";
-import { formatByType } from "@/lib/common/utils";
-import { createPeakIcon } from "@/lib/leaflet";
+import { Location } from "@/lib/common/types";
 import { Peak } from "@/lib/peaks/types";
 import { locationsEqual } from "@/lib/utils";
 
+import { PeakMarker } from "@/components/peaks/peak-marker";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -21,7 +19,9 @@ import {
 import { useValueChange } from "@/hooks/use-value-change";
 
 import { InteractiveMap } from "./interactive-map";
-import { MapLocationPicker } from "./map-location-picker";
+import { LocationMarker } from "./interactive-map/location-marker";
+import { LocationsLine } from "./interactive-map/locations-line";
+import { MapLocationPicker } from "./interactive-map/map-location-picker";
 
 interface LocationPickerProps {
   value?: Location;
@@ -82,41 +82,11 @@ export function LocationPicker({ value, onChange, peak }: LocationPickerProps) {
       <div className="rounded-lg">
         <InteractiveMap locations={locations} hideLocationMarkers>
           <MapLocationPicker onLocationSelect={onChange} />
-
           {value && (
-            <Marker position={value}>
-              <Popup>
-                <strong>Selected location</strong>
-                <br />
-                Latitude: {formatByType(DetailType.COORDINATE, value.lat)}
-                <br />
-                Longitude: {formatByType(DetailType.COORDINATE, value.lng)}
-                <br />
-                Altitude: {formatByType(DetailType.DISTANCE, value.alt)}
-              </Popup>
-            </Marker>
+            <LocationMarker location={value} text="Selected location" />
           )}
-
-          {peak && (
-            <Marker
-              key={peak.id}
-              position={{ lat: peak.lat, lng: peak.lng }}
-              icon={createPeakIcon(18, "green")}
-            >
-              <Popup>
-                <strong>{peak.name}</strong>
-                <br />
-                {formatByType(DetailType.DISTANCE, peak.elevation)}
-              </Popup>
-            </Marker>
-          )}
-
-          {locations.length > 1 && (
-            <Polyline
-              positions={locations}
-              pathOptions={{ dashArray: "1 8" }}
-            />
-          )}
+          {peak && <PeakMarker peak={peak} />}
+          <LocationsLine locations={locations} />
         </InteractiveMap>
       </div>
     </div>
