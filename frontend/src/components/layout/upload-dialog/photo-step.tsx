@@ -59,17 +59,15 @@ export function PhotoStep({ next }: PhotoStepProps) {
       <MessageBlock
         iconComponent={Upload}
         title={
-          isPending
-            ? "Extracting metadata..."
-            : "Drag and drop or click to upload"
+          isPending ? "Reading your photo..." : "Add a memory to your diary"
         }
-        description="Support for JPG, PNG files. Metadata will be extracted automatically."
+        description="Drop your photo here or click to browse. We'll automatically prepare your memory with location and time details."
         className="mb-4"
       />
 
       <Button disabled={isPending}>
         {isPending && <Spinner />}
-        {isPending ? "Processing..." : "Select File"}
+        {isPending ? "Just a moment..." : "Choose photo"}
       </Button>
       <input {...getInputProps()} />
     </div>

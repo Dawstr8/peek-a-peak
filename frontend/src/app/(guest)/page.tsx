@@ -18,7 +18,7 @@ const features = [
     icon: Camera,
     title: "Upload Photos",
     description:
-      "Upload photos from your mountain adventures. Our system automatically reads location and time data.",
+      "Upload your hiking photos. Our system automatically reads location and time data.",
   },
   {
     id: 2,
@@ -53,11 +53,11 @@ export default async function Home() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
           <div className="max-w-3xl">
             <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">
-              Document Your Mountain Adventures
+              Share Your Hiking Memories
             </h1>
             <p className="text-primary-foreground/90 mb-8 text-xl">
-              Track and share your conquests of Polish peaks with weather data,
-              locations, and beautiful memories.
+              Share your hiking photos and memories from Polish peaks with
+              weather data, locations, and beautiful stories.
             </p>
           </div>
         </div>
@@ -71,8 +71,7 @@ export default async function Home() {
               How It Works
             </h2>
             <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-              Easily upload and organize your mountain adventures with smart
-              features.
+              Easily upload and organize your hiking photos with smart features.
             </p>
           </div>
 
@@ -100,11 +99,11 @@ export default async function Home() {
       <section className="bg-primary text-primary-foreground py-16">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-6 text-3xl font-bold">
-            Ready to document your mountain adventures?
+            Ready to share your hiking memories?
           </h2>
           <p className="text-primary-foreground/90 mx-auto mb-8 max-w-3xl text-xl">
-            Join our community of mountain enthusiasts and start tracking your
-            conquests of Polish peaks.
+            Join our community of mountain enthusiasts and start sharing your
+            memories from Polish peaks.
           </p>
         </div>
       </section>

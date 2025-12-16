@@ -20,15 +20,15 @@ export function EmptyAdd() {
         <EmptyMedia variant="icon">
           <Camera />
         </EmptyMedia>
-        <EmptyTitle>No photos uploaded yet.</EmptyTitle>
+        <EmptyTitle>No memories added yet</EmptyTitle>
         <EmptyDescription>
-          Your summit photo timeline is empty.
+          Memories from your hikes will appear here once you start sharing them.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button onClick={openDialog}>
           <Plus />
-          Add your first trip
+          Add your first memory
         </Button>
       </EmptyContent>
     </EmptyUI>

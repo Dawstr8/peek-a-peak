@@ -15,9 +15,10 @@ export function Empty() {
         <EmptyMedia variant="icon">
           <Camera />
         </EmptyMedia>
-        <EmptyTitle>No photos uploaded yet.</EmptyTitle>
+        <EmptyTitle>No memories added yet</EmptyTitle>
         <EmptyDescription>
-          This user&apos;s summit photo timeline is empty.
+          Memories from this user&apos;s hikes will appear here once they start
+          sharing them.
         </EmptyDescription>
       </EmptyHeader>
     </EmptyUI>
