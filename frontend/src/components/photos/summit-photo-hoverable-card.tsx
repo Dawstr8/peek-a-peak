@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import {
   ArrowUp,
   Clock,
@@ -21,6 +19,7 @@ import type { SummitPhoto } from "@/lib/photos/types";
 import { cn } from "@/lib/utils";
 
 import { Detail } from "@/components/common/detail";
+import { WeatherConditionsList } from "@/components/weather/weather-conditions-list";
 
 import { UPLOADS_BASE_URL } from "@/config/api";
 
@@ -116,24 +115,10 @@ export function SummitPhotoHoverableCard({
               )}
           </Detail>
         </div>
-
-        <div>
-          {weatherRecord?.conditions && weatherRecord.conditions.length > 0 && (
-            <div className="flex items-center gap-1.5 text-xs">
-              {weatherRecord.conditions.map((condition) => (
-                <div key={condition.id} className="flex items-center gap-1">
-                  <Image
-                    src={`https://openweathermap.org/img/wn/${condition.icon}@2x.png`}
-                    alt={condition.description}
-                    width={24}
-                    height={24}
-                  />
-                  <span className="capitalize">{condition.description}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <WeatherConditionsList
+          conditions={weatherRecord?.conditions}
+          className="flex flex-wrap items-center gap-1.5 text-xs"
+        />
       </div>
     </PhotoAspectRatio>
   );
