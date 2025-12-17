@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -14,10 +16,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 
 import { LoginForm } from "./components/login-form";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -50,5 +53,19 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner className="size-8" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
