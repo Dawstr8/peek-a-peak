@@ -47,7 +47,7 @@ services:
       - S3_BUCKET_NAME=peek-a-peak
       - S3_SECURE=false
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     depends_on:
       - postgres
       - minio
