@@ -4,6 +4,17 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    # Environment
+    environment: str = os.getenv("ENVIRONMENT", "development")
+
+    # CORS
+    cors_origins: list[str] = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(
+        ","
+    )
+
+    # Allowed hosts
+    allowed_hosts: list[str] = os.getenv("ALLOWED_HOSTS", "*").split(",")
+
     # Database settings
     postgres_server_url: str = (
         "postgresql+asyncpg://{db_user}:{db_password}@{db_host}:5432".format(

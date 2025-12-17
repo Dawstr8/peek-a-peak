@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from config import settings
@@ -11,14 +12,17 @@ app = FastAPI(
     title="Peek-a-Peak API",
     description="API for managing Polish mountain summit photos and achievements",
     version="1.0.0",
+    docs_url="/docs" if settings.environment == "development" else None,
+    redoc_url="/redoc" if settings.environment == "development" else None,
 )
 
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=(settings.allowed_hosts))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["*"],
 )
 
