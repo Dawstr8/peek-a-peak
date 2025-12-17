@@ -34,9 +34,9 @@ export function UploadStep({ peakToDisplay, back, next }: UploadStepProps) {
   const summitPhoto = {
     ...summitPhotoCreate,
     fileName: URL.createObjectURL(file),
-    id: 999,
+    id: "id",
     peak: peakToDisplay,
-  } as SummitPhoto;
+  } as unknown as SummitPhoto;
 
   const { isPending, isError, error, mutate } = useMutation({
     mutationFn: () => PhotoClient.uploadPhoto(file, summitPhotoCreate),
