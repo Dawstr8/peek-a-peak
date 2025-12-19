@@ -20,6 +20,7 @@ services:
       - /app/node_modules
       - /app/.next
     environment:
+      - API_URL=http://backend:8000
       - NEXT_PUBLIC_API_URL=http://backend:8000
       - NEXT_PUBLIC_S3_URL=http://minio:9000/peek-a-peak
     depends_on:
