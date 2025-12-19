@@ -1,0 +1,60 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://backend:8000}
+        NEXT_PUBLIC_S3_URL: ${NEXT_PUBLIC_S3_URL:-http://minio:9000/peek-a-peak}
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://backend:8000
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - ENVIRONMENT=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - STORAGE_TYPE=s3
+      - S3_SECURE=false
+    depends_on:
+      - postgres
+      - minio
+
+  postgres:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5442:5432"
+    env_file:
+      - ./postgres/.env
+    volumes:
+      - ./postgres/init-postgis.sql:/docker-entrypoint-initdb.d/init-postgis.sql
+      - postgresdata:/var/lib/postgresql
+
+  minio:
+    image: minio/minio:latest
+    command: server /data
+    restart: unless-stopped
+    env_file:
+      - ./minio/.env
+    volumes:
+      - miniodata:/data
+
+volumes:
+  postgresdata:
+  miniodata:

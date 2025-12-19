@@ -1,3 +1,5 @@
+name: peek-a-peak-dev
+
 services:
   dev:
     image: mcr.microsoft.com/devcontainers/base:ubuntu
