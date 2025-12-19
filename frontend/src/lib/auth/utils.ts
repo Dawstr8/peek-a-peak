@@ -8,7 +8,7 @@ export async function getCurrentUser(): Promise<User | undefined> {
   const sessionCookie = cookieStore.get("session_id");
   if (!sessionCookie) return undefined;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const baseUrl = process.env.API_URL || "http://localhost:8000";
   const response = await fetch(`${baseUrl}/api/auth/me`, {
     headers: {
       Cookie: `session_id=${sessionCookie.value}`,
