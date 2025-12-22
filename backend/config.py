@@ -1,6 +1,8 @@
 import os
+from typing import Annotated
 
-from pydantic_settings import BaseSettings
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, NoDecode
 
 
 class Settings(BaseSettings):
@@ -8,12 +10,12 @@ class Settings(BaseSettings):
     environment: str = os.getenv("ENVIRONMENT", "development")
 
     # CORS
-    cors_origins: list[str] = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(
-        ","
+    cors_origins: Annotated[list[str], NoDecode] = os.getenv(
+        "CORS_ORIGINS", "http://localhost:3000"
     )
 
     # Allowed hosts
-    allowed_hosts: list[str] = os.getenv("ALLOWED_HOSTS", "*").split(",")
+    allowed_hosts: Annotated[list[str], NoDecode] = os.getenv("ALLOWED_HOSTS", "*")
 
     # Database settings
     postgres_server_url: str = (
@@ -43,6 +45,22 @@ class Settings(BaseSettings):
     s3_secret_key: str = os.getenv("S3_SECRET_KEY", "minioadmin")
     s3_bucket_name: str = os.getenv("S3_BUCKET_NAME", "peek-a-peak")
     s3_secure: bool = os.getenv("S3_SECURE", "false").lower() == "true"
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v: str | list[str]) -> list[str]:
+        if isinstance(v, str):
+            return [i.strip() for i in v.split(",")]
+
+        return v
+
+    @field_validator("allowed_hosts", mode="before")
+    @classmethod
+    def assemble_allowed_hosts(cls, v: str | list[str]) -> list[str]:
+        if isinstance(v, str):
+            return [i.strip() for i in v.split(",")]
+
+        return v
 
 
 settings = Settings()
