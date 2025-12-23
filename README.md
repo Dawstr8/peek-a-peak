@@ -1,109 +1,190 @@
 # 🏔️ Peek-a-Peak
 
-**Peek-a-Peak** is a personal portfolio project designed to provide a central place to store and view photos from mountain summits across Poland. The main goal of the project is to allow users to upload summit photos and keep them organized in one place, tracking their climbing achievements.
+> **A full-stack summit diary that transforms hiking photos into intelligent, geo-enriched memories**
 
-> This project is inspired by the idea of completing all major Polish summits, but it is a personal project and not affiliated with or endorsed by any official organization.
+Transform your hiking photos into a beautiful, intelligent diary with automatic peak detection, weather history, and interactive maps. Built to showcase modern full-stack development with **React**, **FastAPI**, **PostGIS**, and **async Python**.
 
-## ✨ Main Idea
+<details>
+<summary>🌐 <strong><a href="https://peek-a-peak.dawidstrojek.com">Live Demo</a></strong> • 📱 Try uploading a photo with GPS data!</summary>
 
-- Store summit photos in one place
-- Organize photos by summit
-- Keep a personal record of climbing achievements
-- Track progress toward completing all major summits
+![Peek-a-Peak upload view](assets/upload.png)
 
-## 🛠️ Tech Stack
+</details>
 
-- **Frontend:** Next.js (React, TypeScript, Tailwind CSS)
-- **Backend:** FastAPI (Python)
-- **Database:** PostgreSQL (or SQLite for development)
-- **Development:** VS Code Dev Container (recommended)
+<details>
+<summary>📖 <strong><a href="https://peek-a-peak.dawidstrojek.com/diary/dawstr8">Example Diary</a></strong> • See what a complete summit diary looks like!</summary>
 
-## 🚀 Getting Started
+![Peek-a-Peak diary view](assets/diary.png)
 
-### Option A: Development Container (Recommended)
+</details>
 
-The easiest way to get started is using VS Code with the development container:
+---
 
-1. Install [VS Code](https://code.visualstudio.com/) and [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-2. Clone and open the repository in VS Code
-3. Press `Ctrl+Shift+P` → "Dev Containers: Reopen in Container"
-4. Start development: `./dev.sh`
-5. Access:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
+## ✨ What It Does
 
-For more details about the development container setup, see the [Dev Container README](./.devcontainer/README.md).
+**Smart Upload & Enrichment**  
+Drag & drop a summit photo → EXIF metadata extracted in-browser → Polish peak auto-suggested → historical weather fetched asynchronously → stored in PostGIS with S3/MinIO.
 
-### Option B: Manual Setup
+**Geospatial Intelligence**  
+PostGIS spatial queries match coordinates to Polish peaks (scraped from Wikipedia), calculate distances, and power interactive Leaflet maps with real-time peak suggestions.
 
-### 1. Clone the repository
+**Personal Timeline**  
+Browse your summit diary with infinite scrolling, weather overlays, and session-based authentication-all server-rendered with Next.js App Router.
+
+---
+
+## 🧱 Tech Stack
+
+| Category           | Technologies                                                                                                                          |
+| :----------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| **Frontend**       | **Next.js 15** (App Router), **TypeScript**, **TanStack Query**, **Tailwind CSS v4**, **shadcn/ui**, **Leaflet**, **React Hook Form** |
+| **Backend**        | **FastAPI**, **SQLModel** (Async), **PostgreSQL** + **PostGIS**, **Alembic**, **Pydantic**, **HTTPX**                                 |
+| **Infrastructure** | **Docker Compose**, **MinIO** (S3-compatible), **VS Code Dev Containers**, **Nginx**                                                  |
+| **Tools**          | **Pytest**, **ESLint**, **Prettier**, **GitHub Actions**                                                                              |
+
+---
+
+## ✨ Engineering Highlights
+
+### 🏗️ Domain-Driven Architecture
+
+- **Modular Design**: Backend organized by domain (`auth`, `peaks`, `weather`) rather than technical layers for scalability.
+- **Type Safety**: End-to-end type safety from database models (SQLModel) to API contracts (Pydantic) and frontend clients (TypeScript).
+
+### 🌍 Advanced Geospatial Features
+
+- **PostGIS Integration**: Utilizes `Geography(Point, 4326)` for accurate location storage and `ST_Distance` for efficient radius searches.
+- **Smart Peak Matching**: Spatial queries automatically suggest the nearest peak based on photo EXIF data.
+
+### ⚡ Performance & Async Processing
+
+- **Non-blocking Operations**: Heavy tasks like historical weather fetching run in background threads (`BackgroundTasks`) to ensure instant UI feedback.
+- **Optimistic UI**: Frontend updates immediately using TanStack Query's optimistic updates while the server processes data.
+
+### 🕷️ Robust Data Scraping
+
+- **Wikipedia Integration**: Custom scraping pipeline to extract Polish peak data (coordinates, mountain ranges, elevations) directly from Wikipedia.
+- **Resilient Architecture**: Implements respectful rate limiting, retries with exponential backoff, and comprehensive error handling.
+- **Data Normalization**: Cleans and standardizes unstructured HTML data into structured PostGIS-ready records.
+
+### 🛡️ Production-Ready Practices
+
+- **Reproducible Environments**: Fully containerized setup with Docker and VS Code Dev Containers.
+- **Secure Authentication**: Session-based auth with HttpOnly cookies and server-side session storage.
+- **Pluggable Storage**: Abstracted file storage interface supporting both local filesystem (dev) and S3/MinIO (prod).
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────-┐
+│  Next.js 15 Frontend (TypeScript, TanStack Query, shadcn)    │
+│  • EXIF extraction  • Peak search  • Map UI  • Infinite      │
+│    scroll diary     • Route-based auth                       │
+└────────────────────┬──────────────────────-┬─────────────────┘
+                     │ REST API              │ Public downloads
+                     │ (session cookies)     │ (direct access)
+┌────────────────────▼────────────────────-┐ │
+│  FastAPI Backend (Python, async SQLModel)│ │
+│  • Auth/Sessions  • Photos + EXIF        │ │
+│  • Peak matching  • Weather enrichment   │ │
+│  • S3/MinIO uploads                      │ │
+└────────────────────┬────────────────────-┘ │
+                     │                       │
+        ┌────────────┴────────────┐          │
+        ▼                         ▼          ▼
+┌───────────────────┐    ┌────────────────────┐
+│  PostgreSQL 15    │    │  MinIO (S3-like)   │
+│  + PostGIS        │    │  Object Storage    │
+│  (geospatial)     │    │                    │
+└───────────────────┘    └────────────────────┘
+```
+
+**Data Flow**: Browser extracts EXIF → Next.js validates & uploads → FastAPI persists to PostGIS → Background task fetches weather → MinIO stores original file → Diary queries use spatial indexes.
+
+---
+
+## 🚀 Quick Start
+
+> **Tip:** The recommended way to run this project is using the VS Code Dev Container. See the [Dev Container README](./.devcontainer/README.md) for details.
+
+### Option 1: Docker Compose
 
 ```bash
-git clone https://github.com/dawstr8/polish-peaks.git
-cd polish-peaks
+git clone https://github.com/dawstr8/peek-a-peak.git
+cd peek-a-peak
+docker compose -f docker-compose.dev.yaml up --build
 ```
 
-### 2. Backend Setup
+### Option 2: Manual Setup
 
-For detailed backend setup instructions, see the [Backend README](./backend/README.md).
+For detailed manual setup instructions, please refer to:
 
-Quick start:
+- **[Backend README](./backend/README.md)**
+- **[Frontend README](./frontend/README.md)**
 
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip3 install "fastapi[standard]"
-python3 -m fastapi dev main.py
-```
+---
 
-### 3. Frontend Setup
+## 📚 Documentation
 
-For detailed frontend setup instructions, see the [Frontend README](./frontend/README.md).
+For deep dives into testing, specific commands, and architectural decisions, please refer to the dedicated READMEs:
 
-Quick start:
+- **[Backend Documentation](./backend/README.md)**: Detailed guide on API setup, database management, async workers, and testing.
+- **[Frontend Documentation](./frontend/README.mdi)**: Comprehensive overview of the Next.js app, component architecture, and client-side logic.
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+---
 
-## 🧪 Testing
-
-The backend includes automated tests written with `pytest` (covering services, storage, and API behavior).
-
-Run the backend test suite:
-
-```bash
-cd backend
-pytest -q
-```
-
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```
-polish-peaks/
-├── README.md          # Project overview and setup guide
-├── .devcontainer/     # VS Code development container configuration
-│   └── README.md      # Development container setup guide
-├── dev.sh             # Development helper script
-├── backend/           # FastAPI backend application
-│   └── README.md      # Backend development documentation
-└── frontend/          # Next.js frontend application
-    └── README.md      # Frontend development documentation
+peek-a-peak/
+├── frontend/          # Next.js 15 App Router (React 19, TypeScript, TanStack Query)
+├── backend/           # FastAPI (Python, SQLModel, PostGIS, async repos)
+├── .devcontainer/     # VS Code Dev Container config (Docker-based)
+├── postgres/          # PostgreSQL + PostGIS Docker setup
+├── minio/             # MinIO (S3-compatible) storage config
+└── scripts/           # Deployment & backup scripts
 ```
 
-This is a full-stack web application with a clear separation between frontend and backend components. Each component has its own dedicated documentation for development setup and guidelines.
+---
 
-## ⚡ Contribution
+## 🎓 What This Project Demonstrates
 
-This is a personal portfolio project. Contributions are welcome in the form of suggestions, feedback, or ideas, but core development is done by the author.
+**For Backend Engineers:**
+
+- **Async Python**: Leveraging `async`/`await` for I/O-bound operations and `BackgroundTasks` for non-blocking workflows.
+- **Geospatial Data**: Practical use of PostGIS for location-based features and spatial indexing.
+- **Data Engineering**: Robust scraping pipeline for Wikipedia data with proper error handling and rate limiting.
+- **System Design**: Separation of concerns with Repository pattern and Dependency Injection.
+
+**For Frontend Engineers:**
+
+- **Modern React**: Next.js 15 App Router, Server Components, and React 19 features.
+- **Complex State**: Managing async server state with TanStack Query and client-side form state with React Hook Form.
+- **UX Focus**: Optimistic updates, infinite scrolling, and client-side image processing (EXIF).
+
+**For Full-Stack Engineers:**
+
+- **End-to-End Type Safety**: Shared understanding of data structures between Python and TypeScript.
+- **DevOps Culture**: Docker-based development workflow and production-ready containerization.
+- **Storage Abstraction**: Handling file uploads and storage across different environments (Local vs S3).
+
+---
 
 ## 👤 Author
 
-**Dawid Strojek**
+**Dawid Strojek**  
+Full-Stack Engineer | React • FastAPI • TypeScript • Python  
+Previously: Vue.js, NestJS, PHP
 
-- Portfolio: https://www.linkedin.com/in/dawid-strojek/
-- GitHub: https://github.com/dawstr8
-- Email: dawid.strojek@gmail.com
+📧 [dawid.strojek@gmail.com](mailto:dawid.strojek@gmail.com)  
+💼 [LinkedIn](https://www.linkedin.com/in/dawid-strojek/)  
+🐙 [GitHub](https://github.com/dawstr8)  
+🌐 [Portfolio](https://peek-a-peak.dawidstrojek.com)
+
+---
+
+## 📄 License
+
+This is a personal portfolio project. Feel free to explore, but please don't copy for your own portfolio. Reach out if you'd like to discuss the architecture or collaborate!
