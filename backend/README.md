@@ -43,15 +43,16 @@ A production-ready backend service designed for scalability and maintainability.
 
 ## 🧱 Tech Stack
 
-| Category        | Technologies                                       |
-| :-------------- | :------------------------------------------------- |
-| **Core**        | Python 3.11+, FastAPI, Pydantic v2                 |
-| **Database**    | PostgreSQL 15, PostGIS, SQLModel, SQLAlchemy 2.0   |
-| **Migrations**  | Alembic                                            |
-| **Geospatial**  | GeoAlchemy2, PostGIS (`ST_Distance`, `ST_DWithin`) |
-| **Async/Queue** | FastAPI BackgroundTasks (Weather enrichment)       |
-| **Storage**     | Local Filesystem / MinIO (S3 Compatible)           |
-| **Testing**     | Pytest, AsyncClient, Factory Boy                   |
+| Category         | Technologies                                       |
+| :--------------- | :------------------------------------------------- |
+| **Core**         | Python 3.11+, FastAPI, Pydantic v2                 |
+| **Database**     | PostgreSQL 15, PostGIS, SQLModel, SQLAlchemy 2.0   |
+| **Migrations**   | Alembic                                            |
+| **Geospatial**   | GeoAlchemy2, PostGIS (`ST_Distance`, `ST_DWithin`) |
+| **Async/Queue**  | FastAPI BackgroundTasks (Weather enrichment)       |
+| **Storage**      | Local Filesystem / MinIO (S3 Compatible)           |
+| **Data Seeding** | BeautifulSoup4, Pandas, Requests                   |
+| **Testing**      | Pytest, AsyncClient, Factory Boy                   |
 
 ## ✨ Engineering Highlights
 
